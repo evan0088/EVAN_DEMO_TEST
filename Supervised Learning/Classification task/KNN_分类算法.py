@@ -14,3 +14,6 @@ model = KNeighborsClassifier(n_neighbors=3)
 model.fit(x_train, y_train)
 y_test = model.predict(x_test)
 print(y_test)
+
+# 分类任务为多数投票选举
+# 0 0 1 即y_test=0
