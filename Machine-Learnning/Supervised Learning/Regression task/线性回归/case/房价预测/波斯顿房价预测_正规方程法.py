@@ -34,8 +34,8 @@ print(f"训练后intercept_参数:{model.intercept_}")
 # todo 6.模型预测
 y_pred = model.predict(new_x_test)
 # todo 7.模型评估
-from sklearn.metrics import mean_squared_error,mean_absolute_error
+from sklearn.metrics import mean_squared_error,mean_absolute_error,root_mean_squared_error
 print(f"均方误差:{mean_squared_error(y_test, y_pred)}")
-print(f"均方根误差:{np.sqrt(mean_squared_error(y_test, y_pred))}")
+print(f"均方根误差:{root_mean_squared_error(y_test,y_pred)}")
 print(f"平均绝对误差:{mean_absolute_error(y_test, y_pred)}")
 
