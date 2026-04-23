@@ -17,13 +17,12 @@ def one_hot_vector():
 
     # todo:3-构建one-hot词向量表示
     # one_hot_vector = tokenizer.texts_to_matrix(texts=vocabs, mode='binary')
-    one_hot_vector = tokenizer.texts_to_matrix(texts=vocabs, mode='binary')[:, 1:]
+    one_hot_vector = tokenizer.texts_to_matrix(texts=vocabs, mode='binary')[:,  1:]
     print('one_hot_vector--->', one_hot_vector)
 
     # todo:4-将词和one-hot词向量进行对应
     for word, vector in zip(vocabs, one_hot_vector):
-        print(vector.astype(int).tolist())
-        result = vector.tolist()
+        result = vector.astype(int).tolist()
         print(word, result)
 
     # todo:4-存储分词器对象的结果
@@ -32,7 +31,6 @@ def one_hot_vector():
     # todo:5-加载分词器对象, 进行one-hot转换
     tokenizer = joblib.load('./onehot_tokenizer.joblib')
     result = tokenizer.texts_to_matrix(texts=['王力宏'], mode='binary')[0,1:]
-    # print(result.iloc[])
     print('result--->', result)
 
 
