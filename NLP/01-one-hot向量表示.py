@@ -5,7 +5,7 @@ import joblib
 
 def one_hot_vector():
     # todo:1- 初始化词表
-    vocabs = ["周杰伦", "陈奕迅", "王力宏", "李宗盛", "吴亦凡", "鹿晗"]
+    vocabs = ["周杰伦", "陈奕迅", "王力宏", "李宗盛", "吴亦凡", "鹿晗","周杰伦"]
 
     # todo:2- 实例化tokenizer对象, 分词器对象
     tokenizer = Tokenizer()
