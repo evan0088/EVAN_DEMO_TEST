@@ -7,7 +7,7 @@ import torch.nn as nn
 import torch
 
 
-# 单向LSTM
+# TODO 单向LSTM
 def dm01_lstm():
     # 创建LSTM层
     # 将rnn类换成lstm类
@@ -29,7 +29,7 @@ def dm01_lstm():
     print('cn--->', cn.shape, cn)
 
 
-# 单向LSTM
+# 双向LSTM
 def dm02_lstm():
     # 创建LSTM层
     # 将rnn类换成lstm类
