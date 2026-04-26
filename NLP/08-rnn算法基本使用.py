@@ -25,7 +25,7 @@ def demo01():
 
     # 初始化h0(显性初始化), 如果不进行初始化, 默认初始化为0(隐性初始化)
     # 形状->(隐藏层层数, 句子数, 隐层维度)
-    h0 = torch.zeros(size=(1, 3, 7))
+    # h0 = torch.zeros(size=(1, 3, 7))
 
     # 调用rnn层对象,生成output和hn
     # ouput, hn = rnn(x, h0)
