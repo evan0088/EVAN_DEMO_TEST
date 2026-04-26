@@ -12,6 +12,9 @@ text = "我爱自然语言处理, 我爱看足球"
 embedding = nn.Embedding(num_embeddings=1000, embedding_dim=5)
 print('embedding--->', embedding)
 
+print('初始权重:', embedding.weight.data)
+print('是否需要梯度:', embedding.weight.requires_grad)
+
 # todo:3-使用embedding层进行文本向量化
 word_list = jieba.lcut(text)
 print('word_list--->', word_list)
@@ -19,6 +22,7 @@ print('word_list--->', word_list)
 word_index = [word_list.index(word) for word in word_list]
 print('word_index--->', word_index)
 # 将词下标列表转换成张量对象
+# embedding 只能接受张量对象作为输入
 word_index_tensor = torch.tensor(word_index)
 print('word_index_tensor--->', word_index_tensor)
 # 调用embedding层对象进行向量化
