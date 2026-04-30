@@ -32,6 +32,7 @@ class MyAttn(nn.Module):
         # out_features: 后续gru/lstm/transformer的要求输入维度
         self.attn_combine = nn.Linear(in_features=self.query_size+self.hidden_size,
                                       out_features=self.output_size)
+        print("query_size+hidden_size --->",self.query_size+self.hidden_size)
 
         # 后续步骤, 初始化gru层
         self.gru = nn.GRU(input_size=self.output_size, hidden_size=512, num_layers=1, batch_first=True)
@@ -58,6 +59,7 @@ class MyAttn(nn.Module):
         # ============= 以上就是加性注意力计算的结果 =============
         # 后续将q和动态c融合给到下一步(gru/lstm/transformer隐层)
         attn_q_c = torch.cat(tensors=[query, attn_c], dim=-1)
+        print('attn_q_c--->', attn_q_c.shape, attn_q_c)
         # 经过线性层2, 得到最终融合的结果=gru层的输入x
         input_x = self.attn_combine(attn_q_c)
         print('input_x--->', input_x.shape, input_x)
