@@ -30,9 +30,16 @@ if __name__ == '__main__':
     # 准备模型数据, 解码器的输出
     de_result = dm_test_Decoder()
 
+    print('de_result--->', de_result.shape, '\n', de_result)
+
     # 实例化输出层对象
     my_generator = Generator(d_model, vocab_size)
 
     # 数据经过out层
     gen_result = my_generator(de_result)
     print('gen_result--->', gen_result.shape, '\n', gen_result)
+
+    # probabilities = torch.exp(gen_result)  # 转换为实际概率
+    # print("概率分布:", probabilities)
+    # predicted_indices = torch.argmax(gen_result, dim=-1)  # 获取每个位置概率最高的词
+    # print("预测的词索引:", predicted_indices)
