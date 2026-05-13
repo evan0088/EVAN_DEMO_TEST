@@ -13,11 +13,11 @@ def dm01_test_text_classification():
     # 1 自动加载预训练的分词器
     # # techthiyanes/xxx 官网自动下载路径
     # my_tokenizer = AutoTokenizer.from_pretrained('techthiyanes/chinese_sentiment')
-    my_tokenizer = AutoTokenizer.from_pretrained('model/chinese_sentiment')
+    my_tokenizer = AutoTokenizer.from_pretrained('../model/chinese_sentiment')
 
     # 2 自动加载序列分类模型
     # my_model = AutoModelForSequenceClassification.from_pretrained('techthiyanes/chinese_sentiment')
-    my_model = AutoModelForSequenceClassification.from_pretrained('model/chinese_sentiment')
+    my_model = AutoModelForSequenceClassification.from_pretrained('../model/chinese_sentiment')
     print('my_model--->', my_model)
     # 实例化模型配置文件对象
 
@@ -177,7 +177,7 @@ def dm05_test_summarization():
 
 
 if __name__ == '__main__':
-    # dm01_test_text_classification()
+    dm01_test_text_classification()
     # dm02_test_feature_extraction()
     # dm03_test_fill_mask()
-    dm05_test_summarization()
+    # dm05_test_summarization()
