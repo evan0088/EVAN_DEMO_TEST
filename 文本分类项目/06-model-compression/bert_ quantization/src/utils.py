@@ -31,7 +31,7 @@ def load_raw_data(file_path):
                 continue
             text, label = line.split("\t")
             data.append((text, int(label)))
-    # print(data[:5])
+    print(data[:5])
     return data
 
 
@@ -81,7 +81,7 @@ def collate_fn(batch):
     # 提取文本和标签
     texts = [item[0] for item in batch]
     labels = [item[1] for item in batch]
-    
+
     # 批量分词，自动添加 [CLS] 和 [SEP]  add_special_tokens  # padding，统一处理
     text_tokens = conf.tokenizer.batch_encode_plus(texts,padding=True)
     token_ids_list = text_tokens["input_ids"]
@@ -93,77 +93,56 @@ def collate_fn(batch):
     #
     # print("================================")
     # print(labels)
+    # print(attention_mask)
+    # print(input_ids)
     return input_ids, attention_mask, labels
 
-# def build_dataloader():
-#     """
-#     构建DataLoader，整合数据加载、Dataset和collate_fn。
-#
-#     参数：
-#         file_path (str): 数据文件路径。
-#         batch_size (int): 批次大小。
-#         padding_size (int): 统一padding长度（默认28）。
-#         device (str): 设备（"cpu"或"cuda"）。
-#
-#     返回：
-#         DataLoader: 用于训练的DataLoader。
-#     """
-#     # 加载原始数据
-#     train_data = load_raw_data(conf.train_path)
-#     test_data = load_raw_data(conf.test_path)
-#     dev_data = load_raw_data(conf.dev_path)
-#
-#     # 创建 Dataset
-#     train_dataset = TextDataset(train_data)
-#     dev_dataset = TextDataset(dev_data)
-#     test_dataset = TextDataset(test_data)
-#
-#     # 创建 DataLoader
-#     train_dataloader = DataLoader(train_dataset,batch_size=conf.batch_size,shuffle=False,collate_fn=collate_fn)
-#     test_dataloader = DataLoader(test_dataset, batch_size=conf.batch_size, shuffle=False, collate_fn=collate_fn)
-#     dev_dataloader = DataLoader(dev_dataset, batch_size=conf.batch_size, shuffle=False, collate_fn=collate_fn)
-#
-#     return train_dataloader,test_dataloader,dev_dataloader
-
-
-# 示例用法
-
-# 构建数据的Dataloader
 def build_dataloader():
-    # 1.数据格式调整   text \t label ===> [（text,label）]
+    """
+    构建DataLoader，整合数据加载、Dataset和collate_fn。
+
+    参数：
+        file_path (str): 数据文件路径。
+        batch_size (int): 批次大小。
+        padding_size (int): 统一padding长度（默认28）。
+        device (str): 设备（"cpu"或"cuda"）。
+
+    返回：
+        DataLoader: 用于训练的DataLoader。
+    """
+    # 加载原始数据
     train_data = load_raw_data(conf.train_path)
     test_data = load_raw_data(conf.test_path)
     dev_data = load_raw_data(conf.dev_path)
 
-    # 2.构建数据集对象 TextDataset   __getitem__
+    # 创建 Dataset
     train_dataset = TextDataset(train_data)
-    test_dataset = TextDataset(test_data)
     dev_dataset = TextDataset(dev_data)
+    test_dataset = TextDataset(test_data)
 
-    # 3.Dataloader构建
-    train_loader = DataLoader(train_dataset, shuffle=True, batch_size=conf.batch_size,collate_fn=collate_fn)
-    test_loader = DataLoader(test_dataset, shuffle=True, batch_size=conf.batch_size,collate_fn=collate_fn)
-    dev_loader = DataLoader(dev_dataset, shuffle=True, batch_size=conf.batch_size,collate_fn=collate_fn)
+    # 创建 DataLoader
+    train_dataloader = DataLoader(train_dataset,batch_size=conf.batch_size,shuffle=False,collate_fn=collate_fn)
+    test_dataloader = DataLoader(test_dataset, batch_size=conf.batch_size, shuffle=False, collate_fn=collate_fn)
+    dev_dataloader = DataLoader(dev_dataset, batch_size=conf.batch_size, shuffle=False, collate_fn=collate_fn)
 
-    return train_loader,test_loader,dev_loader
+    return train_dataloader,test_dataloader,dev_dataloader
 
 
+# 示例用法
 if __name__ == "__main__":
     # 记录开始时间
     start_time = time.time()
     print(load_raw_data(conf.train_path)[:5])
     # # 构建 DataLoader
     train_dataloader,test_dataloader,dev_dataloader = build_dataloader()
-    # print(f'训练集数量：{len(train_dataloader.dataset)}')
-    # print(f'测试集数量：{len(test_dataloader.dataset)}')
-    # print(f'验证集数量：{len(dev_dataloader.dataset)}')
-
+    #
     # # #遍历 DataLoader
     for batch in train_dataloader:
         input_ids, attention_mask, labels = batch
-        print("input_ids=>",input_ids)
-        # print("labels=>",labels.shape)
-        # print("attention_mask=>",attention_mask.shape)
+        print("input_ids=>",input_ids.tolist())
+        print("labels=>",labels.tolist())
+        print("attention_mask=>",attention_mask.tolist())
+        breakpoint()
         # print("Input IDs:", input_ids.shape)
         # print("Attention Mask:", attention_mask.shape)
         # print("Labels:", labels.shape)
