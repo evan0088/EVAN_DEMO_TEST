@@ -30,7 +30,7 @@
         └─ 损失: 交叉熵                                       (BERT / FastText / LLM)
 ```
 
-### 一·补充：ML / DL / NLP 的区别与升级关系
+### 一（补充）：ML / DL / NLP 的区别与升级关系
 
 > 上面的树状图只回答了"有哪些"，没回答"为什么从 A 演进到 B"。本小节用 4 个角度把三者关系彻底讲清。
 
@@ -186,15 +186,15 @@
 | 注意力机制四种 | [README.md:1181](README.md#L1181) | NLP 进阶 | 软/硬/加性/缩放点积 |
 | **Transformer 完整架构** | [README.md:1441](README.md#L1441) | NLP 核心 | Encoder + Decoder + Mask |
 | **编码器⇄解码器全链路** | [README.md:1672](README.md#L1672) | NLP 核心 | memory 纽带 + Q/K/V 来源 |
-| 学习路线建议 | [README.md:1913](README.md#L1913) | 路线图 | ML→DL→NLP 三阶段 |
-| 文本分类实战入口 | [README.md:2014](README.md#L2014) | 项目实战 | 6 阶段递进路线 |
-| 01-data 数据 EDA | [README.md:2059](README.md#L2059) | 实战阶段 1 | 数据清洗 + padding 选择 |
-| 02-rf 随机森林 | [README.md:2086](README.md#L2086) | 实战阶段 2 | TF-IDF + RF 基线 |
-| 03-fasttext | [README.md:2127](README.md#L2127) | 实战阶段 3 | 字 vs 词级别 + autotune |
-| **04-bert 微调** | [README.md:2189](README.md#L2189) | 实战阶段 4 | [CLS] + 三个 ID + 微调 |
-| 05-LLM 大模型 | [README.md:2306](README.md#L2306) | 实战阶段 5 | DeepSeek API + Prompt 工程 |
-| **06-model-compression** | [README.md:2376](README.md#L2376) | 实战阶段 6 | 量化/剪枝/蒸馏三板斧 |
-| 面试高频题精选 | [README.md:2650](README.md#L2650) | 复习 | 6 道经典题 + 答案 |
+| 学习路线建议 | [README.md:1917](README.md#L1917) | 路线图 | ML→DL→NLP 三阶段 |
+| 文本分类实战入口 | [README.md:2018](README.md#L2018) | 项目实战 | 6 阶段递进路线 |
+| 01-data 数据 EDA | [README.md:2063](README.md#L2063) | 实战阶段 1 | 数据清洗 + padding 选择 |
+| 02-rf 随机森林 | [README.md:2090](README.md#L2090) | 实战阶段 2 | TF-IDF + RF 基线 |
+| 03-fasttext | [README.md:2131](README.md#L2131) | 实战阶段 3 | 字 vs 词级别 + autotune |
+| **04-bert 微调** | [README.md:2193](README.md#L2193) | 实战阶段 4 | [CLS] + 三个 ID + 微调 |
+| 05-LLM 大模型 | [README.md:2310](README.md#L2310) | 实战阶段 5 | DeepSeek API + Prompt 工程 |
+| **06-model-compression** | [README.md:2380](README.md#L2380) | 实战阶段 6 | 量化/剪枝/蒸馏三板斧 |
+| 面试高频题精选 | [README.md:2654](README.md#L2654) | 复习 | 6 道经典题 + 答案 |
 
 ### 四、学习路径推荐（三档进阶）
 
@@ -209,17 +209,17 @@
 | 我想… | 看哪章 |
 |------|--------|
 | 给老板做客户分群 | K-Means [README.md:616](README.md#L616) |
-| 做一个垃圾邮件二分类器 | 混淆矩阵 [README.md:484](README.md#L484) + 02-rf [README.md:2086](README.md#L2086) |
-| 做一个 10 类新闻分类器 | 04-bert [README.md:2189](README.md#L2189) |
-| 模型太大想压缩 | 06-model-compression [README.md:2376](README.md#L2376) |
+| 做一个垃圾邮件二分类器 | 混淆矩阵 [README.md:484](README.md#L484) + 02-rf [README.md:2090](README.md#L2090) |
+| 做一个 10 类新闻分类器 | 04-bert [README.md:2193](README.md#L2193) |
+| 模型太大想压缩 | 06-model-compression [README.md:2380](README.md#L2380) |
 | 想理解 Transformer 怎么工作 | 编码器⇄解码器全链路 [README.md:1672](README.md#L1672) |
 | 训练 loss 不下降怎么办 | 5 步训练模板 [README.md:873](README.md#L873) + Autograd 报错速查 [README.md:996](README.md#L996) |
-| 想把模型上线提供 API | 上线四件套 [README.md:2115](README.md#L2115) |
-| 不想训练，直接用 GPT 做分类 | 05-LLM [README.md:2306](README.md#L2306) |
+| 想把模型上线提供 API | 上线四件套 [README.md:2119](README.md#L2119) |
+| 不想训练，直接用 GPT 做分类 | 05-LLM [README.md:2310](README.md#L2310) |
 | 评估指标怎么选 | 交叉熵 [README.md:387](README.md#L387) + 决策树 [README.md:584](README.md#L584) |
-| 调 padding_size 时拍多少？ | EDA padding 选择 [README.md:2077](README.md#L2077) |
-| 蒸馏温度 T 怎么设？ | 软标签蒸馏 [README.md:2483](README.md#L2483) |
-| BERT 三个 ID 是啥？ | BERT 输入 [README.md:2208](README.md#L2208) |
+| 调 padding_size 时拍多少？ | EDA padding 选择 [README.md:2081](README.md#L2081) |
+| 蒸馏温度 T 怎么设？ | 软标签蒸馏 [README.md:2487](README.md#L2487) |
+| BERT 三个 ID 是啥？ | BERT 输入 [README.md:2212](README.md#L2212) |
 
 ### 六、关键术语索引（A-Z 速查）
 
@@ -229,17 +229,17 @@
 | **Autograd** | 自动微分 | [README.md:785](README.md#L785) |
 | **AUC / ROC** | ROC 曲线下面积 | [README.md:535](README.md#L535) |
 | **BCE Loss** | 二元交叉熵 | [README.md:395](README.md#L395) |
-| **BERT** | 双向编码 Transformer | [README.md:2189](README.md#L2189) |
-| **BiLSTM** | 双向 LSTM | [README.md:2527](README.md#L2527) |
+| **BERT** | 双向编码 Transformer | [README.md:2193](README.md#L2193) |
+| **BiLSTM** | 双向 LSTM | [README.md:2531](README.md#L2531) |
 | **`backward()`** | 反向传播触发 | [README.md:818](README.md#L818) |
-| **`[CLS]`** | 句子分类标记 | [README.md:2218](README.md#L2218) |
+| **`[CLS]`** | 句子分类标记 | [README.md:2222](README.md#L2222) |
 | **Cross-Attention** | 编码-解码交叉注意力 | [README.md:1672](README.md#L1672) |
 | **Cross Entropy** | 交叉熵损失 | [README.md:387](README.md#L387) |
 | **Decoder** | 解码器 | [README.md:1633](README.md#L1633) |
-| **Distillation** | 知识蒸馏 | [README.md:2463](README.md#L2463) |
+| **Distillation** | 知识蒸馏 | [README.md:2467](README.md#L2467) |
 | **Encoder** | 编码器 | [README.md:1558](README.md#L1558) |
 | **F1 Score** | F1 分数 | [README.md:503](README.md#L503) |
-| **FastText** | 浅层快速分类 | [README.md:2127](README.md#L2127) |
+| **FastText** | 浅层快速分类 | [README.md:2131](README.md#L2131) |
 | **GRU** | 门控循环单元 | [README.md:1130](README.md#L1130) |
 | **K-Means** | K 均值聚类 | [README.md:616](README.md#L616) |
 | **KNN** | K 近邻 | [README.md:329](README.md#L329) |
@@ -248,18 +248,18 @@
 | **mask** | 掩码 | [README.md:1530](README.md#L1530) |
 | **memory** | 编码器输出 | [README.md:1672](README.md#L1672) |
 | **Multi-Head Attention** | 多头注意力 | [README.md:1558](README.md#L1558) |
-| **NSP** | 下一句预测（BERT 任务）| [README.md:2199](README.md#L2199) |
-| **Padding Size** | 序列填充长度 | [README.md:2077](README.md#L2077) |
+| **NSP** | 下一句预测（BERT 任务）| [README.md:2203](README.md#L2203) |
+| **Padding Size** | 序列填充长度 | [README.md:2081](README.md#L2081) |
 | **Positional Encoding** | 位置编码 | [README.md:1482](README.md#L1482) |
 | **Precision / Recall** | 精确率 / 召回率 | [README.md:503](README.md#L503) |
-| **Pruning** | 剪枝 | [README.md:2423](README.md#L2423) |
-| **Quantization** | 量化 | [README.md:2396](README.md#L2396) |
+| **Pruning** | 剪枝 | [README.md:2427](README.md#L2427) |
+| **Quantization** | 量化 | [README.md:2400](README.md#L2400) |
 | **`requires_grad`** | 梯度跟踪标记 | [README.md:923](README.md#L923) |
 | **RNN** | 循环神经网络 | [README.md:1064](README.md#L1064) |
 | **Self-Attention** | 自注意力 | [README.md:1558](README.md#L1558) |
 | **Softmax** | 多分类输出层 | [README.md:417](README.md#L417) |
 | **Teacher Forcing** | 教师强制（训练）| [README.md:1672](README.md#L1672) |
-| **TF-IDF** | 词频-逆文档频率 | [README.md:2094](README.md#L2094) |
+| **TF-IDF** | 词频-逆文档频率 | [README.md:2098](README.md#L2098) |
 | **Transformer** | Transformer 架构 | [README.md:1441](README.md#L1441) |
 | **`zero_grad()`** | 梯度清零 | [README.md:830](README.md#L830) |
 
@@ -1035,11 +1035,11 @@ for _ in range(2):
 | **RNN/LSTM** | Tanh | 零中心化，稳定梯度 |
 
 
-## NLP
+# NLP
 
 > 自然语言处理（Natural Language Processing）让计算机"看懂"和"会说"人话。本章按经典学习顺序：**预处理 → 词表示 → RNN 家族 → 注意力机制 → Transformer**，每一步都解决前一步的痛点。
 
-### 文本预处理流程
+## 文本预处理流程
 
 | 步骤 | 方法 | 工具/库 | 说明 |
 |------|------|---------|------|
@@ -1049,7 +1049,7 @@ for _ in range(2):
 | **4. 命名实体识别** | NER | spaCy、NLTK | 识别人名、地名、组织名 |
 | **5. 向量化** | One-Hot、Word2Vec、Embedding | gensim、torch.nn.Embedding | 将词转为向量 |
 
-### 词表示方法对比
+## 词表示方法对比
 
 | 方法 | 维度 | 优点 | 缺点 | 适用场景 |
 |------|------|------|------|----------|
@@ -1059,9 +1059,9 @@ for _ in range(2):
 | **GloVe** | 自定义(50-300) | 全局统计信息 | 静态嵌入 | 通用词嵌入 |
 | **BERT Embedding** | 768/1024 | 上下文相关，动态 | 计算成本高 | 现代NLP任务 |
 
-### RNN 循环神经网络家族
+## RNN 循环神经网络家族
 
-#### 1. RNN (Recurrent Neural Network)
+### 1. RNN (Recurrent Neural Network)
 **核心思想**：引入时间维度，隐藏状态在不同时间步之间传递，实现序列记忆。
 
 **公式**：
@@ -1092,7 +1092,7 @@ output, hn = rnn(x)  # output: 所有时间步输出, hn: 最后隐藏状态
 
 ---
 
-#### 2. LSTM (Long Short-Term Memory)
+### 2. LSTM (Long Short-Term Memory)
 **核心思想**：引入**门控机制**和**细胞状态（Cell State）**，解决长期依赖问题。
 
 **三大门控**：
@@ -1127,7 +1127,7 @@ output, (hn, cn) = lstm(x)  # hn: 隐藏状态, cn: 细胞状态
 
 ---
 
-#### 3. GRU (Gated Recurrent Unit)
+### 3. GRU (Gated Recurrent Unit)
 **核心思想**：LSTM的简化版，将遗忘门和输入门合并为**更新门**，减少参数量。
 
 **两大门控**：
@@ -1160,7 +1160,7 @@ output, hn = gru(x)  # hn: 隐藏状态
 
 ---
 
-#### RNN vs LSTM vs GRU 对比总结
+### RNN vs LSTM vs GRU 对比总结
 
 | 对比维度 | RNN | LSTM | GRU |
 |---------|-----|------|-----|
@@ -1178,9 +1178,9 @@ output, hn = gru(x)  # hn: 隐藏状态
 > - 资源受限/追求效率 → **GRU**
 > - 现代NLP任务 → 优先考虑 **Transformer**
 
-### 注意力机制 (Attention Mechanism)
+## 注意力机制 (Attention Mechanism)
 
-#### 注意力机制核心概念
+### 注意力机制核心概念
 
 可以把注意力机制想象成在图书馆找资料：
 - **H（Hidden States）**：每本书的完整原始信息（封面+摘要+目录+正文+作者…）
@@ -1196,7 +1196,7 @@ output, hn = gru(x)  # hn: 隐藏状态
 
 ---
 
-#### 三种注意力机制对比
+### 三种注意力机制对比
 
 | 对比维度 | **软性注意力 (Soft Attention)** | **硬性注意力 (Hard Attention)** | **加性注意力 (Additive Attention)** |
 |---------|-------------------------------|-------------------------------|----------------------------------|
@@ -1213,7 +1213,7 @@ output, hn = gru(x)  # hn: 隐藏状态
 
 ---
 
-#### 1. 软性注意力 (Soft Attention)
+### 1. 软性注意力 (Soft Attention)
 
 **核心思想**：对输入序列的**所有位置**计算注意力权重，权重和为1，是确定性的连续函数。
 
@@ -1244,7 +1244,7 @@ context = attn_weights · V
 
 ---
 
-#### 2. 硬性注意力 (Hard Attention)
+### 2. 硬性注意力 (Hard Attention)
 
 **核心思想**：每次只**随机选择**输入序列中的一个或少数几个位置进行关注，是离散的选择过程。
 
@@ -1279,7 +1279,7 @@ context = V[position]  # 只获取选中位置的值
 
 ---
 
-#### 3. 加性注意力 (Additive Attention)
+### 3. 加性注意力 (Additive Attention)
 
 **核心思想**：通过一个**前馈神经网络**（线性层）来计算 Query 和 Key 之间的相似度，属于软性注意力的一种具体实现方式。
 
@@ -1354,7 +1354,7 @@ attn_c = torch.bmm(attn_weights, value)  # (batch, seq_len, hidden_size)
 
 ---
 
-#### 4. 缩放点积注意力 (Scaled Dot-Product Attention)
+### 4. 缩放点积注意力 (Scaled Dot-Product Attention)
 
 **为什么需要缩放？**
 
@@ -1421,7 +1421,7 @@ def scaled_dot_product_attention(query, key, value):
 
 ---
 
-#### 选择建议
+### 选择建议
 
 | 场景 | 推荐注意力类型 |
 |------|--------------|
@@ -1438,13 +1438,13 @@ def scaled_dot_product_attention(query, key, value):
 
 ---
 
-### Transformer 完整架构详解（NLP/12~18 文件）
+## Transformer 完整架构详解（NLP/12~18 文件）
 
 > 📂 文件来源：[NLP/13~18.py](NLP/) + [encoder.py](NLP/encoder.py) / [decoder.py](NLP/decoder.py) / [input.py](NLP/input.py)，配套案例 [12.1-英译法案例.py](NLP/12.1-英译法案例.py)。
 
 Transformer 是 2017 年 Google 论文 *Attention Is All You Need* 提出的架构，**抛弃 RNN，纯靠注意力**，奠定了 BERT/GPT/ChatGPT 的基石。
 
-#### 整体架构图（极简版）
+### 整体架构图（极简版）
 
 ```
 输入文本 ──► [Embedding] ──► [+ 位置编码] ──┐
@@ -1466,7 +1466,7 @@ Transformer 是 2017 年 Google 论文 *Attention Is All You Need* 提出的架�
                           [Linear → log_softmax] ──► 词表概率
 ```
 
-#### 关键超参（Transformer-base）
+### 关键超参（Transformer-base）
 
 | 参数 | 值 | 含义 |
 |------|-----|------|
@@ -1479,9 +1479,9 @@ Transformer 是 2017 年 Google 论文 *Attention Is All You Need* 提出的架�
 
 ---
 
-#### 1️⃣ 输入层（[13-input编码器之位置编码.py](NLP/13-input编码器之位置编码.py)）
+### 1️⃣ 输入层（[13-input编码器之位置编码.py](NLP/13-input编码器之位置编码.py)）
 
-##### 词嵌入层
+#### 词嵌入层
 
 ```python
 class Embeddings(nn.Module):
@@ -1497,7 +1497,7 @@ class Embeddings(nn.Module):
 
 > 🌰 **生活类比**：embedding 是音量大小，位置编码是节拍器。如果音量太小，节拍器声音会盖住歌词，所以先把音量放大。
 
-##### 位置编码（核心公式）
+#### 位置编码（核心公式）
 
 ```
 PE(pos, 2i)   = sin( pos / 10000^(2i/d_model) )
@@ -1517,7 +1517,7 @@ Transformer 抛弃了 RNN 的"顺序读"，所有词同时输入；不告诉模�
 
 > 🌰 **生活类比**：电影院给每个座位贴一个独一无二的座位号（位置编码），即使你蒙眼随便坐也能知道自己在第几排第几座。
 
-##### 输入 = embedding + 位置编码
+#### 输入 = embedding + 位置编码
 
 ```python
 x = embedding(x) * sqrt(d_model)
@@ -1527,11 +1527,11 @@ x = dropout(x)
 
 ---
 
-#### 2️⃣ 掩码（[14-input编码器之mask掩码.py](NLP/14-input编码器之mask掩码.py)）
+### 2️⃣ 掩码（[14-input编码器之mask掩码.py](NLP/14-input编码器之mask掩码.py)）
 
 两种 mask 都是 0/1 矩阵，**0 的位置会被替换为 `-inf`**，softmax 后变 0。
 
-##### Padding Mask（编码器+解码器都用）****
+#### Padding Mask（编码器+解码器都用）****
 
 屏蔽 `[PAD]` 占位符，避免模型把"无意义填充"当成有效信息。
 ```python
@@ -1540,7 +1540,7 @@ padding_mask = (input_ids != 0).unsqueeze(-2)  # [batch, 1, seq_len]
 
 > 🌰 **生活类比**：考试卷子上有些空白格不算分，阅卷老师直接跳过。
 
-##### Causal Mask / Subsequent Mask（仅解码器）
+#### Causal Mask / Subsequent Mask（仅解码器）
 
 下三角矩阵，让模型在预测第 t 个词时**只能看到前 t-1 个词**。
 ```python
@@ -1555,9 +1555,9 @@ mask = torch.tril(torch.ones(seq_len, seq_len))  # 下三角=1，上三角=0
 
 ---
 
-#### 3️⃣ 编码器（[15-transform之encoder.py](NLP/15-transform之encoder.py) + [16-层标准化.py](NLP/16-transform之层标准化.py)）
+### 3️⃣ 编码器（[15-transform之encoder.py](NLP/15-transform之encoder.py) + [16-层标准化.py](NLP/16-transform之层标准化.py)）
 
-##### 缩放点积注意力（一次计算）
+#### 缩放点积注意力（一次计算）
 
 ```python
 def attention(Q, K, V, mask=None):
@@ -1569,7 +1569,7 @@ def attention(Q, K, V, mask=None):
     return weights @ V, weights
 ```
 
-##### 多头注意力（[15](NLP/15-transform之encoder.py)）
+#### 多头注意力（[15](NLP/15-transform之encoder.py)）
 
 ```python
 # 把 d_model=512 拆成 8 头，每头 d_k=64
@@ -1584,7 +1584,7 @@ out = self.W_o(out)  # 最终线性层
 
 > 🌰 **生活类比**：一个评委（单头）容易主观；8 个评委（多头）各看不同角度（语法/语义/情感/位置/...）再综合，更全面。
 
-##### 前馈网络
+#### 前馈网络
 
 ```python
 # 两层全连接 + ReLU
@@ -1594,7 +1594,7 @@ FFN(x) = Linear_2( ReLU( Linear_1(x) ) )
 
 > 🌰 **生活类比**：先把信息"展开"到大房间（2048）方便整理，再"压缩"回原房间（512）。
 
-##### Add & Norm（残差 + 层归一化）
+#### Add & Norm（残差 + 层归一化）
 
 ```python
 class SublayerConnection(nn.Module):
@@ -1613,7 +1613,7 @@ class SublayerConnection(nn.Module):
 > - **残差** = 写作业时保留草稿，万一新答案错了还能回头看
 > - **LayerNorm** = 每个学生自己量身高体重再标准化（个人内部）；BatchNorm 是全班一起标准化（不适合 NLP，因为句子长度不一）
 
-##### 编码器层堆叠 6 次
+#### 编码器层堆叠 6 次
 
 ```python
 class EncoderLayer(nn.Module):
@@ -1630,7 +1630,7 @@ class Encoder(nn.Module):
 
 ---
 
-#### 4️⃣ 解码器（[17-transform-decoder.py](NLP/17-transform-decoder.py)）
+### 4️⃣ 解码器（[17-transform-decoder.py](NLP/17-transform-decoder.py)）
 
 解码器有**三个子层**（编码器只有两个）：
 
@@ -1653,7 +1653,7 @@ class DecoderLayer(nn.Module):
 
 ---
 
-#### 5️⃣ 输出层（[18-transform之output.py](NLP/18-transform之output.py)）
+### 5️⃣ 输出层（[18-transform之output.py](NLP/18-transform之output.py)）
 
 ```python
 class Generator(nn.Module):
@@ -1669,11 +1669,11 @@ class Generator(nn.Module):
 
 ---
 
-#### 6️⃣ 编码器 ⇄ 解码器 全链路联系（重点）
+### 6️⃣ 编码器 ⇄ 解码器 全链路联系（重点）
 
 前面 5 节把 6 个组件单独讲了一遍，这一节回答最关键的问题：**它们之间到底怎么连？数据流到底长什么样？**
 
-##### 6.1 数据流总览（带形状追踪）
+#### 6.1 数据流总览（带形状追踪）
 
 设 `batch=2, src_len=tgt_len=4, d_model=512, num_heads=8, vocab=1000`：
 
@@ -1715,7 +1715,7 @@ class Generator(nn.Module):
 [2, 4, 1000]                            ← 每个位置在词表上的对数概率
 ```
 
-##### 6.2 关键纽带：memory（编码器输出）
+#### 6.2 关键纽带：memory（编码器输出）
 
 | 维度 | 说明 |
 |------|------|
@@ -1727,7 +1727,7 @@ class Generator(nn.Module):
 
 > 🌰 **生活类比**：memory 像翻译考试时摆在桌上的英文原稿。无论你写到第几个汉字，都能随时回头看这份原稿；原稿不会变，永远只算一次。
 
-##### 6.3 解码器三个子层的 Q/K/V 来源差异（最容易混的地方）
+#### 6.3 解码器三个子层的 Q/K/V 来源差异（最容易混的地方）
 
 这是 Transformer 最精妙也最容易记混的一点：
 
@@ -1750,7 +1750,7 @@ x = self.sublayer[2](x, self.feed_forward)                                 # ③
 > - 子层② = 抬头看英文原稿，找下一个该翻什么（**Q 是脑中疑问，K/V 是原稿**）
 > - 子层③ = 大脑加工一下，准备下笔
 
-##### 6.4 为什么 cross-attention 中 K 和 V 都来自 memory？
+#### 6.4 为什么 cross-attention 中 K 和 V 都来自 memory？
 
 | 角色 | 含义 | 翻译场景类比 |
 |------|------|------------|
@@ -1765,7 +1765,7 @@ K 和 V 都来自 **同一份** memory：
 
 而 Q 来自解码器，因为它代表**译者当前的需求**，每写一个词需求都不同。
 
-##### 6.5 两种 mask 在编码器/解码器的分工
+#### 6.5 两种 mask 在编码器/解码器的分工
 
 | Mask | 形状 | 编码器自注意力 | 解码器自注意力 | 解码器跨注意力 |
 |------|------|--------------|---------------|---------------|
@@ -1788,7 +1788,7 @@ target_mask = target_padding & target_causal
 > - src_mask = 原稿上有几个空格，提醒"这里别看"
 > - tgt_mask = 自己写到一半，前面写过的字能看，后面没写的字不存在 + 空格也别看
 
-##### 6.6 训练 vs 推理：数据流的根本差异
+#### 6.6 训练 vs 推理：数据流的根本差异
 
 | 阶段 | 解码器输入 | 是否并行 | 编码器跑几次 |
 |------|----------|---------|------------|
@@ -1812,7 +1812,7 @@ target_mask = target_padding & target_causal
 > - 推理 = 边想边写，必须一字一字憋出来
 > - 编码器只算一次 = 原稿摆桌上不动，省算力（这就是大模型 **KV-Cache** 优化的雏形）
 
-##### 6.7 编码器内部一层的形状追踪（多头注意力示例）
+#### 6.7 编码器内部一层的形状追踪（多头注意力示例）
 
 ```
 x = pe_result                                    # [2, 4, 512]
@@ -1834,7 +1834,7 @@ x = pe_result                                    # [2, 4, 512]
 > - 拆 8 头 = 把 512 维"大议题"分给 8 个评委组，每组负责 64 维"小议题"
 > - 合 8 头 = 把 8 组评委的意见拼起来，再过一道线性层"统一文书"
 
-##### 6.8 完整 Transformer 一图记忆
+#### 6.8 完整 Transformer 一图记忆
 
 ```
 源句 ─►[Embed+PE]─►Encoder×6─►memory ──┐
@@ -1852,7 +1852,7 @@ x = pe_result                                    # [2, 4, 512]
                   log_softmax → 词概率
 ```
 
-##### 6.9 高频面试问答（Transformer 编解码器篇）
+#### 6.9 高频面试问答（Transformer 编解码器篇）
 
 **Q1：解码器有几个注意力？分别叫什么？**
 A：两个。① Masked Self-Attention（自注意力，看自己已写的）；② Cross-Attention / Encoder-Decoder Attention（跨注意力，Q 来自解码器，K/V 来自编码器输出 memory）。
@@ -1871,7 +1871,7 @@ A：BERT 仅用编码器（双向自注意力，无因果 mask）。因为它做
 
 ---
 
-#### 7️⃣ 英译法 Seq2Seq + 加性注意力实战（[12.1](NLP/12.1-英译法案例.py) / [12.2](NLP/12.2-英译法案例.py)）
+### 7️⃣ 英译法 Seq2Seq + 加性注意力实战（[12.1](NLP/12.1-英译法案例.py) / [12.2](NLP/12.2-英译法案例.py)）
 
 这是 Transformer 出现**之前**的经典 NMT 架构，理解它能更好懂为什么 Transformer 是革命：
 
@@ -1888,7 +1888,7 @@ context = torch.bmm(attn_weights.unsqueeze(0), encoder_outputs.unsqueeze(0))
 gru_input = self.attn_combine(torch.cat([embed, context], dim=-1))
 ```
 
-##### Transformer vs Seq2Seq+Attention 对比
+#### Transformer vs Seq2Seq+Attention 对比
 
 | 维度 | Seq2Seq+Attn | Transformer |
 |------|-------------|------------|
@@ -1900,7 +1900,7 @@ gru_input = self.attn_combine(torch.cat([embed, context], dim=-1))
 
 ---
 
-#### Transformer 一句话记忆
+### Transformer 一句话记忆
 
 > **"输入加位置，多头来注意，残差防梯消，前馈再过一遍，编完给解码，掩码盖未来，最后线性 + softmax 出词。"**
 
@@ -1909,6 +1909,10 @@ gru_input = self.attn_combine(torch.cat([embed, context], dim=-1))
 
 
 ---
+
+# 📖 资源与附录
+
+> 本章为全文性的附录，与具体学科解耦：包含学习路线、API 速查、参考资料、常见问题。
 
 ## 学习路线建议
 
