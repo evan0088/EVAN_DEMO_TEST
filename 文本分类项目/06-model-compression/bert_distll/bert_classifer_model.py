@@ -3,6 +3,7 @@ import torch.nn as nn
 from transformers import BertModel
 from config import Config
 from utils import build_dataloader
+
 conf = Config()
 
 
@@ -19,27 +20,31 @@ class BertClassifier(nn.Module):
         # 加载预训练的BERT模型
         self.bert = BertModel.from_pretrained(conf.bert_path)
         # 全连接层：将BERT的隐藏状态映射到类别数
-        self.fc = nn.Linear(conf.hidden_size, conf.num_classes)
+        self.fc = nn.Linear(conf.hidden_size, conf.class_num)
 
     def forward(self, input_ids, attention_mask):
         # x: 模型输入，包含句子、句子长度和填充掩码。
         # _是占位符，接收模型的所有输出，而 pooled 是池化的结果,将整个句子的信息压缩成一个固定长度的向量
         _, pooled = self.bert(input_ids=input_ids, attention_mask=attention_mask, return_dict=False)
-        print("pooled.shape---->",pooled.shape)
+        # print(pooled)
+        # print(type(pooled))
         # print(pooled.shape) #batch_size,hidden_size
         # 模型输出，用于文本分类
-        out = self.fc(pooled)  # 逻辑值   argmax ---arg获取的是对应索引
-        # 如果需要概率分布，可以添加softmax
-        out = torch.softmax(out, dim=1)
+        out = self.fc(pooled)
         return out
 
 
 if __name__ == '__main__':
+    # 1.加载配置文件
+    conf = Config()
+    # 2.实例化模型
     model = BertClassifier()
+    # 3.加载数据
     train_dataloader, test_dataloader, dev_dataloader = build_dataloader()
+    # 4.遍历批次，模型预测
     for batch in train_dataloader:
         input_ids, attention_mask, labels = batch
         logits = model(input_ids, attention_mask)
+        print(logits.shape)
         print(torch.argmax(logits, dim=1))
         print(labels)
-        break

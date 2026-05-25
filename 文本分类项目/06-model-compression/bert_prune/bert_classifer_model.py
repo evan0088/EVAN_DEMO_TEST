@@ -5,12 +5,10 @@ from config import Config
 from utils import build_dataloader
 conf = Config()
 
-
 class BertClassifier(nn.Module):
     """
     BERT + 全连接层的分类模型。
     """
-
     def __init__(self):
         """
         初始化模型，包括BERT和全连接层。
@@ -25,21 +23,22 @@ class BertClassifier(nn.Module):
         # x: 模型输入，包含句子、句子长度和填充掩码。
         # _是占位符，接收模型的所有输出，而 pooled 是池化的结果,将整个句子的信息压缩成一个固定长度的向量
         _, pooled = self.bert(input_ids=input_ids, attention_mask=attention_mask, return_dict=False)
-        print("pooled.shape---->",pooled.shape)
+        # print(pooled)
+        # print(type(pooled))
         # print(pooled.shape) #batch_size,hidden_size
         # 模型输出，用于文本分类
-        out = self.fc(pooled)  # 逻辑值   argmax ---arg获取的是对应索引
-        # 如果需要概率分布，可以添加softmax
-        out = torch.softmax(out, dim=1)
+        out = self.fc(pooled)
         return out
 
 
 if __name__ == '__main__':
     model = BertClassifier()
-    train_dataloader, test_dataloader, dev_dataloader = build_dataloader()
-    for batch in train_dataloader:
+    train_dataloader,test_dataloader,dev_dataloader=build_dataloader()
+    for  batch in train_dataloader:
         input_ids, attention_mask, labels = batch
         logits = model(input_ids, attention_mask)
+        print(logits.shape)
         print(torch.argmax(logits, dim=1))
         print(labels)
-        break
+
+
