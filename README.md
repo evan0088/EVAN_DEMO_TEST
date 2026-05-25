@@ -30,6 +30,113 @@
         └─ 损失: 交叉熵                                       (BERT / FastText / LLM)
 ```
 
+### 一·补充：ML / DL / NLP 的区别与升级关系
+
+> 上面的树状图只回答了"有哪些"，没回答"为什么从 A 演进到 B"。本小节用 4 个角度把三者关系彻底讲清。
+
+#### ① 三者的"包含关系"——一句话定位
+
+```
+        ┌──────────────────────────────────────┐
+        │           AI（人工智能 = 大目标）       │
+        │  ┌────────────────────────────────┐  │
+        │  │   ML（机器学习 = 方法论的总称）  │  │
+        │  │   ┌──────────────────────────┐ │  │
+        │  │   │  DL（深度学习 = 神经网络派）│ │  │
+        │  │   └──────────────────────────┘ │  │
+        │  └────────────────────────────────┘  │
+        └──────────────────────────────────────┘
+                          ▲
+                          │ 都可以拿来做的"任务领域"：
+                          │
+              ┌───────────┼───────────┐
+              │           │           │
+          NLP（语言）   CV（视觉）   语音/推荐 …
+```
+
+- **AI ⊃ ML ⊃ DL**：DL 是 ML 的一个子集——专门用神经网络的那一支
+- **NLP 是任务领域**，不是方法论——它**可以用 ML 做（02-rf），也可以用 DL 做（03-fasttext / 04-bert）**
+- 所以 **NLP 的发展史 = 先用 ML 做、再用 DL 做、最后用大模型做** 的升级史
+
+#### ② 区别对照表——核心区别在"特征怎么来"
+
+| 维度 | 🔧 传统机器学习 (ML) | 🤖 深度学习 (DL) |
+|------|---------------------|------------------|
+| **特征工程** | **人工设计**特征<br>(分词 / TF-IDF / N-gram / 关键词词典 / 大小写/链接数) | **模型自动学**特征<br>(Embedding / 卷积核 / 注意力权重) |
+| **数据需求** | 几千~几万条就能跑出可用模型 | 几十万~亿级才能发挥优势 |
+| **算力需求** | CPU 即可 | 必须 GPU/TPU |
+| **可解释性** | 高（每个特征是人写出来的） | 低（特征是黑盒高维向量） |
+| **典型模型** | KNN / SVM / 决策树 / 随机森林 / TF-IDF | CNN / RNN / LSTM / Transformer / BERT |
+| **本仓库示例** | `02-rf` 随机森林 + TF-IDF | `03-fasttext` / `04-bert` / Transformer 全套 |
+
+> 💡 **一句话区别**：ML 是"**人教模型怎么看**"——你要先告诉它"链接数 > 3 就可疑"；DL 是"**模型自己学怎么看**"——给它原文，它自己悟出"链接数"是个有用特征。
+
+#### ③ NLP 的演进史——5 个时代的升级链
+
+每一代都是为了**解决上一代的痛点**而生：
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  时代1: 传统 ML 时代（对应 02-rf）                            │
+│    流程: 分词 → TF-IDF/词袋 → 随机森林/SVM → 预测              │
+│    痛点: 1) 必须手工分词、停用词、特征筛选                     │
+│         2) 词与词之间没语义关系（"苹果"和"水果"完全无关）      │
+│         3) 长文本被压成向量，丢失先后顺序                     │
+└─────────────────────────────────────────────────────────────┘
+                            ↓ 升级动力：让模型自己学语义
+┌─────────────────────────────────────────────────────────────┐
+│  时代2: 浅层神经网络（对应 03-fasttext）                      │
+│    流程: 分词 → Embedding 词向量 → 平均池化 → 分类             │
+│    解决了: 词向量带语义（"苹果"和"水果"距离很近）              │
+│    痛点: 1) 还是看不到词的"先后顺序"（平均池化把顺序抹掉）     │
+│         2) 模型很浅，复杂语义抓不住                           │
+└─────────────────────────────────────────────────────────────┘
+                            ↓ 升级动力：要看顺序、要更深
+┌─────────────────────────────────────────────────────────────┐
+│  时代3: 循环神经网络 RNN / LSTM / GRU                         │
+│    流程: 词向量 → LSTM 逐字处理 → 末态隐藏向量 → 分类           │
+│    解决了: 顺序信息被"记住"，能处理变长序列                    │
+│    痛点: 1) 无法并行（必须一个字一个字按顺序算）               │
+│         2) 长距离依赖会"遗忘"（句首信息传到句尾就糊了）        │
+└─────────────────────────────────────────────────────────────┘
+                            ↓ 升级动力：要并行、要看任意距离
+┌─────────────────────────────────────────────────────────────┐
+│  时代4: Transformer / BERT（对应 04-bert）                    │
+│    流程: 词向量 + 位置编码 → 多头自注意力 → 任务头              │
+│    解决了: 1) 完全并行计算（GPU 利用率拉满）                   │
+│           2) 任意两个词都能"直接对话"（自注意力）              │
+│           3) 预训练 + 微调 = 用很少数据就能做新任务            │
+│    痛点: 1) 预训练成本极高（百万美元级）                       │
+│         2) 每个新任务还是要微调                               │
+└─────────────────────────────────────────────────────────────┘
+                            ↓ 升级动力：连微调都不想做
+┌─────────────────────────────────────────────────────────────┐
+│  时代5: 大语言模型 LLM（对应 05-LLM）                         │
+│    流程: 写好 Prompt → 调 GPT/DeepSeek API → 拿回答            │
+│    解决了: 0 训练样本，靠提示词就能做几乎所有 NLP 任务         │
+│    痛点: 1) 成本按 token 计费                                 │
+│         2) 数据要走第三方 API                                 │
+└─────────────────────────────────────────────────────────────┘
+```
+
+#### ④ 同一个任务，三种做法的真实对照（以"垃圾邮件分类"为例）
+
+| 做法 | 训练数据量 | 特征怎么来 | 模型 | 优劣 | 本仓库参考 |
+|------|----------|-----------|------|------|-----------|
+| 🔧 **ML 派** | 几千封邮件 | **人工**：黑名单词、链接数、大写率、TF-IDF | 随机森林 | ✅ 可解释、CPU 跑得动<br>❌ 漏过新型套话 | `02-rf` 风格 |
+| 🤖 **DL 派** | 几万封邮件 | **自学**：Embedding + LSTM/BERT 隐藏向量 | LSTM / BERT | ✅ 精度高、自己学语义<br>❌ 要 GPU 和大量标注数据 | `03-fasttext` / `04-bert` |
+| 🚀 **LLM 派** | 0 条训练样本 | 不用特征，直接 Prompt | GPT-4 / DeepSeek | ✅ 零成本上线、能解释推理过程<br>❌ token 费用、数据要走第三方 | `05-LLM` 风格 |
+
+> 💡 **怎么选**：看 3 个变量——**数据量、预算、可解释性需求**。
+> - 数据少 + 要解释 → 走 ML 派
+> - 数据多 + 要精度 → 走 DL 派
+> - 没数据 + 要快 → 走 LLM 派
+
+> 🌰 **生活类比**：判断一封邮件是不是垃圾邮件——
+> - **ML 派**：训练一个老员工，手把手教他"链接超过 3 个就可疑"
+> - **DL 派**：让一个新员工读 10 万封邮件，自己悟出"什么样的邮件像垃圾"
+> - **LLM 派**：直接打电话问 GPT："这封邮件是垃圾邮件吗？"
+
 ### 二、核心概念依赖图（学了 A 才能学 B）
 
 ```
@@ -63,31 +170,31 @@
 
 | 章节 | 位置 | 层级 | 一句话总结 |
 |------|------|------|-----------|
-| KNN 分类算法 | [README.md:218](README.md#L218) | ML 基础 | "近朱者赤"——看周围 K 个邻居 |
-| 数据特征处理 | [README.md:237](README.md#L237) | ML 基础 | 归一化/标准化/独热编码 |
-| 损失函数（线性回归） | [README.md:263](README.md#L263) | ML 评估 | MAE/MSE/RMSE/R² |
-| **交叉熵损失** | [README.md:276](README.md#L276) | ML 评估 | 二分类 & 多分类通吃 |
-| **混淆矩阵** | [README.md:373](README.md#L373) | ML 评估 | TP/FP/FN/TN + P/R/F1/AUC |
-| K-Means 聚类 | [README.md:505](README.md#L505) | ML 无监督 | 客户分群、肘部法则 |
-| PyTorch 张量速查表 | [README.md:540](README.md#L540) | DL 基础 | 创建/形状/索引/运算 |
-| **PyTorch 张量 18 例** | [README.md:570](README.md#L570) | DL 基础 | 创建→转换→运算→索引→形状→拼接 |
-| **Autograd 自动微分** | [README.md:667](README.md#L667) | DL 基础 | 计算图 + `backward()` + `zero_grad()` |
-| 5 步训练模板 | [README.md:755](README.md#L755) | DL 基础 | 前向→损失→清零→反向→更新 |
-| 激活函数 | [README.md:905](README.md#L905) | DL 核心 | Sigmoid/ReLU/Tanh/Softmax |
-| 文本预处理 | [README.md:928](README.md#L928) | NLP 基础 | 分词/去停用词/向量化 |
-| RNN/LSTM/GRU | [README.md:948](README.md#L948) | NLP 序列模型 | 记忆细胞 + 门控机制 |
-| 注意力机制四种 | [README.md:1067](README.md#L1067) | NLP 进阶 | 软/硬/加性/缩放点积 |
-| **Transformer 完整架构** | [README.md:1327](README.md#L1327) | NLP 核心 | Encoder + Decoder + Mask |
-| **编码器⇄解码器全链路** | [README.md:1558](README.md#L1558) | NLP 核心 | memory 纽带 + Q/K/V 来源 |
-| 学习路线建议 | [README.md:1799](README.md#L1799) | 路线图 | ML→DL→NLP 三阶段 |
-| 文本分类实战入口 | [README.md:1896](README.md#L1896) | 项目实战 | 6 阶段递进路线 |
-| 01-data 数据 EDA | [README.md:1941](README.md#L1941) | 实战阶段 1 | 数据清洗 + padding 选择 |
-| 02-rf 随机森林 | [README.md:1968](README.md#L1968) | 实战阶段 2 | TF-IDF + RF 基线 |
-| 03-fasttext | [README.md:2009](README.md#L2009) | 实战阶段 3 | 字 vs 词级别 + autotune |
-| **04-bert 微调** | [README.md:2071](README.md#L2071) | 实战阶段 4 | [CLS] + 三个 ID + 微调 |
-| 05-LLM 大模型 | [README.md:2188](README.md#L2188) | 实战阶段 5 | DeepSeek API + Prompt 工程 |
-| **06-model-compression** | [README.md:2258](README.md#L2258) | 实战阶段 6 | 量化/剪枝/蒸馏三板斧 |
-| 面试高频题精选 | [README.md:2532](README.md#L2532) | 复习 | 6 道经典题 + 答案 |
+| KNN 分类算法 | [README.md:329](README.md#L329) | ML 基础 | "近朱者赤"——看周围 K 个邻居 |
+| 数据特征处理 | [README.md:348](README.md#L348) | ML 基础 | 归一化/标准化/独热编码 |
+| 损失函数（线性回归） | [README.md:374](README.md#L374) | ML 评估 | MAE/MSE/RMSE/R² |
+| **交叉熵损失** | [README.md:387](README.md#L387) | ML 评估 | 二分类 & 多分类通吃 |
+| **混淆矩阵** | [README.md:484](README.md#L484) | ML 评估 | TP/FP/FN/TN + P/R/F1/AUC |
+| K-Means 聚类 | [README.md:616](README.md#L616) | ML 无监督 | 客户分群、肘部法则 |
+| PyTorch 张量速查表 | [README.md:658](README.md#L658) | DL 基础 | 创建/形状/索引/运算 |
+| **PyTorch 张量 18 例** | [README.md:688](README.md#L688) | DL 基础 | 创建→转换→运算→索引→形状→拼接 |
+| **Autograd 自动微分** | [README.md:785](README.md#L785) | DL 基础 | 计算图 + `backward()` + `zero_grad()` |
+| 5 步训练模板 | [README.md:873](README.md#L873) | DL 基础 | 前向→损失→清零→反向→更新 |
+| 激活函数 | [README.md:1015](README.md#L1015) | DL 核心 | Sigmoid/ReLU/Tanh/Softmax |
+| 文本预处理 | [README.md:1042](README.md#L1042) | NLP 基础 | 分词/去停用词/向量化 |
+| RNN/LSTM/GRU | [README.md:1062](README.md#L1062) | NLP 序列模型 | 记忆细胞 + 门控机制 |
+| 注意力机制四种 | [README.md:1181](README.md#L1181) | NLP 进阶 | 软/硬/加性/缩放点积 |
+| **Transformer 完整架构** | [README.md:1441](README.md#L1441) | NLP 核心 | Encoder + Decoder + Mask |
+| **编码器⇄解码器全链路** | [README.md:1672](README.md#L1672) | NLP 核心 | memory 纽带 + Q/K/V 来源 |
+| 学习路线建议 | [README.md:1913](README.md#L1913) | 路线图 | ML→DL→NLP 三阶段 |
+| 文本分类实战入口 | [README.md:2014](README.md#L2014) | 项目实战 | 6 阶段递进路线 |
+| 01-data 数据 EDA | [README.md:2059](README.md#L2059) | 实战阶段 1 | 数据清洗 + padding 选择 |
+| 02-rf 随机森林 | [README.md:2086](README.md#L2086) | 实战阶段 2 | TF-IDF + RF 基线 |
+| 03-fasttext | [README.md:2127](README.md#L2127) | 实战阶段 3 | 字 vs 词级别 + autotune |
+| **04-bert 微调** | [README.md:2189](README.md#L2189) | 实战阶段 4 | [CLS] + 三个 ID + 微调 |
+| 05-LLM 大模型 | [README.md:2306](README.md#L2306) | 实战阶段 5 | DeepSeek API + Prompt 工程 |
+| **06-model-compression** | [README.md:2376](README.md#L2376) | 实战阶段 6 | 量化/剪枝/蒸馏三板斧 |
+| 面试高频题精选 | [README.md:2650](README.md#L2650) | 复习 | 6 道经典题 + 答案 |
 
 ### 四、学习路径推荐（三档进阶）
 
@@ -101,60 +208,60 @@
 
 | 我想… | 看哪章 |
 |------|--------|
-| 给老板做客户分群 | K-Means [README.md:505](README.md#L505) |
-| 做一个垃圾邮件二分类器 | 混淆矩阵 [README.md:373](README.md#L373) + 02-rf [README.md:1968](README.md#L1968) |
-| 做一个 10 类新闻分类器 | 04-bert [README.md:2071](README.md#L2071) |
-| 模型太大想压缩 | 06-model-compression [README.md:2258](README.md#L2258) |
-| 想理解 Transformer 怎么工作 | 编码器⇄解码器全链路 [README.md:1558](README.md#L1558) |
-| 训练 loss 不下降怎么办 | 5 步训练模板 [README.md:755](README.md#L755) + Autograd 报错速查 [README.md:878](README.md#L878) |
-| 想把模型上线提供 API | 上线四件套 [README.md:1997](README.md#L1997) |
-| 不想训练，直接用 GPT 做分类 | 05-LLM [README.md:2188](README.md#L2188) |
-| 评估指标怎么选 | 交叉熵 [README.md:276](README.md#L276) + 决策树 [README.md:473](README.md#L473) |
-| 调 padding_size 时拍多少？ | EDA padding 选择 [README.md:1959](README.md#L1959) |
-| 蒸馏温度 T 怎么设？ | 软标签蒸馏 [README.md:2365](README.md#L2365) |
-| BERT 三个 ID 是啥？ | BERT 输入 [README.md:2090](README.md#L2090) |
+| 给老板做客户分群 | K-Means [README.md:616](README.md#L616) |
+| 做一个垃圾邮件二分类器 | 混淆矩阵 [README.md:484](README.md#L484) + 02-rf [README.md:2086](README.md#L2086) |
+| 做一个 10 类新闻分类器 | 04-bert [README.md:2189](README.md#L2189) |
+| 模型太大想压缩 | 06-model-compression [README.md:2376](README.md#L2376) |
+| 想理解 Transformer 怎么工作 | 编码器⇄解码器全链路 [README.md:1672](README.md#L1672) |
+| 训练 loss 不下降怎么办 | 5 步训练模板 [README.md:873](README.md#L873) + Autograd 报错速查 [README.md:996](README.md#L996) |
+| 想把模型上线提供 API | 上线四件套 [README.md:2115](README.md#L2115) |
+| 不想训练，直接用 GPT 做分类 | 05-LLM [README.md:2306](README.md#L2306) |
+| 评估指标怎么选 | 交叉熵 [README.md:387](README.md#L387) + 决策树 [README.md:584](README.md#L584) |
+| 调 padding_size 时拍多少？ | EDA padding 选择 [README.md:2077](README.md#L2077) |
+| 蒸馏温度 T 怎么设？ | 软标签蒸馏 [README.md:2483](README.md#L2483) |
+| BERT 三个 ID 是啥？ | BERT 输入 [README.md:2208](README.md#L2208) |
 
 ### 六、关键术语索引（A-Z 速查）
 
 | 术语 | 中文 | 行号 |
 |------|------|------|
-| **Attention** | 注意力机制 | [README.md:1067](README.md#L1067) |
-| **Autograd** | 自动微分 | [README.md:667](README.md#L667) |
-| **AUC / ROC** | ROC 曲线下面积 | [README.md:424](README.md#L424) |
-| **BCE Loss** | 二元交叉熵 | [README.md:284](README.md#L284) |
-| **BERT** | 双向编码 Transformer | [README.md:2071](README.md#L2071) |
-| **BiLSTM** | 双向 LSTM | [README.md:2409](README.md#L2409) |
-| **`backward()`** | 反向传播触发 | [README.md:700](README.md#L700) |
-| **`[CLS]`** | 句子分类标记 | [README.md:2100](README.md#L2100) |
-| **Cross-Attention** | 编码-解码交叉注意力 | [README.md:1558](README.md#L1558) |
-| **Cross Entropy** | 交叉熵损失 | [README.md:276](README.md#L276) |
-| **Decoder** | 解码器 | [README.md:1519](README.md#L1519) |
-| **Distillation** | 知识蒸馏 | [README.md:2345](README.md#L2345) |
-| **Encoder** | 编码器 | [README.md:1444](README.md#L1444) |
-| **F1 Score** | F1 分数 | [README.md:392](README.md#L392) |
-| **FastText** | 浅层快速分类 | [README.md:2009](README.md#L2009) |
-| **GRU** | 门控循环单元 | [README.md:1016](README.md#L1016) |
-| **K-Means** | K 均值聚类 | [README.md:505](README.md#L505) |
-| **KNN** | K 近邻 | [README.md:218](README.md#L218) |
-| **LayerNorm** | 层归一化 | [README.md:1444](README.md#L1444) |
-| **LSTM** | 长短时记忆 | [README.md:981](README.md#L981) |
-| **mask** | 掩码 | [README.md:1416](README.md#L1416) |
-| **memory** | 编码器输出 | [README.md:1558](README.md#L1558) |
-| **Multi-Head Attention** | 多头注意力 | [README.md:1444](README.md#L1444) |
-| **NSP** | 下一句预测（BERT 任务）| [README.md:2081](README.md#L2081) |
-| **Padding Size** | 序列填充长度 | [README.md:1959](README.md#L1959) |
-| **Positional Encoding** | 位置编码 | [README.md:1368](README.md#L1368) |
-| **Precision / Recall** | 精确率 / 召回率 | [README.md:392](README.md#L392) |
-| **Pruning** | 剪枝 | [README.md:2305](README.md#L2305) |
-| **Quantization** | 量化 | [README.md:2278](README.md#L2278) |
-| **`requires_grad`** | 梯度跟踪标记 | [README.md:805](README.md#L805) |
-| **RNN** | 循环神经网络 | [README.md:950](README.md#L950) |
-| **Self-Attention** | 自注意力 | [README.md:1444](README.md#L1444) |
-| **Softmax** | 多分类输出层 | [README.md:306](README.md#L306) |
-| **Teacher Forcing** | 教师强制（训练）| [README.md:1558](README.md#L1558) |
-| **TF-IDF** | 词频-逆文档频率 | [README.md:1976](README.md#L1976) |
-| **Transformer** | Transformer 架构 | [README.md:1327](README.md#L1327) |
-| **`zero_grad()`** | 梯度清零 | [README.md:712](README.md#L712) |
+| **Attention** | 注意力机制 | [README.md:1181](README.md#L1181) |
+| **Autograd** | 自动微分 | [README.md:785](README.md#L785) |
+| **AUC / ROC** | ROC 曲线下面积 | [README.md:535](README.md#L535) |
+| **BCE Loss** | 二元交叉熵 | [README.md:395](README.md#L395) |
+| **BERT** | 双向编码 Transformer | [README.md:2189](README.md#L2189) |
+| **BiLSTM** | 双向 LSTM | [README.md:2527](README.md#L2527) |
+| **`backward()`** | 反向传播触发 | [README.md:818](README.md#L818) |
+| **`[CLS]`** | 句子分类标记 | [README.md:2218](README.md#L2218) |
+| **Cross-Attention** | 编码-解码交叉注意力 | [README.md:1672](README.md#L1672) |
+| **Cross Entropy** | 交叉熵损失 | [README.md:387](README.md#L387) |
+| **Decoder** | 解码器 | [README.md:1633](README.md#L1633) |
+| **Distillation** | 知识蒸馏 | [README.md:2463](README.md#L2463) |
+| **Encoder** | 编码器 | [README.md:1558](README.md#L1558) |
+| **F1 Score** | F1 分数 | [README.md:503](README.md#L503) |
+| **FastText** | 浅层快速分类 | [README.md:2127](README.md#L2127) |
+| **GRU** | 门控循环单元 | [README.md:1130](README.md#L1130) |
+| **K-Means** | K 均值聚类 | [README.md:616](README.md#L616) |
+| **KNN** | K 近邻 | [README.md:329](README.md#L329) |
+| **LayerNorm** | 层归一化 | [README.md:1558](README.md#L1558) |
+| **LSTM** | 长短时记忆 | [README.md:1095](README.md#L1095) |
+| **mask** | 掩码 | [README.md:1530](README.md#L1530) |
+| **memory** | 编码器输出 | [README.md:1672](README.md#L1672) |
+| **Multi-Head Attention** | 多头注意力 | [README.md:1558](README.md#L1558) |
+| **NSP** | 下一句预测（BERT 任务）| [README.md:2199](README.md#L2199) |
+| **Padding Size** | 序列填充长度 | [README.md:2077](README.md#L2077) |
+| **Positional Encoding** | 位置编码 | [README.md:1482](README.md#L1482) |
+| **Precision / Recall** | 精确率 / 召回率 | [README.md:503](README.md#L503) |
+| **Pruning** | 剪枝 | [README.md:2423](README.md#L2423) |
+| **Quantization** | 量化 | [README.md:2396](README.md#L2396) |
+| **`requires_grad`** | 梯度跟踪标记 | [README.md:923](README.md#L923) |
+| **RNN** | 循环神经网络 | [README.md:1064](README.md#L1064) |
+| **Self-Attention** | 自注意力 | [README.md:1558](README.md#L1558) |
+| **Softmax** | 多分类输出层 | [README.md:417](README.md#L417) |
+| **Teacher Forcing** | 教师强制（训练）| [README.md:1672](README.md#L1672) |
+| **TF-IDF** | 词频-逆文档频率 | [README.md:2094](README.md#L2094) |
+| **Transformer** | Transformer 架构 | [README.md:1441](README.md#L1441) |
+| **`zero_grad()`** | 梯度清零 | [README.md:830](README.md#L830) |
 
 > 💡 **使用建议**：
 > - **第一次学**：按"四"的新手路径走，**严禁跳级**
@@ -190,6 +297,8 @@ pip install scikit-learn torch numpy pandas matplotlib jieba
 
 ## 人工智能发展的三要素
 
+> AI 不是黑科技，是"数据 + 算法 + 算力"三者堆出来的。三者缺一不可，但重要性不等价——下表帮你建立直觉。
+
 | 要素 | 说明 | 重要性 |
 |------|------|--------|
 | **数据** | 决定了模型最终效果的上限 | 🌟🌟🌟🌟🌟 |
@@ -199,6 +308,8 @@ pip install scikit-learn torch numpy pandas matplotlib jieba
 > 💡 **核心理念**: 数据质量 > 数据数量 > 算法优化 > 算力提升
 
 ## 算法的学习方式
+
+> 按"训练数据有没有标签"，机器学习被划成三大流派。本节先用一张对照表帮你区分清楚。
 
 | 区别 |     监督学习      | 无监督学习 | 半监督学习 |
 | :--: | :---------------: | :--------: | :--------: |
@@ -535,7 +646,14 @@ auc = roc_auc_score(y_true, y_pred_proba)
 
 # 深度学习
 
+> **深度学习 = 多层神经网络 + 大量数据 + GPU 算力**。本章从 PyTorch 张量基础出发，依次过自动微分（Autograd）、训练标准模板、激活函数四件套，是理解 NLP/CV 等所有上层任务的地基。三句话掌握脉络：
+> 1. **张量** 是数据的统一表示（标量/向量/矩阵/高维全用 `torch.Tensor`）
+> 2. **Autograd** 替你自动算梯度，无需手推链式法则
+> 3. **5 步训练模板**（前向→损失→清零→反向→更新）适配所有模型，从 MLP 到 BERT 都一样
+
 ## PyTorch基础
+
+> PyTorch 入门第一站：张量。把它当成"加强版 numpy"——会自动求导、能跑 GPU。本节先过常用 API 速查表，再看 18 个示例文件细节。
 
 ### 张量(Tensor)操作速查表
 
@@ -894,15 +1012,9 @@ for _ in range(2):
 
 
 
-
-
-
-
-# 深度学习
-
-
-
 ## 四大激活函数
+
+> 没有激活函数，神经网络再深也只是一连串线性变换，等价于一层。激活函数提供**非线性**，让网络能拟合复杂模式。下表对比 Sigmoid / Tanh / ReLU / Leaky ReLU 的特性和适用场景。
 
 | 激活函数 | 公式 | 优点 | 缺点 | 适用场景 |
 |---------|------|------|------|----------|
@@ -924,6 +1036,8 @@ for _ in range(2):
 
 
 ## NLP
+
+> 自然语言处理（Natural Language Processing）让计算机"看懂"和"会说"人话。本章按经典学习顺序：**预处理 → 词表示 → RNN 家族 → 注意力机制 → Transformer**，每一步都解决前一步的痛点。
 
 ### 文本预处理流程
 
@@ -1798,6 +1912,8 @@ gru_input = self.attn_combine(torch.cat([embed, context], dim=-1))
 
 ## 学习路线建议
 
+> 路线推荐按"先广再深"原则：先把每个阶段的核心概念和经典模型走一遍打底，再回头深挖某一块。下面是三阶段的最低必修清单。
+
 ### 机器学习阶段
 1. ✅ 理解监督学习与无监督学习的区别
 2. ✅ 掌握数据预处理（归一化/标准化）
@@ -1820,6 +1936,8 @@ gru_input = self.attn_combine(torch.cat([embed, context], dim=-1))
 ---
 
 ## 常用API速查
+
+> 需要"立刻能跑"的代码片段？本节按工具栈分类，复制粘贴即可使用。
 
 ### Scikit-Learn
 ```python
@@ -2554,6 +2672,8 @@ A: ① 业务上 90% 场景不需要 LLM，传统方法够用且便宜；② 面
 # 🎯 终极知识总结：通读全文后再回头看
 
 > 看到这一章说明你已经把整篇文档读完了。这一章的目的是**把所有零散知识点串成一个心智模型**——不再按章节，而是按"做事时大脑里应该想什么"组织。
+>
+> ⚠️ 本章节的"一/二/三…"是独立编号，与前文"🚀 文本分类项目实战"的"七/八/九"是并列的两个 H1 大章节，不是续编。
 
 ## 一、AI 的"三件套"心智模型
 
