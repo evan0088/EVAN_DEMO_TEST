@@ -182,6 +182,7 @@
 | 5 步训练模板 | [训练模板](#train-template) | DL 基础 | 前向→损失→清零→反向→更新 |
 | 激活函数 | [激活函数](#activation-functions) | DL 核心 | Sigmoid/ReLU/Tanh/Softmax |
 | **参数初始化** | [参数初始化](#parameter-init) | DL 核心 | 7 种初始化方式 + 选型指南 |
+| **模型优化** | [模型优化](#model-optimization) | DL 核心 | 优化器演进 + 学习率 + Dropout + BN |
 | 文本预处理 | [文本预处理](#text-preprocessing) | NLP 基础 | 分词/去停用词/向量化 |
 | RNN/LSTM/GRU | [RNN 家族](#rnn-family) | NLP 序列模型 | 记忆细胞 + 门控机制 |
 | 注意力机制四种 | [注意力机制](#attention) | NLP 进阶 | 软/硬/加性/缩放点积 |
@@ -201,8 +202,8 @@
 
 | 路径 | 周期 | 学完目标 | 推荐章节顺序 |
 |------|------|---------|-------------|
-| 🌱 **新手** | ~30 天 | 看懂代码、能跑模型 | 环境安装 → ML 基础 → PyTorch 张量 → Autograd → 5 步模板 → 激活函数 → RNN → 注意力 → Transformer 整体架构 |
-| 🌿 **进阶** | ~60 天 | 能微调 BERT 完成业务分类 | 在新手基础上 + 编码器⇄解码器细节 → BERT 输入三件套 → 04-bert 全套代码 → 02-rf / 03-fasttext 对比 |
+| 🌱 **新手** | ~30 天 | 看懂代码、能跑模型 | 环境安装 → ML 基础 → PyTorch 张量 → Autograd → 5 步模板 → 激活函数 → 参数初始化 → 模型优化(优化器+学习率) → RNN → 注意力 → Transformer 整体架构 |
+| 🌿 **进阶** | ~60 天 | 能微调 BERT 完成业务分类 | 在新手基础上 + 编码器⇄解码器细节 → BERT 输入三件套 → 04-bert 全套代码 → 02-rf / 03-fasttext 对比 → Dropout + BatchNorm 调优 |
 | 🌳 **专家** | ~90 天 | 模型上线 + 压缩部署 | 进阶基础上 + 蒸馏温度 T → 量化原理 → 剪枝 L1 → 上线四件套 → 05-LLM Prompt 工程 |
 
 ### 五、按需查找索引（"我想做 X" → "看 Y 章"）
@@ -217,6 +218,10 @@
 | 训练 loss 不下降怎么办 | [训练模板](#train-template) + [Autograd 报错](#autograd-errors) |
 | 模型收敛慢 / loss 一直是 NaN | [参数初始化](#parameter-init)（检查初始化方式） |
 | 不知道该用哪种初始化方法 | [参数初始化](#parameter-init)（选型指南） |
+| 不知道选哪个优化器 | [模型优化](#model-optimization)（Adam 首选） |
+| 训练 loss 震荡不收敛 | [模型优化](#model-optimization)（调整学习率） |
+| 模型过拟合了怎么办 | [模型优化](#model-optimization)（加 Dropout） |
+| 训练速度太慢 / 梯度消失 | [模型优化](#model-optimization)（加 BatchNorm） |
 | 想把模型上线提供 API | [上线四件套](#deployment-pipeline) |
 | 不想训练，直接用 GPT 做分类 | [05-LLM](#llm-section) |
 | 评估指标怎么选 | [交叉熵](#cross-entropy) + [决策树](#metric-decision-tree) |
@@ -231,16 +236,20 @@
 | **Attention** | 注意力机制 | [详情](#attention) |
 | **Autograd** | 自动微分 | [详情](#autograd) |
 | **AUC / ROC** | ROC 曲线下面积 | [详情](#auc-roc) |
+| **Adam** | 自适应矩估计优化器 | [详情](#model-optimization) |
 | **BCE Loss** | 二元交叉熵 | [详情](#bce-loss) |
 | **BERT** | 双向编码 Transformer | [详情](#bert-section) |
 | **BiLSTM** | 双向 LSTM | [详情](#bilstm) |
 | **`backward()`** | 反向传播触发 | [详情](#backward) |
+| **BatchNorm** | 批量归一化 | [详情](#model-optimization) |
 | **`[CLS]`** | 句子分类标记 | [详情](#special-tokens) |
 | **Cross-Attention** | 编码-解码交叉注意力 | [详情](#encoder-decoder-link) |
 | **Cross Entropy** | 交叉熵损失 | [详情](#cross-entropy) |
 | **Decoder** | 解码器 | [详情](#decoder) |
 | **Distillation** | 知识蒸馏 | [详情](#distillation) |
+| **Dropout** | 随机失活正则化 | [详情](#model-optimization) |
 | **Encoder** | 编码器 | [详情](#encoder) |
+| **EWMA** | 指数加权平均 | [详情](#model-optimization) |
 | **F1 Score** | F1 分数 | [详情](#precision-recall-f1) |
 | **FastText** | 浅层快速分类 | [详情](#fasttext-section) |
 | **GRU** | 门控循环单元 | [详情](#gru) |
@@ -249,19 +258,24 @@
 | **Kaiming 初始化** | He 初始化 | [详情](#parameter-init) |
 | **KNN** | K 近邻 | [详情](#knn-classifier) |
 | **LayerNorm** | 层归一化 | [详情](#encoder) |
+| **Learning Rate** | 学习率 | [详情](#model-optimization) |
 | **LSTM** | 长短时记忆 | [详情](#lstm) |
 | **mask** | 掩码 | [详情](#mask) |
 | **memory** | 编码器输出 | [详情](#encoder-decoder-link) |
+| **Momentum** | 动量法优化器 | [详情](#model-optimization) |
 | **Multi-Head Attention** | 多头注意力 | [详情](#multi-head-attention) |
 | **NSP** | 下一句预测（BERT 任务）| [详情](#bert-pretraining-tasks) |
+| **Optimizer** | 优化器 | [详情](#model-optimization) |
 | **Padding Size** | 序列填充长度 | [详情](#padding-size-selection) |
 | **Positional Encoding** | 位置编码 | [详情](#positional-encoding) |
 | **Precision / Recall** | 精确率 / 召回率 | [详情](#precision-recall-f1) |
 | **Pruning** | 剪枝 | [详情](#pruning) |
 | **Quantization** | 量化 | [详情](#quantization) |
 | **`requires_grad`** | 梯度跟踪标记 | [详情](#requires-grad) |
+| **RMSprop** | RMSprop 优化器 | [详情](#model-optimization) |
 | **RNN** | 循环神经网络 | [详情](#rnn) |
 | **Self-Attention** | 自注意力 | [详情](#encoder) |
+| **SGD** | 随机梯度下降 | [详情](#model-optimization) |
 | **Softmax** | 多分类输出层 | [详情](#softmax) |
 | **Teacher Forcing** | 教师强制（训练）| [详情](#encoder-decoder-link) |
 | **TF-IDF** | 词频-逆文档频率 | [详情](#tf-idf) |
@@ -293,7 +307,7 @@ AI-Learning/
 │   ├── 03-激活函数/                 # 激活函数
 │   ├── 04-参数初始化/               # 参数初始化
 │   ├── 04_损失函数/                 # 损失函数
-│   ├── 05_模型优化/                 # 优化器
+│   ├── 05_模型优化/                 # 模型优化（优化器/学习率/Dropout/BN）
 │   └── 06_综合案例_手机价格分类预测/ # DL 综合实战
 ├── NLP/                        # 自然语言处理
 ├── 文本分类项目/                # 文本分类实战 (THUCNews 10分类)
@@ -1247,6 +1261,356 @@ model.apply(init_weights)  # 一键应用到所有子层
 
 5. **Q：现实中我真的需要手动初始化吗？**
    A：**大多数场景不需要**。PyTorch 内置层已经自带合理的默认初始化（Linear → Kaiming Uniform，LSTM → Uniform 等）。只有自定义层或特殊需求时才手动调。
+
+
+<a id="model-optimization"></a>
+## 模型优化（Model Optimization）— 训练快、收敛稳、防过拟合
+
+> 📂 文件来源：[Deep learnning/05_模型优化/](Deep%20learnning/05_模型优化/)
+
+模型优化是深度学习的"调优三板斧"：**选对优化器 → 调好学习率 → 加正则化**。本章从指数加权平均（EWMA）这个底层思想出发，依次搞懂优化器演进、学习率策略、Dropout 和 BatchNorm。
+
+---
+
+### 一、指数加权平均（EWMA）— 所有高级优化器的地基
+
+**核心公式**：
+
+```
+v_t = β · v_{t-1} + (1 - β) · θ_t
+```
+
+- `v_t`：当前时刻的加权平均值
+- `θ_t`：当前时刻的原始数据
+- `β`：历史权重（0~1），**β 越大曲线越平缓**
+
+**β 的影响**：
+
+| β 值 | 含义 | 效果 |
+|------|------|------|
+| 0.9  | ≈ 平均最近 10 个数据 | 曲线平滑，保留大致趋势 |
+| 0.99 | ≈ 平均最近 100 个数据 | 曲线非常平滑，但反应滞后 |
+| 0.5  | ≈ 平均最近 2 个数据 | 几乎跟随原始数据，不平滑 |
+
+> 🌰 **生活类比**：你记录每天的体重。β=0.9 相当于"昨天的估计值占 90% + 今天实测占 10%"，数字有波动但趋势看得清。β=0.99 几乎只看历史趋势，你今天胖了 2 斤要好多天才能反映出来。
+
+**为什么 EWMA 是优化器的地基？**
+
+动量法（Momentum）用它平滑梯度，RMSprop 用它平滑梯度平方，Adam 两个都用。**掌握了 EWMA，就掌握了优化器演进的钥匙。**
+
+```python
+# 手动实现 EWMA（核心 3 行）
+beta = 0.9
+v = 0
+for t in data:
+    v = beta * v + (1 - beta) * t   # ← 指数加权平均
+```
+
+---
+
+### 二、梯度下降优化器演进 — 从 SGD 到 Adam 的升级之路
+
+> 📂 [02_回顾梯度下降_SGD.py](Deep%20learnning/05_模型优化/02_回顾梯度下降_SGD.py) + [03_梯度下降优化器_动量法_adagrad_RMSprop_Adam.py](Deep%20learnning/05_模型优化/03_梯度下降优化器_动量法_adagrad_RMSprop_Adam.py)
+
+每一代优化器都是为了**解决上一代的核心痛点**：
+
+```
+SGD（最朴素）
+  │   ❌ 更新方向震荡、收敛慢
+  ├─→ Momentum（动量法）
+  │      引入 EWMA 平滑梯度方向，减少震荡
+  │   ❌ 所有参数共用同一学习率
+  ├─→ Adagrad（自适应学习率）
+  │      每个参数独立调整学习率，稀疏特征更新大，频繁特征更新小
+  │   ❌ 学习率过早衰减到接近 0
+  ├─→ RMSprop（改进 Adagrad）
+  │      用 EWMA 替换 Adagrad 的累加求和，缓解学习率衰减问题
+  │   ❌ 缺少动量
+  └─→ Adam（集大成者）
+          Momentum + RMSprop = 当前首选
+```
+
+#### ① SGD — 最朴素的梯度下降
+
+```python
+optimizer = torch.optim.SGD([w], lr=0.01)
+# 更新规则: w = w - lr * ∇w
+```
+
+| 优点 | 缺点 |
+|------|------|
+| 简单，容易理解 | 梯度方向震荡（尤其在峡谷地形） |
+| 内存占用少 | 所有参数共享同一学习率 |
+| 理论成熟 | 在平坦区域收敛极慢 |
+
+> 🌰 **生活类比**：SGD 像蒙着眼睛下山——每走一步都选最陡的方向，但可能会在谷底来回震荡走不出去。
+
+#### ② Momentum（动量法）— 引入惯性
+
+```python
+optimizer = torch.optim.SGD([w], lr=0.01, momentum=0.9)  # SGD + 动量
+```
+
+**核心思想**：用 EWMA 平滑梯度方向，保留历史梯度的一部分。
+
+```
+v_t     = β · v_{t-1} + (1-β) · ∇w_t    ← 梯度的指数加权平均
+w_{t+1} = w_t - lr · v_t                  ← 用平滑后的梯度更新
+```
+
+| 优点 | 缺点 |
+|------|------|
+| 减少震荡，收敛更平稳 | 多了一个超参 β（默认 0.9） |
+| 能"冲过"局部极小点和平坦区 | 在梯度变化剧烈的场景可能 overshoot |
+
+> 🌰 **生活类比**：下坡时推一个铁球——铁球有惯性（动量），即便路有起伏也能冲过去，不会像羽毛（SGD）一样随风乱飘。
+
+#### ③ Adagrad — 让每个参数有自己的学习率
+
+```python
+optimizer = torch.optim.Adagrad([w], lr=0.01)
+```
+
+**核心思想**：频繁更新的参数学习率变小，稀疏更新的参数学习率变大。
+
+```
+G_t     = G_{t-1} + (∇w_t)²              ← 梯度平方的累加
+w_{t+1} = w_t - lr / (√G_t + ε) · ∇w_t    ← 学习率被 G_t 缩放
+```
+
+| 优点 | 缺点 |
+|------|------|
+| 自适应学习率，适合稀疏特征 | **学习率过早衰减**——G_t 不断增大，学习率趋向 0 |
+| 无需手动调整学习率 | 训练后期基本停止学习 |
+
+> 🌰 **生活类比**：Adagrad 像一个"越学越慢"的学生——每学到一个新知识就记一笔，笔记越积越厚（G_t 累加），翻书越来越慢。适合突击复习（短时间训练），不适合长期学习。
+
+#### ④ RMSprop — 修复 Adagrad 的"过早衰减"
+
+```python
+optimizer = torch.optim.RMSprop([w], lr=0.01, alpha=0.99)
+```
+
+**核心思想**：把 Adagrad 的累加求和换成 EWMA，不让分母无限增长。
+
+```
+G_t     = β · G_{t-1} + (1-β) · (∇w_t)²  ← EWMA 替代累加
+w_{t+1} = w_t - lr / (√G_t + ε) · ∇w_t
+```
+
+| 优点 | 缺点 |
+|------|------|
+| 解决 Adagrad 过早衰减问题 | 多了一个超参 α（默认 0.99） |
+| 自适应学习率，训练稳定 | RMSprop 单独用效果不如 Adam |
+
+> 🌰 **生活类比**：RMSprop 像一个"复习有方"的学生——笔记只保留最近的笔记（EWMA），不会越积越厚，能持续学习新知识。
+
+#### ⑤ Adam（Adaptive Moment Estimation）— 🌟 当前默认首选
+
+```python
+optimizer = torch.optim.Adam([w], lr=0.01, betas=(0.9, 0.99))
+```
+
+**核心思想**：Adam = **动量法（一阶矩）+ RMSprop（二阶矩）**，两个 EWMA 分工合作。
+
+```
+一阶矩（动量）: m_t = β₁·m_{t-1} + (1-β₁)·∇w_t    ← 平滑梯度方向
+二阶矩（RMS） : v_t = β₂·v_{t-1} + (1-β₂)·(∇w_t)² ← 自适应学习率
+
+w_{t+1} = w_t - lr · m_t / (√v_t + ε)
+```
+
+| 优点 | 缺点 |
+|------|------|
+| ✅ 自适应学习率 + 动量，**绝大多数场景效果最好** | 需要更多内存（存一阶/二阶矩） |
+| ✅ 超参鲁棒（即使不太调参也能收敛） | 在极端稀疏场景不如 Adagrad |
+| ✅ 默认超参 `lr=0.001, betas=(0.9, 0.999)` 适配大部分任务 | 相比 SGD 泛化性略有争议（但实战差异很小） |
+
+> 🌰 **生活类比**：Adam 像一个"聪明又稳重的司机"——动量法告诉你要往哪个方向走（惯性），RMSprop 告诉你要走多快（路况自适应）。两者配合，又快又稳。
+
+#### 优化器对比总结
+
+| 优化器 | 自适应 LR | 动量 | 核心超参 | 适用场景 |
+|--------|----------|------|---------|---------|
+| **SGD** | ❌ | ❌ | lr | 简单任务、小网络、追求泛化性 |
+| **Momentum** | ❌ | ✅ | lr, momentum(0.9) | 大部分基础任务 |
+| **Adagrad** | ✅ | ❌ | lr | 稀疏数据、NLP 词嵌入 |
+| **RMSprop** | ✅ | ❌ | lr, alpha(0.99) | 序列模型、RL 强化学习 |
+| **Adam** | ✅ | ✅ | lr, betas=(0.9,0.999) | **默认首选，新手直接无脑用** |
+
+> **实战建议**：没有特别理由，**直接选 Adam**。它像智能手机——什么都能干、默认设置就很好用。想极致调优时再考虑其他。
+
+---
+
+### 三、学习率 — 最敏感的超参
+
+> 📂 [04_学习率衰减三大方式对比.py](Deep%20learnning/05_模型优化/04_学习率衰减三大方式对比.py) + [05_拓展_通过调整学习率展示各种问题对应图表.py](Deep%20learnning/05_模型优化/05_拓展_通过调整学习率展示各种问题对应图表.py)
+
+#### 不同学习率的效果
+
+| 学习率 | 现象 | 比喻 |
+|-------|------|------|
+| ≤ 0.01 | 下降太慢，收敛时间长 | 乌龟跑步 |
+| **0.05~0.1** | **正常下降，稳定收敛** | 正常步行 |
+| 0.125 | 一步到位（适合简单函数） | 跳远刚好踩线 |
+| 0.2 | 在最优值附近震荡，下不去 | 钟摆来回晃 |
+| ≥ 0.3 | **梯度爆炸，loss 变成 NaN** | 火箭冲出大气层 |
+
+> 💡 **核心结论**：学习率太小 ≈ 没在学，学习率太大 ≈ 学崩了。**合理区间通常是 0.001~0.1**，Adam 默认 0.001 就很好用。
+
+#### 学习率衰减（Learning Rate Scheduler）
+
+训练后期需要让学习率逐渐减小，避免在最优点附近震荡。PyTorch 提供 3 种主流方式：
+
+| 方式 | API | 行为 | 适用场景 |
+|------|-----|------|---------|
+| **等间隔衰减** | `StepLR(optimizer, step_size, gamma)` | 每 `step_size` 轮 × gamma | 固定节奏训练 |
+| **指定间隔衰减** | `MultiStepLR(optimizer, milestones, gamma)` | 在指定轮次 × gamma | 自定义衰减曲线 |
+| **指数衰减** | `ExponentialLR(optimizer, gamma)` | 每轮 × gamma，平滑衰减 | 需要平滑衰减时 |
+
+> 🌰 **生活类比**：
+> - **等间隔衰减** = 每月工资打 9 折（固定节奏）
+> - **指定间隔衰减** = 入职 25 天、125 天、175 天时分别调薪（自定义节点）
+> - **指数衰减** = 工资每天降一点（平滑过渡）
+
+```python
+# 完整模板：优化器 + 学习率衰减
+optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=50, gamma=0.5)
+
+for epoch in range(200):
+    train_one_epoch(model, dataloader, optimizer)  # 常规训练
+    scheduler.step()                                # 更新学习率（每 epoch 后）
+```
+
+---
+
+### 四、Dropout 随机失活 — 最简单的防过拟合
+
+> 📂 [06_dropout随机失活正则化.py](Deep%20learnning/05_模型优化/06_dropout随机失活正则化.py)
+
+**核心思想**：训练时**随机丢弃**一部分神经元，强迫网络不依赖单个特征。
+
+```python
+linear = nn.Linear(4, 5)
+dropout = nn.Dropout(p=0.5)   # 50% 概率丢弃
+
+x = torch.randn(1, 4)
+x = linear(x)                  # 加权求和
+x = torch.relu(x)              # ReLU 激活
+x = dropout(x)                 # ★ 随机丢弃一半神经元（输出置 0）
+```
+
+**关键理解**：
+
+| 阶段 | Dropout 行为 | 原理 |
+|------|-------------|------|
+| **训练时** | 以概率 p 随机丢弃神经元（输出置 0） | 防止共适应（co-adaptation） |
+| **推理时** | Dropout 关闭，所有权重 × (1-p) 缩放 | 保持期望输出一致 |
+
+> 🌰 **生活类比**：Dropout 像"团队轮岗"——每次训练随机抽掉一半员工，剩下的必须独立完成工作。这样每个人都能独当一面，不会过度依赖特定同事（防止过拟合）。
+
+**使用建议**：
+- `p=0.5` 是常见默认值（对隐藏层）
+- **Dropout 放激活函数之后**
+- 推理时用 `model.eval()` 自动关闭 Dropout
+- 过拟合明显时才加，欠拟合时不要加
+
+---
+
+### 五、批量归一化（Batch Normalization）— 训练加速器
+
+> 📂 [07_批量归一化.py](Deep%20learnning/05_模型优化/07_批量归一化.py)
+
+**核心问题**：深层网络中，每层输入的分布不断变化（内部协变量偏移），导致：
+- 上层参数要不断适应下层输出的分布变化
+- 需要更小的学习率才能稳定训练
+- 梯度消失问题加剧
+
+**BatchNorm 解决方案**：把每层的输入拉回标准正态分布 N(0,1)，再学两个可恢复参数 γ（缩放）和 β（偏移）。
+
+```
+x̂ = (x - μ) / √(σ² + ε)      ← 归一化到 N(0,1)
+y = γ · x̂ + β                 ← 可学习的恢复（想恢复多少学多少）
+```
+
+| 参数 | 含义 | 是否可学习 |
+|------|------|-----------|
+| μ, σ | 当前 batch 的均值和标准差 | ❌ 统计得到 |
+| γ | 缩放因子（学回来的标准差） | ✅ 可学习 |
+| β | 偏移量（学回来的均值） | ✅ 可学习 |
+| ε | 防止除 0 的小常数（默认 1e-5） | ❌ 固定值 |
+
+> 🌰 **生活类比**：BatchNorm 像"标准化考试"——把所有学生的分数调到均分 70 分（归一化），再允许部分学霸恢复高分（γ 放大），部分学渣保持低分（β 偏移）。**先统一标准，再恢复差异**。
+
+```python
+# BatchNorm2d: 用于 CNN（输入 NCHW）
+bn = nn.BatchNorm2d(2)         # 2 = 通道数
+input = torch.randn(1, 2, 3, 4)  # (N, C, H, W)
+output = bn(input)
+
+print(bn.weight)  # γ，初始全 1
+print(bn.bias)    # β，初始全 0
+```
+
+**训练 vs 推理的差异**：
+
+| 阶段 | μ 和 σ 怎么来 | 含义 |
+|------|--------------|------|
+| **训练时** | 当前 batch 的统计值 | 让 BN 适配当前数据分布 |
+| **推理时** | 训练阶段累积的**滑动平均** | 使用全局稳定的统计数据 |
+
+> ⚠️ **必须调用 `model.eval()` 切换推理模式**，否则 BN 层的 μ/σ 在推理时仍用 batch 统计，结果会不稳定。
+
+**使用建议**：
+- 放在激活函数**之前**（原始论文做法）或**之后**（某些现代做法），通常之前
+- CNN 用 `BatchNorm2d`，全连接用 `BatchNorm1d`
+- BatchNorm 自带正则化效果，有时可替代 Dropout
+
+---
+
+### 六、模型优化总览图
+
+```
+                   指数加权平均 (EWMA)
+                          │
+            ┌─────────────┴─────────────┐
+            ▼                            ▼
+      ┌─ 优化器 ──┐               ┌─ 学习率 ──┐
+      │ SGD       │               │ 大小选择   │
+      │ Momentum  │               │ StepLR    │
+      │ Adagrad   │               │ MultiStep │
+      │ RMSprop   │               │ ExpLR     │
+      │ Adam 🌟   │               │           │
+      └───────────┘               └───────────┘
+                          │
+            ┌─────────────┴─────────────┐
+            ▼                            ▼
+    ┌─ 正则化 ──┐              ┌─ 归一化 ──┐
+    │ Dropout   │              │ BatchNorm │
+    │ 随机失活   │              │ 层归一化   │
+    └───────────┘              └───────────┘
+```
+
+### 面试高频题
+
+1. **Q：Adam 相比 SGD 好在哪里？为什么现在都默认用 Adam？**
+   A：Adam = Momentum（平滑梯度方向）+ RMSprop（自适应学习率），对超参不敏感，大部分场景直接收敛，无需精细调参。
+
+2. **Q：学习率太大 / 太小会怎样？**
+   A：太小 → 收敛极慢甚至停滞；太大 → 震荡不收敛甚至梯度爆炸（loss 变 NaN）。
+
+3. **Q：Dropout 训练和推理有什么区别？**
+   A：训练时随机丢弃；推理时不丢弃但权重 × (1-p) 保持期望一致。`model.eval()` 自动处理。
+
+4. **Q：为什么需要学习率衰减？**
+   A：训练初期需要大学习率快速下降，训练后期需要小学习率精细收敛。不衰减会在最优点附近震荡。
+
+5. **Q：BatchNorm 训练和推理有什么区别？**
+   A：训练时 μ/σ 用当前 batch 统计；推理时用全局滑动平均。必须切换 `model.eval()` / `model.train()` 模式。
+
+6. **Q：BN 层中的 γ 和 β 是什么？**
+   A：γ（缩放）和 β（偏移）是可学习参数，用于"恢复"归一化后丢失的表达能力。初始化 γ=1, β=0。
 
 
 # NLP
