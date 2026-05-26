@@ -181,6 +181,7 @@
 | **Autograd 自动微分** | [自动微分](#autograd) | DL 基础 | 计算图 + `backward()` + `zero_grad()` |
 | 5 步训练模板 | [训练模板](#train-template) | DL 基础 | 前向→损失→清零→反向→更新 |
 | 激活函数 | [激活函数](#activation-functions) | DL 核心 | Sigmoid/ReLU/Tanh/Softmax |
+| **参数初始化** | [参数初始化](#parameter-init) | DL 核心 | 7 种初始化方式 + 选型指南 |
 | 文本预处理 | [文本预处理](#text-preprocessing) | NLP 基础 | 分词/去停用词/向量化 |
 | RNN/LSTM/GRU | [RNN 家族](#rnn-family) | NLP 序列模型 | 记忆细胞 + 门控机制 |
 | 注意力机制四种 | [注意力机制](#attention) | NLP 进阶 | 软/硬/加性/缩放点积 |
@@ -214,6 +215,8 @@
 | 模型太大想压缩 | [06-model-compression](#compression-section) |
 | 想理解 Transformer 怎么工作 | [编解码链路](#encoder-decoder-link) |
 | 训练 loss 不下降怎么办 | [训练模板](#train-template) + [Autograd 报错](#autograd-errors) |
+| 模型收敛慢 / loss 一直是 NaN | [参数初始化](#parameter-init)（检查初始化方式） |
+| 不知道该用哪种初始化方法 | [参数初始化](#parameter-init)（选型指南） |
 | 想把模型上线提供 API | [上线四件套](#deployment-pipeline) |
 | 不想训练，直接用 GPT 做分类 | [05-LLM](#llm-section) |
 | 评估指标怎么选 | [交叉熵](#cross-entropy) + [决策树](#metric-decision-tree) |
@@ -241,13 +244,15 @@
 | **F1 Score** | F1 分数 | [详情](#precision-recall-f1) |
 | **FastText** | 浅层快速分类 | [详情](#fasttext-section) |
 | **GRU** | 门控循环单元 | [详情](#gru) |
+| **He Initialization** | Kaiming 初始化 | [详情](#parameter-init) |
 | **K-Means** | K 均值聚类 | [详情](#kmeans) |
+| **Kaiming 初始化** | He 初始化 | [详情](#parameter-init) |
 | **KNN** | K 近邻 | [详情](#knn-classifier) |
 | **LayerNorm** | 层归一化 | [详情](#encoder) |
 | **LSTM** | 长短时记忆 | [详情](#lstm) |
 | **mask** | 掩码 | [详情](#mask) |
 | **memory** | 编码器输出 | [详情](#encoder-decoder-link) |
-| **Multi-Head Attention** | 多头注意力 | [详情](#encoder) |
+| **Multi-Head Attention** | 多头注意力 | [详情](#multi-head-attention) |
 | **NSP** | 下一句预测（BERT 任务）| [详情](#bert-pretraining-tasks) |
 | **Padding Size** | 序列填充长度 | [详情](#padding-size-selection) |
 | **Positional Encoding** | 位置编码 | [详情](#positional-encoding) |
@@ -261,6 +266,7 @@
 | **Teacher Forcing** | 教师强制（训练）| [详情](#encoder-decoder-link) |
 | **TF-IDF** | 词频-逆文档频率 | [详情](#tf-idf) |
 | **Transformer** | Transformer 架构 | [详情](#transformer) |
+| **Xavier 初始化** | Glorot 初始化 | [详情](#parameter-init) |
 | **`zero_grad()`** | 梯度清零 | [详情](#zero-grad) |
 
 > 💡 **使用建议**：
@@ -1058,6 +1064,190 @@ for _ in range(2):
 | **输出层-回归** | 无需激活函数 / Linear | 直接输出连续值 |
 | **RNN/LSTM** | Tanh | 零中心化，稳定梯度 |
 
+<a id="parameter-init"></a>
+## 参数初始化（Parameter Initialization）— 给模型"一个合理的起点"
+
+> 📂 文件来源：[Deep learnning/04-参数初始化/](Deep%20learnning/04-参数初始化/)
+
+### 为什么参数初始化这么重要？
+
+神经网络训练本质上是**找路**——从随机的起点出发，沿着梯度下降的方向一步步走到最优点。
+
+| 初始化不好 | 初始化好 |
+|-----------|---------|
+| 🚫 梯度消失：深层梯度 ≈ 0，前面几层根本学不动 | ✅ 梯度通畅：信息在前向/反向传播中稳定流动 |
+| 🚫 梯度爆炸：loss 变成 NaN，训练直接崩 | ✅ 数值稳定：loss 正常下降 |
+| 🚫 收敛极慢：绕远路，花几倍时间才走到终点 | ✅ 收敛快：起点就在"好位置"附近 |
+
+> 🌰 **生活类比**：登山团从山脚出发 → 体力消耗大、容易迷路（坏初始化）。直升机直接把你送到半山腰营地 → 轻松登顶（好初始化）。初始化就是那个直升机——省掉不必要的路程。
+
+### PyTorch 7 种初始化方式速查表
+
+| # | 方法 | API | 默认分布 | 一句话特点 | 适用场景 |
+|---|------|-----|---------|-----------|---------|
+| 1 | **均匀初始化** | `init.uniform_(w)` | U(0,1) | 所有值等概率出现 | 简单基线，对称数据 |
+| 2 | **正态初始化** | `init.normal_(w, mean, std)` | N(0,1) | 中心附近概率大，两边小 | 一般默认选项 |
+| 3 | **全 0 初始化** | `init.zeros_(w)` | 全是 0 | 最简单但最坑 | ❌ 几乎所有场景都不推荐 |
+| 4 | **全 1 初始化** | `init.ones_(w)` | 全是 1 | 对称破缺失败，等同 0 | ❌ 同全 0，基本不用 |
+| 5 | **固定值初始化** | `init.constant_(w, val)` | 用户指定 | 你想设多少就设多少 | 特殊定制（如偏置设 0） |
+| 6 | **Kaiming 初始化** | `init.kaiming_normal_(w)` | N(0, √(2/fan_in)) | ReLU 家族的黄金搭档 | **隐藏层用 ReLU 时首选** |
+| 7 | **Xavier 初始化** | `init.xavier_normal_(w)` | N(0, √(1/fan_in)) | Sigmoid/Tanh 的标配 | 隐藏层用 Sigmoid/Tanh 时首选 |
+
+> `fan_in` = 该层的输入神经元个数。Kaiming 除以 `√(2/fan_in)`，Xavier 除以 `√(1/fan_in)`，Kaiming 更激进一点——因为 ReLU 会杀死一半神经元。
+
+---
+
+### ① 均匀初始化 — 纯随机，听天由命
+
+```python
+linear = nn.Linear(5, 3)
+nn.init.uniform_(linear.weight)   # 范围 [0, 1)
+```
+
+> 🌰 **生活类比**：从 0 到 1 的区间里闭着眼睛随便抓一个数，抓到多少算多少。
+
+---
+
+### ② 正态初始化 — 大多数取值在均值附近
+
+```python
+linear = nn.Linear(5, 3)
+nn.init.normal_(linear.weight, mean=0, std=1)  # N(0, 1)
+```
+
+> 🌰 **生活类比**：全班身高分布——大部分人集中在平均身高附近，特别高和特别矮的很少。这种"中间多、两头少"的分布更自然。
+
+---
+
+### ③④ 全 0 / 全 1 初始化 — ❌ 新手最容易踩的坑
+
+```python
+linear = nn.Linear(5, 3)
+nn.init.zeros_(linear.weight)   # 全部设成 0
+nn.init.ones_(linear.weight)    # 全部设成 1
+```
+
+**为什么全 0 / 全 1 不行？**
+
+所有神经元输出完全一样 → 反向传播梯度也一样 → 所有神经元学到同样的特征 → **模型退化成一个神经元**。
+
+> 🌰 **生活类比**：全班同学都用同一份答案考试 → 每个人都考一样的分数 → 你分不清谁数学好谁语文好（参数没有"差异化"）。
+
+**唯一的例外**：偏置 `bias` 通常初始化为 0，这是安全的。
+
+---
+
+### ⑤ 固定值初始化 — 自定义专属起点
+
+```python
+linear = nn.Linear(5, 3)
+nn.init.constant_(linear.weight, 2.6)  # 所有权重 = 2.6
+```
+
+> 🌰 **生活类比**：公司给每个新员工发同样的起步工资 2.6 万——统一但缺乏个性。大多数场景下用随机初始化更合理。
+
+---
+
+### ⑥ Kaiming 初始化（He Initialization）— 🌟 最常用，ReLU 绝配
+
+**发明背景**：2015 年何恺明发现，用 Xavier 初始化搭配 ReLU 效果不好，因为 ReLU 会把一半输出变 0，方差直接砍半。Kaiming 初始化专门补偿这个损失。
+
+```python
+linear = nn.Linear(5, 3)
+
+# 正态版（推荐）
+nn.init.kaiming_normal_(linear.weight)
+# → N(0, √(2/fan_in))，fan_in = 输入维度
+
+# 均匀版
+nn.init.kaiming_uniform_(linear.weight)
+# → U(-√(6/fan_in), +√(6/fan_in))
+```
+
+**数学直觉**：
+
+| 初始化 | 方差 | 为什么 |
+|--------|------|--------|
+| Xavier | 1/fan_in | 假设激活函数是线性的（Sigmoid/Tanh 近似线性区） |
+| **Kaiming** | **2/fan_in** | 假设用了 ReLU（一半输出归 0，方差减半，所以补一倍） |
+
+> 🌰 **生活类比**：Kaiming 是"高海拔特供氧气瓶"——你知道爬珠峰（ReLU）氧气会稀薄一半，出发前就多背一倍。Xavier 是"普通登山氧气瓶"——走平缓坡（Sigmoid/Tanh）够用，上高峰就不行了。
+
+---
+
+### ⑦ Xavier 初始化（Glorot Initialization）— Sigmoid/Tanh 时代的经典
+
+**发明背景**：2010 年 Glorot 发现，简单正态初始化在深层网络中梯度会消失，他推导出方差应为 `1/fan_in` 才能让信息在层间稳定流动。
+
+```python
+linear = nn.Linear(5, 3)
+
+# 正态版
+nn.init.xavier_normal_(linear.weight)
+# → N(0, √(1/fan_in))
+
+# 均匀版
+nn.init.xavier_uniform_(linear.weight)
+# → U(-√(3/fan_in), +√(3/fan_in))
+```
+
+> 🌰 **生活类比**：Xavier 像是"自适应水管"——水龙头水流太猛会冲坏花（梯度爆炸），水流太细浇不到远端（梯度消失），它把水管粗细调到刚刚好，让水流均匀地浇灌每一层。
+
+---
+
+### 一张图记住怎么选
+
+```
+你的激活函数是什么？
+├─ ReLU / Leaky ReLU / PReLU ──► Kaiming 初始化（当前最常用）
+├─ Sigmoid / Tanh ─────────────► Xavier 初始化
+├─ 其他 / 不确定 ──────────────► 正态初始化 N(0, 0.01)
+│                                  （保险选项，数值小防止爆炸）
+└─ 偏置 bias ──────────────────► constant_(bias, 0)（几乎总是 0）
+```
+
+**实战口诀**：
+> **"ReLU 配 Kaiming，Sigmoid 配 Xavier，偏置全 0，权重不取整（别用 constant）"**
+
+### 实际项目中怎么做？
+
+PyTorch 的 `nn.Linear` / `nn.Conv2d` 等层**自带默认初始化**（Kaiming Uniform），大多数时候你**不需要手动调**。手动初始化在以下场景才需要：
+
+1. **自定义层**：自己写了 `nn.Module`，没有内置初始化逻辑
+2. **迁移/微调**：想用特定分布重新初始化某些层
+3. **调试研究**：验证初始化对收敛的影响
+
+```python
+# 实际项目中的标准写法（只需要覆盖默认时用）
+def init_weights(m):
+    if isinstance(m, nn.Linear):
+        nn.init.kaiming_normal_(m.weight, mode='fan_in', nonlinearity='relu')
+        if m.bias is not None:
+            nn.init.constant_(m.bias, 0)
+    elif isinstance(m, nn.Conv2d):
+        nn.init.kaiming_normal_(m.weight, mode='fan_in', nonlinearity='relu')
+
+model = nn.Sequential(nn.Linear(10, 5), nn.ReLU(), nn.Linear(5, 2))
+model.apply(init_weights)  # 一键应用到所有子层
+```
+
+### 面试高频题
+
+1. **Q：为什么不能全 0 初始化？**
+   A：对称性问题——所有神经元输出相同、梯度相同、学到的特征相同，模型退化成一个神经元。
+
+2. **Q：Kaiming 和 Xavier 的核心区别？**
+   A：方差公式不同。Kaiming 方差 = 2/fan_in（补偿 ReLU 砍半的方差），Xavier 方差 = 1/fan_in（假设线性激活）。
+
+3. **Q：偏置 bias 一般初始化为多少？**
+   A：几乎 always 0。偏置的作用是平移，初始为 0 让网络自己学偏移量。
+
+4. **Q：`init.kaiming_normal_` 后面的下划线什么意思？**
+   A：PyTorch 约定**带下划线 = 原地修改（in-place）**。函数直接修改传入张量的值，不返回新对象。
+
+5. **Q：现实中我真的需要手动初始化吗？**
+   A：**大多数场景不需要**。PyTorch 内置层已经自带合理的默认初始化（Linear → Kaiming Uniform，LSTM → Uniform 等）。只有自定义层或特殊需求时才手动调。
+
 
 # NLP
 
@@ -1336,6 +1526,26 @@ attn_weights = torch.softmax(attn_scores, dim=-1)  # (batch, seq_len, seq_len)
 attn_c = torch.bmm(attn_weights, value)  # (batch, seq_len, hidden_size)
 ```
 
+##### 别忘了"融合层" attn_combine——它才是衔接下游 RNN 的关键
+
+[NLP/11-加性注意力.py](NLP/11-加性注意力.py) 里的 `MyAttn` 类有**两个**线性层,容易看漏第二个:
+
+| 线性层成员 | 第几行 | 输入 → 输出 | 用途 |
+|-----------|-------|------------|------|
+| `self.attn` | 第 26-27 行 | `query_size + key_size` → `seq_len` | 算**注意力分数** `attn_scores`(只用一次) |
+| `self.attn_combine` | 第 33-34 行 | `query_size + hidden_size` → `output_size` | **把 Q 和动态 C 融合**,产出下游 GRU/LSTM 的 `input_x` |
+
+```python
+# 紧接上面的 attn_c, 第二个线性层在这里登场:
+attn_q_c = torch.cat([query, attn_c], dim=-1)        # 把"原问题"和"答案上下文"拼一起
+input_x  = self.attn_combine(attn_q_c)               # 线性融合 → 下一步 GRU 的输入
+output, hn = self.gru(input_x)                       # 这才是加性注意力的"完整链路"终点
+```
+
+> 🌰 **生活类比**:`attn_c`(动态 C)只是"你查到的资料",**还要把"原问题 Q"和"资料 C"一起交给下游 RNN**——这步合并就是 `attn_combine` 干的事。源码注释第 19 行写得直白:"q 和动态 c 融合后的维度数 = 后续 rnn/lstm/gru/transformer 的输入维度"。
+
+> ⚠️ **常见误解**:很多人以为加性注意力到 `attn_c` 就结束了。**没有**——少了 `attn_combine`,下游 RNN 拿不到原问题信息,效果会差一截。这一点在缩放点积注意力(乘性)里被简化掉了,这是两类注意力**最大的工程差别**。
+
 **优点**：
 - ✅ 完全可导，训练简单
 - ✅ 能处理 Q 和 K 维度不同的情况（通过线性层映射）
@@ -1603,20 +1813,380 @@ def attention(Q, K, V, mask=None):
     return weights @ V, weights
 ```
 
-#### 多头注意力（[15](NLP/15-transform之encoder.py)）
+<a id="multi-head-attention"></a>
+#### 多头注意力 Multi-Head Attention（[15-transform之encoder.py](NLP/15-transform之encoder.py)）
 
-```python
-# 把 d_model=512 拆成 8 头，每头 d_k=64
-Q = self.W_q(x).view(batch, -1, num_heads, d_k).transpose(1, 2)
-K = self.W_k(x).view(batch, -1, num_heads, d_k).transpose(1, 2)
-V = self.W_v(x).view(batch, -1, num_heads, d_k).transpose(1, 2)
+> 📌 **学习路线定位**：你已经学完了"[加性注意力](#attention)"和上一节的"缩放点积注意力"——单次 attention 怎么算已经清楚了。本节要讲的多头注意力，**就是把单次 attention 复制 8 份并行做，最后拼起来**，是 Transformer 编码器/解码器里真正在用的注意力。
 
-out, _ = attention(Q, K, V, mask)
-out = out.transpose(1, 2).contiguous().view(batch, -1, d_model)
-out = self.W_o(out)  # 最终线性层
+##### 一句话定义
+
+> **多头注意力 = 把 d_model 维的 Q/K/V 切成 head 段，每段独立做一次缩放点积注意力，最后再拼回 d_model 维。**
+
+类比就是：原来一个老师（单头）打一份卷子的分；现在叫 8 个老师（8 头）各自打分，最后把 8 份评语合订成一份总报告。
+
+---
+
+##### 1. 为什么要多头？（动机）
+
+单头注意力有个显而易见的问题：**一份注意力权重只能表达一种"关注模式"**。可一个句子里词与词的关系，从来不止一种——
+
+| 关注角度 | 例：「我 昨天 在 公园 喂 鸽子」 |
+|---------|--------------------------------|
+| 谁是动作的发起者 | 「我」 ←→ 「喂」 |
+| 动作的对象 | 「喂」 ←→ 「鸽子」 |
+| 时间修饰 | 「昨天」 ←→ 「喂」 |
+| 地点修饰 | 「在公园」 ←→ 「喂」 |
+
+如果只用 1 个头，模型必须在这些关系之间"二选一"，注意力被稀释。把 d_model=512 拆成 8 头后，**每个头有自己独立的 W_q / W_k / W_v 线性层**（权重不共享！），可以**各自学一种关注模式**，互不干扰。
+
+> 🌰 **生活类比**：单头 = 一个全科老师批卷子，又要看语法又要看立意，眼花缭乱；多头 = 8 个学科老师分头批，语法老师只看语法、立意老师只看立意，最后把 8 份评语合订——精度高、还能并行。
+
+> ⚠️ **常见误解**：多头**不是**把同一个 attention 算 8 次取平均。每个头用的是**完全不同**的 W_q/W_k/W_v 参数（[15](NLP/15-transform之encoder.py) 第 110-111 行的 `clones()` 用 `copy.deepcopy` 做的就是这件事——4 个线性层互相独立、权重不共享）。
+
+---
+
+##### 2. 核心思想三步走（总览图）
+
+无论代码看起来多复杂，**多头注意力永远只做这 3 件事**：
+
+```
+                    输入 x: [batch=2, 句长=4, d_model=512]
+                                    │
+                                    ▼
+   ┌──────────── 第①步：线性变换 + 拆头 ────────────┐
+   │  3 个独立线性层 W_q / W_k / W_v 各做一次 [512→512]  │
+   │  把 512 维"切成"8 段，每段 d_k = 512/8 = 64 维     │
+   │                                                    │
+   │   x ──► W_q ──► Q [2,4,512] ─view─► [2,4,8,64]     │
+   │   x ──► W_k ──► K [2,4,512] ─view─► [2,4,8,64]     │
+   │   x ──► W_v ──► V [2,4,512] ─view─► [2,4,8,64]     │
+   │                                                    │
+   │   ─transpose(1,2)─► Q/K/V: [2,8,4,64]              │
+   │                       ↑   ↑                        │
+   │                   把"头"放到第二维，                │
+   │                   让最后两维 (4, 64) 参与运算       │
+   └────────────────────────────────────────────────────┘
+                                    │
+                                    ▼
+   ┌──────── 第②步：每头独立做缩放点积注意力 ────────┐
+   │   8 个头并行计算（已经学过的 attention 函数）：    │
+   │       scores = Q @ K^T / √d_k        [2,8,4,4]    │
+   │       weights = softmax(scores)       [2,8,4,4]   │
+   │       out_heads = weights @ V         [2,8,4,64]  │
+   └────────────────────────────────────────────────────┘
+                                    │
+                                    ▼
+   ┌──────────── 第③步：拼接多头 + 输出投影 ───────────┐
+   │   先 transpose(1,2) 把"头"放回第三维：[2,4,8,64]   │
+   │   再 contiguous().view 把 8 头拼回 512 维：[2,4,512]│
+   │   最后过第 4 个线性层 W_o (512→512) 融合各头信息   │
+   │                                                    │
+   │           输出: [2, 4, 512]  ← 形状和输入一致      │
+   └────────────────────────────────────────────────────┘
 ```
 
-> 🌰 **生活类比**：一个评委（单头）容易主观；8 个评委（多头）各看不同角度（语法/语义/情感/位置/...）再综合，更全面。
+**为什么是 4 个线性层而不是 3 个？**
+
+[15-transform之encoder.py](NLP/15-transform之encoder.py) 第 127 行 `self.linears = clones(nn.Linear(embedding_dim, embedding_dim), 4)` 这里克隆了 **4 个**线性层：
+
+| 第 N 个 | 角色 | 用在哪一步 |
+|--------|------|-----------|
+| linears[0] | **W_q** 把 x 投影成 Query | 第 ① 步：变换 query |
+| linears[1] | **W_k** 把 x 投影成 Key | 第 ① 步：变换 key |
+| linears[2] | **W_v** 把 x 投影成 Value | 第 ① 步：变换 value |
+| linears[3] | **W_o** 输出投影 (output projection) | 第 ③ 步：拼接后再融合一次 |
+
+> 🌰 **生活类比**：W_q/W_k/W_v 是 3 个翻译官，把同一段中文翻成 3 种"提问视角"；W_o 是总编辑，把 8 个老师的评语合并润色成最终报告。
+
+---
+
+##### 3. 代码逐段拆解（对照 [15-transform之encoder.py](NLP/15-transform之encoder.py)）
+
+###### 3.1 `__init__`：准备 4 个线性层和超参
+
+```python
+class MultiHeadedAttention(nn.Module):
+    def __init__(self, head, embedding_dim, dropout_p=0.1):
+        super().__init__()
+        # ① 必须能整除：512 % 8 == 0，才能均匀分头
+        assert embedding_dim % head == 0, 'head不能被整除'
+
+        # ② 每头维度 d_k = 512 // 8 = 64
+        self.d_k = embedding_dim // head
+        self.head = head
+
+        # ③ clones() = 用 deepcopy 拷 N 份独立的线性层（权重不共享）
+        # 4 份：W_q, W_k, W_v, W_o
+        self.linears = clones(nn.Linear(embedding_dim, embedding_dim), 4)
+
+        self.attn = None                       # 保存权重分布，便于可视化
+        self.dropout = nn.Dropout(p=dropout_p)
+```
+
+**`clones()` 是什么？** ([15-transform之encoder.py](NLP/15-transform之encoder.py) 第 110-111 行)
+
+```python
+def clones(module, N):
+    return nn.ModuleList([copy.deepcopy(module) for _ in range(N)])
+```
+
+注意是 `copy.deepcopy`——**深拷贝**。这意味着每个线性层的权重矩阵在内存中是**独立的副本**，训练时各自更新自己的参数，**互不影响**。这正是"多头能学不同关注模式"的物理基础。
+
+###### 3.2 `forward`：5 步搞定一次多头注意力
+
+```python
+def forward(self, query, key, value, mask=None):
+    # ─── 第 0 步：拿到 batch_size，后面 view 要用 ───
+    batch_size = query.size()[0]
+
+    # ─── 第 1 步：线性变换 + 分头 + 转置 ───
+    # 一行列表推导式同时处理 Q/K/V 三路
+    # [2,4,512] ─model(x)─► [2,4,512]
+    #          ─.view(batch,-1,head,d_k)─► [2,4,8,64]
+    #          ─.transpose(1,2)──────────► [2,8,4,64]
+    query, key, value = [
+        model(x).view(batch_size, -1, self.head, self.d_k).transpose(1, 2)
+        for model, x in zip(self.linears, (query, key, value))
+    ]
+
+    # ─── 第 2 步：调用上一节的 attention() 函数 ───
+    # 输入 4 维：[2,8,4,64]，前 2 维 (batch, head) 不参与矩阵乘法
+    # 只有最后两维 (4, 64) × (64, 4) 在做点积
+    # 输出: x = [2,8,4,64], self.attn = [2,8,4,4]
+    x, self.attn = attention(query, key, value, mask=mask, dropout=self.dropout)
+
+    # ─── 第 3 步：拼接多头（先 transpose 再 view） ───
+    # [2,8,4,64] ─.transpose(1,2)─► [2,4,8,64]
+    #            ─.contiguous()──► （拷贝出连续内存，view 才不会报错）
+    #            ─.view(batch,-1,head*d_k)─► [2,4,512]
+    x = x.transpose(1, 2).contiguous().view(batch_size, -1, self.head * self.d_k)
+
+    # ─── 第 4 步：最后一个线性层 W_o 做融合 ───
+    # linears[-1] 就是第 4 个线性层
+    return self.linears[-1](x)
+```
+
+---
+
+##### 4. 关键形状追踪表（背下来，看代码就一目了然）
+
+以 `batch=2, 句长=4, d_model=512, head=8, d_k=64` 为例：
+
+| 步骤 | 操作 | 形状变化 | 说明 |
+|------|------|---------|------|
+| 输入 | x | `[2, 4, 512]` | (句子数, 句长, 词维度) |
+| ①.1 | `W_q(x)` `W_k(x)` `W_v(x)` | `[2, 4, 512]` | 3 个独立线性层各做一次投影 |
+| ①.2 | `.view(2, -1, 8, 64)` | `[2, 4, 8, 64]` | 把最后一维 512 切成 (8 头 × 64 维) |
+| ①.3 | `.transpose(1, 2)` | `[2, 8, 4, 64]` | **关键转置**：把"头"放到第二维 |
+| ② | `attention(Q, K, V)` 内部 | | |
+| ②.1 |   `Q @ K^T / √d_k` | `[2, 8, 4, 4]` | 句长 × 句长 的注意力分数 |
+| ②.2 |   `softmax + @V` | `[2, 8, 4, 64]` | 加权求和后的"动态 c" |
+| ③.1 | `.transpose(1, 2)` | `[2, 4, 8, 64]` | 把"头"转回第三维 |
+| ③.2 | `.contiguous().view(2,-1,512)` | `[2, 4, 512]` | 8 头拼回 d_model |
+| ③.3 | `W_o(x)` | `[2, 4, 512]` | 输出投影,形状回到原点 |
+
+**两个值得注意的点**：
+
+1. 中间最大维度是 **4 维** `[batch, head, seq_len, d_k]`——前两维 `(batch, head)` 是"独立赛道"，注意力运算只用最后两维 `(seq_len, d_k)`。
+2. 输入和输出形状**完全一致**(`[2, 4, 512]`)——这就是为什么 Transformer 可以**堆 6 层**编码器层而无需任何 reshape。
+
+---
+
+##### 5. 三个最容易踩的坑
+
+###### 坑 1：为什么 view 之后必须 `transpose(1, 2)`？
+
+```python
+.view(batch_size, -1, self.head, self.d_k)   # [2, 4, 8, 64]
+.transpose(1, 2)                              # [2, 8, 4, 64]
+```
+
+矩阵乘法 `Q @ K^T` 永远只看**最后两维**。如果不转置，最后两维是 `(8, 64)`——这是"头数 × 每头维度"，**不是**我们想算的"句长 × 每头维度"，结果完全错。
+
+转置后最后两维变成 `(4, 64)`：4 个词、每个 64 维——这才是注意力分数 `[2, 8, 4, 4]`("4 个词彼此互相关注")的正确来源。
+
+> 🌰 **生活类比**：写信封先要把"收件人"放在最外面，邮差才知道往哪送。`transpose(1,2)` 就是把"句长这一维"挪到能被 `matmul` 看见的位置。
+
+###### 坑 2：为什么拼接时必须先 `contiguous()` 再 `view()`？
+
+```python
+x.transpose(1, 2).contiguous().view(batch_size, -1, self.head * self.d_k)
+```
+
+PyTorch 的 `transpose` **不会真的搬数据**——它只是改了"如何读取这块内存"的元信息（步长 stride）。这导致内存在物理上**不连续**。而 `view()` 要求张量必须**内存连续**才能直接重塑形状，否则会抛出 `RuntimeError: view size is not compatible`。
+
+`contiguous()` 的作用就是：**新开一块连续内存，把数据真正搬过去**，让后续 `view()` 能用。
+
+> 💡 **替代方案**：`reshape()` 在内存不连续时会自动复制；但显式写 `contiguous().view()` 让代码意图更清楚——"我知道这里有性能开销，我接受"。
+
+###### 坑 3：mask 在多头里为什么要 `unsqueeze(1).unsqueeze(2)`？
+
+来自 [15-transform之encoder.py](NLP/15-transform之encoder.py) 第 205 行的测试代码：
+
+```python
+mask = (x != 0).type(torch.uint8).unsqueeze(1).unsqueeze(2)
+#                                      ↑ 加 head 维     ↑ 加 query 维
+# x:    [2, 4]   ──► 句子里非 0 的位置为 1
+# .unsqueeze(1): [2, 1, 4]
+# .unsqueeze(2): [2, 1, 1, 4]
+# 广播到 scores 的形状: [2, 8, 4, 4]
+```
+
+**为什么是 4 维？** 因为多头里的 `scores` 已经是 4 维的 `[batch, head, seq_len_q, seq_len_k]`。mask 必须能对齐这个形状，才能用 `masked_fill` 把 padding 位置打成 `-inf`。
+
+**广播规则**：
+
+| mask 维度 | scores 维度 | 广播后 |
+|----------|-------------|--------|
+| `[2, 1, 1, 4]` | `[2, 8, 4, 4]` | `[2, 8, 4, 4]` ✅ 完美对齐 |
+| 第 1 维 `1` → 广播到 `8`（所有头共用同一个 padding mask） | | |
+| 第 2 维 `1` → 广播到 `4`（每个 query 词都看不见同样的 padding 位置） | | |
+
+> 🌰 **生活类比**：班里 8 个老师批同一份卷子，"答题区外的空白格不给分"这条规则是**全班共用**的——所以 mask 只需要 1 份，靠广播分发到 8 个头身上。
+
+---
+
+##### 6. 自注意力 vs 一般注意力（源码注释里反复强调的核心区分）
+
+[15-transform之encoder.py](NLP/15-transform之encoder.py) 文件开头第 7-8 行就给出了"判别式"：
+
+```python
+# q=k=v -> 自注意力
+# q!=k=v -> 编码器-解码器一般注意力
+```
+
+**两者代码完全相同**——区别只在**调用时传什么参数**：
+
+| 类型 | 在哪里用 | 调用方式 | 含义 |
+|------|---------|---------|------|
+| **自注意力** Self-Attention | 编码器每层、解码器第 1 个子层 | `mha(x, x, x, mask)` | 句子**内部**词与词互相关注（"我"看着"喂"，"喂"看着"鸽子"） |
+| **跨注意力** Cross-Attention | 解码器第 2 个子层 | `mha(decoder_x, memory, memory, src_mask)` | 解码端词去**关注编码端**输出的 memory（翻译时"看原文") |
+
+```python
+# 编码器层（[15] EncoderLayer）：q = k = v = x（自己看自己）
+x = self.sublayer1(x, lambda v: self.self_attn(v, v, v, mask))
+
+# 解码器层（[17] DecoderLayer）的第 2 个子层：Q 来自解码器，K/V 来自编码器
+x = self.sublayer2(x, lambda v: self.cross_attn(v, memory, memory, src_mask))
+```
+
+> 🌰 **生活类比**：
+> - **自注意力** = 学生写作文时反复回看自己写的前文，确保上下文连贯
+> - **跨注意力** = 学生做翻译题时一边看原文一边写译文，原文就是 memory
+
+更详细的 Q/K/V 来源对照见 [编解码链路](#encoder-decoder-link) 章节。
+
+---
+
+##### 7. 三个高频深度问答(读懂这三问,多头注意力就真懂了)
+
+###### Q1:`model(x).view(batch_size, -1, self.head, self.d_k)` 这一步是**复制**还是**折叠**?
+
+**纯折叠,零拷贝。**
+
+`view` 在 PyTorch 里**只改"如何读取这块内存"的元信息(shape/stride),不动底层数据**。
+
+输入 `model(x)` 形状 `[2, 4, 512]`,内存里就是一长串 float:
+
+```
+token 0 的 512 个特征: [f0, f1, ..., f63 | f64, ..., f127 | ... | f448, ..., f511]
+                       └──── 64 ────┘   └──── 64 ────┘    ...  └──── 64 ────┘
+                          "头 0"            "头 1"     ...        "头 7"
+```
+
+`.view(2, -1, 8, 64)` 之后形状变成 `[2, 4, 8, 64]`——**底层 4096 个 float 一个都没动**,只是告诉 PyTorch:"以后请把这 512 个数当成 8 组 × 64 个来读"。
+
+| 操作 | 是否复制内存 | 干什么 |
+|------|-------------|-------|
+| `view` | ❌ 不复制 | **折叠**:改 shape,共享 storage |
+| `transpose` | ❌ 不复制 | 改 stride,但会让内存"不连续" |
+| `contiguous` | ✅ **复制** | 开一块新内存把数据搬过来,让后续 view 能用 |
+
+> 💡 **关键点**:8 个头的 `W_q` 实际上**藏在同一个 `nn.Linear(512, 512)` 矩阵里**——这 512×512 矩阵的前 64 列是头 0 的 W_q,接下来 64 列是头 1 的 W_q……反向传播时各自梯度独立,效果等价于 8 个独立小线性层,但**计算和存储都是一次完成**。这正是多头注意力**几乎没有额外开销**的物理原因。
+
+###### Q2:每个头代表的语义信息**相同**还是**不同**?
+
+**不同——而且这正是多头存在的意义。**
+
+代码里 8 个头的机制完全一样(同一个 `attention(Q,K,V)` 公式,同样的形状),它们**唯一的区别**是 `W_q`/`W_k`/`W_v` 的权重不同——而权重不同来自两个原因:
+
+1. **随机初始化不同**:`copy.deepcopy` 拷出 4 个独立线性层,PyTorch 默认用 Kaiming 均匀分布做随机初始化,8 个头的 64×64 切片初始权重就不一样
+2. **梯度更新不同**:训练时每个头收到的反向梯度不同,各自收敛到不同的局部最优
+
+最终各头**自然涌现**出不同的关注模式。学界对 BERT 等模型做过大量探针实验,典型(不绝对)的分工有:
+
+| 头的类型 | 关注什么 |
+|---------|---------|
+| 位置头 | 当前词的左/右邻居 |
+| 句法头 | 主谓/动宾依存关系 |
+| 共指头 | 代词指向的先行词 |
+| 标点头 | 句号/逗号(段落边界) |
+| 稀有词头 | 重点关注低频词 |
+| 冗余头 | 几乎不起作用,可以剪枝掉 |
+
+> ⚠️ **重要纠偏**:这种"分工"是**事后探针解释**,**不是**代码规定的。源码里没有任何一行告诉模型"头 0 学语法、头 1 学情感"——是损失函数的优化压力 + 初始化的随机性,自然把 8 个头推向不同方向。
+
+> 🌰 **类比**:8 个学生看同一篇课文(同一份输入),起点不同(初始权重不同),老师只布置了一份作业(同一个 loss)。最后每个学生自然擅长不同角度——有的对语法敏感,有的对情感敏感。
+
+> 📚 **冷知识**:论文 *Are Sixteen Heads Really Better than One?* (Michel et al., 2019) 发现许多注意力头**剪枝掉也不损精度**,说明实际有效的头数往往少于设计数——这是后续模型压缩的一个研究方向。
+
+###### Q3:既然每个头不完整,是不是必须**重新拼起来**才完整?
+
+**是的,而且要分两层理解——形状层"必须拼",语义层"必须融"。**
+
+**第一层:形状必须拼**
+
+```
+单头输出:  [batch=2, seq=4, d_k=64]   ← 64 维,喂不进下游 FFN
+拼接之后:  [batch=2, seq=4, d_model=512]  ← 512 维,可以继续传递
+```
+
+下游(前馈网络、下一层 LayerNorm)都要求输入是 **512 维**。单个头的 64 维向量从工程上就**喂不进下一层**——必须拼。
+
+**第二层:`W_o` 才是真正的"融合"——这步最容易被忽略**
+
+`view` 拼接(第 173 行)只是把 8 个 64 维向量"贴在一起",**并没有让它们交互**:
+
+```
+view 拼接后:  [头0的64维 | 头1的64维 | ... | 头7的64维]   ← 8 段独立信息并排放着,彼此不通气
+                              │
+                              ▼  W_o (512→512)  ← 第 4 个线性层登场
+W_o 融合后:  [混合了所有 8 个头视角的 512 维]            ← 每一维都是 8 头的加权和
+```
+
+`W_o` 这个 512×512 的输出投影矩阵的作用就是**让 8 个头的信息真正"对话"**:它的每一行权重决定了"输出的某一维应当从哪几个头各取多少"。`W_o` 也是可训练参数,它学到的是**"融合策略"**。
+
+> ⚠️ **常见误解**:有人以为多头注意力是"8 个头各算各的,最后拼接就完事"。**不是**——`W_o` 的存在让多头变成"8 个头各自学一个视角,**再由 `W_o` 学怎么把这 8 个视角综合起来用**"。这正是为什么 [15-transform之encoder.py:127](NLP/15-transform之encoder.py#L127) 克隆的是 **4 个**线性层而不是 3 个——前 3 个负责"分头"(W_q/W_k/W_v),第 4 个负责"合头"(W_o),**分与合一一对应**。
+
+> 🌰 **类比**:8 台监控摄像头各拍房间一个角度。每台摄像头的画面**形状完整**(都是合法视频),但**信息残缺**(单角度看不到其他)。`view` 把 8 路画面贴到监控墙上,`W_o` 是值班员——他根据 8 路画面**综合判断**"现在房间整体什么状态"。
+
+###### 三问串联记忆
+
+> **"`view` 是折叠不复制(物理零开销),8 头语义自学不互通(训练涌现),`W_o` 把残片融成全景(分头-合头一一对应)。"**
+
+---
+
+##### 8. 一句话记忆口诀
+
+> **"3 路投影分 8 头，每头各做点积注意力，拼回 512 再投影一次。"**
+
+更细一点的 5 步口诀（对照代码顺序）：
+
+```
+① 投   ─ W_q W_k W_v 把 x 投成 Q/K/V    [2,4,512]
+② 切   ─ view 把 512 切成 8×64           [2,4,8,64]
+③ 转   ─ transpose 把 head 放到第 2 维   [2,8,4,64]
+④ 算   ─ attention(Q,K,V,mask)           [2,8,4,64]
+⑤ 拼   ─ transpose+contiguous+view       [2,4,512]
+⑥ 融   ─ W_o 融合多头结果                [2,4,512]
+```
+
+记住这 6 步加上"输入输出形状一样都是 `[B, L, d_model]`"，多头注意力的代码就再也不会让你迷茫了。
+
+---
+
+> 📝 **小结**：多头注意力是 Transformer 编码器的"核心引擎"。下一节的**前馈网络**是引擎旁边的"非线性增强器"，再配合本章后面的 **Add & Norm** 残差结构，就组成了完整的编码器层 EncoderLayer——把 EncoderLayer 堆 6 层，就是 Transformer 的 Encoder。
+
 
 #### 前馈网络
 
@@ -1628,7 +2198,7 @@ FFN(x) = Linear_2( ReLU( Linear_1(x) ) )
 
 > 🌰 **生活类比**：先把信息"展开"到大房间（2048）方便整理，再"压缩"回原房间（512）。
 
-#### Add & Norm（残差 + 层归一化）
+#### Add & Norm（残差 + 层归一化）（[16-transform之层标准化.py](NLP/16-transform之层标准化.py)）
 
 ```python
 class SublayerConnection(nn.Module):
@@ -1646,6 +2216,52 @@ class SublayerConnection(nn.Module):
 > 🌰 **生活类比**：
 > - **残差** = 写作业时保留草稿，万一新答案错了还能回头看
 > - **LayerNorm** = 每个学生自己量身高体重再标准化（个人内部）；BatchNorm 是全班一起标准化（不适合 NLP，因为句子长度不一）
+
+##### LayerNorm 源码细节（[16-transform之层标准化.py](NLP/16-transform之层标准化.py) 第 271-307 行）
+
+```python
+class LayerNorm(nn.Module):
+    def __init__(self, features, eps=1e-6):
+        super().__init__()
+        # 可学习参数 a2(γ): 缩放系数, 初始化为 1
+        self.a2 = nn.Parameter(torch.ones(features))
+        # 可学习参数 b2(β): 偏移系数, 初始化为 0
+        self.b2 = nn.Parameter(torch.zeros(features))
+        # 防止分母为 0 的极小常数
+        self.eps = eps
+
+    def forward(self, x):
+        # 在最后一维(词维度 d_model)上求均值和标准差
+        # x: [2, 4, 512] → mean/std: [2, 4, 1]
+        mean = x.mean(dim=-1, keepdims=True)
+        std = x.std(dim=-1, keepdims=True)
+        # 标准化 + 仿射变换: y = a2 * (x - μ) / (σ + ε) + b2
+        return self.a2 * (x - mean) / (std + self.eps) + self.b2
+```
+
+**三个关键点**：
+
+| 项 | 说明 |
+|----|------|
+| `a2` / `b2` 为什么是 `Parameter`？ | 标记为**可学习参数**，反向传播时 `optimizer` 会更新它们。`a2` 学"该放大多少"，`b2` 学"该平移多少"。 |
+| 为什么是 `dim=-1`？ | 最后一维是词维度 `d_model=512`。**每个 token 自己内部归一化**——这正是 LayerNorm 与 BatchNorm 的根本差别。 |
+| 为什么要 `eps=1e-6`？ | 当某个 token 所有 512 个特征都相同时，`std=0`，分母为 0 会产生 `nan`。`eps` 是兜底安全垫。 |
+
+> ⚠️ **LayerNorm vs BatchNorm 一句话记忆**：
+> - **BatchNorm**：跨样本归一化(对一批句子的同一个特征求均值/方差)——**句子长度不一**时不适合
+> - **LayerNorm**：跨特征归一化(对一个 token 的 512 个特征求均值/方差)——**与句子长度无关**,所以是 NLP 的默认选择
+
+##### SublayerConnection 的三种写法（源码注释里其实写了三种）
+
+[16-transform之层标准化.py](NLP/16-transform之层标准化.py) 第 380-390 行的注释列了 3 种 Add & Norm 顺序，**Transformer 论文用的是第 3 种**：
+
+```python
+# 方式1: norm(x) → sublayer → dropout + x         # Pre-LN, 训练最稳定(后来流行)
+# 方式2: sublayer → norm → dropout + x            # 不推荐, 容易训练不稳定
+# 方式3: norm(x + dropout(sublayer(x)))           # Post-LN, 论文原版 ← 本仓库实现
+```
+
+新手只需记住**方式 3**就够了。如果以后看到 BERT/GPT 源码用方式 1(Pre-LN)，那是后续工作的优化版,不影响理解。
 
 #### 编码器层堆叠 6 次
 
@@ -1686,6 +2302,27 @@ class DecoderLayer(nn.Module):
 > - ② 回头看看英文原文哪里还没翻（跨注意力，Q=自己的疑惑，K/V=英文原文）
 > - ③ 整合一下，写下下一个汉字（前馈）
 
+#### 三个子层逐行走读（[17-transform-decoder.py](NLP/17-transform-decoder.py) 第 27-44 行）
+
+源码里 `forward` 的参数实际叫 `source_mask`(编码器侧的 padding mask) 和 `target_mask`(解码器侧"padding & causal" 合成 mask),README 上面代码块里写成 `src_mask`/`tgt_mask` 是简化别名,二者一一对应。
+
+| 子层 | 调用代码 | Q | K | V | 用哪个 mask | 干什么 |
+|------|---------|---|---|---|-----------|-------|
+| ① 自注意力 | `sublayer[0](x, λx: self_attn(x,x,x, target_mask))` | 解码端 x | 解码端 x | 解码端 x | `target_mask` | "看自己已写的"——配合 causal mask 不偷看未来 |
+| ② 跨注意力 | `sublayer[1](x, λx: src_attn(x,m,m, source_mask))` | 解码端 x | 编码器输出 `memory` | 编码器输出 `memory` | `source_mask` | "对照原文"——把翻译进度对齐到源句的非 padding 位置 |
+| ③ 前馈 | `sublayer[2](x, feed_forward)` | — | — | — | — | 非线性变换,与编码器 FFN 完全相同 |
+
+**两个 mask 的合成方式**(源码第 80-86 行):
+
+```python
+# target 侧的两类 mask 用按位与合成,只有都为 1 才算"可以看"
+target_padding_mask = (target != 0).type(torch.uint8).unsqueeze(1).unsqueeze(2)   # 屏蔽 PAD
+target_causal_mask  = torch.tril(torch.ones(4, 4)).unsqueeze(0).unsqueeze(0)       # 屏蔽未来词
+target_mask = target_padding_mask & target_causal_mask                             # 两个都满足
+```
+
+> 💡 完整的 Q/K/V 来源、memory 怎么从编码器一路传到解码器、训练 vs 推理的差异,跳到 [#encoder-decoder-link](#encoder-decoder-link) 看"6️⃣ 编码器⇄解码器全链路"——本节只做单层走读,避免重复。
+
 ---
 
 ### 5️⃣ 输出层（[18-transform之output.py](NLP/18-transform之output.py)）
@@ -1693,14 +2330,33 @@ class DecoderLayer(nn.Module):
 ```python
 class Generator(nn.Module):
     def __init__(self, d_model, vocab_size):
-        self.proj = nn.Linear(d_model, vocab_size)
+        # 源码里的属性名实际是 self.out（不是 self.proj）
+        self.out = nn.Linear(d_model, vocab_size)
     def forward(self, x):
-        return F.log_softmax(self.proj(x), dim=-1)
+        # 沿最后一维(词表维度)做 log_softmax
+        return torch.log_softmax(self.out(x), dim=-1)
 ```
 
 把 512 维隐藏向量映射回**词表大小**，再 log_softmax 得到每个词的概率对数（配合 NLLLoss 用）。
 
 > 🌰 **生活类比**：从"我懂了什么意思"（隐藏向量）翻译成"该说哪个具体的词"（词表概率）。
+
+##### FAQ:为什么是 `log_softmax` 而不是直接 `softmax`?
+
+| 角度 | 解释 |
+|------|------|
+| **配合损失函数** | `log_softmax + nn.NLLLoss` ≡ `nn.CrossEntropyLoss`(详见 [交叉熵章节](#cross-entropy))。Transformer 训练时常用 NLLLoss,所以输出层先把 log 做掉。 |
+| **数值稳定性** | softmax 涉及 `exp(x)`,当 logits 很大时容易溢出;`log_softmax` 内部用 "log-sum-exp" 技巧,数值更稳。 |
+| **梯度更友好** | log 把 `(0, 1]` 的概率拉到 `(-∞, 0]` 的对数域,避免极小概率(如 1e-20)在反向传播时直接归零。 |
+
+> ⚠️ **常见错误**:模型已经输出 `log_softmax` 了,**不要**再外面套 `nn.CrossEntropyLoss`(它内部又会做一次 log_softmax)——应该用 `nn.NLLLoss`。配套关系参见 README [损失函数与输出层选择表](#cross-entropy)。
+
+如果做推理需要真正的概率分布,只需 `torch.exp(gen_result)` 把对数转回概率:
+
+```python
+predicted_indices = torch.argmax(gen_result, dim=-1)   # 取概率最大的词 ID(argmax 在 log 域和概率域结果一样)
+probabilities = torch.exp(gen_result)                  # 需要展示概率值时再 exp 回来
+```
 
 ---
 
@@ -1923,6 +2579,20 @@ attn_weights = softmax(self.attn(torch.cat([embed, hidden], dim=-1)))
 context = torch.bmm(attn_weights.unsqueeze(0), encoder_outputs.unsqueeze(0))
 gru_input = self.attn_combine(torch.cat([embed, context], dim=-1))
 ```
+
+#### 12.1 vs 12.2 两个文件的分工
+
+| 文件 | 关键内容 | 主要函数/类 |
+|------|---------|------------|
+| [12.1-英译法案例.py](NLP/12.1-英译法案例.py) | **数据 + 模型搭建** | `normalizeString`(文本清洗)、`my_getdata`(读 eng-fra 双语对)、`MyPairsDataset`(Dataset)、`EncoderRNN`(Embedding + GRU 编码器)、`AttnDecoderRNN`(Embedding + 加性注意力 + GRU 解码器) |
+| [12.2-英译法案例.py](NLP/12.2-英译法案例.py) | **训练 + 评估 + 可视化**(在 12.1 基础上追加) | `train_seq2seq` / `train_iters`(训练循环 + Teacher Forcing)、`seq2seq_evaluate`(自回归推理)、`dm_test_Attention`(注意力权重可视化) |
+
+> 💡 **学习建议**:
+> 1. 先把 12.1 跑通——只看清 `EncoderRNN.forward` 和 `AttnDecoderRNN.forward` 的形状变化即可
+> 2. 再读 12.2 的 `train_iters`——重点看 **Teacher Forcing 比例**怎么随训练步数变化(用 `random.random() < teacher_forcing_ratio` 决定每一步喂"真值"还是喂"上一步预测")
+> 3. 最后看 `seq2seq_evaluate`——推理时**没有真值可喂**,必须用上一步的输出当下一步输入(纯自回归)
+
+> ⚠️ **Teacher Forcing 的本质**:训练时让解码器看到正确答案,加快收敛、防止误差累积;推理时拿不到答案,只能用自己的预测——**训练-推理的 gap 就是这里产生的**(Transformer 的 causal mask 也是为了让训练更接近推理)。详情对照 [#encoder-decoder-link](#encoder-decoder-link) 的 6.6 节"训练 vs 推理"。
 
 #### Transformer vs Seq2Seq+Attention 对比
 
