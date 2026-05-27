@@ -546,6 +546,15 @@ loss.backward()
 | **正例**  | TP (真阳性)     | FP (假阳性/误报) |
 | **负例**  | FN (假阴性/漏报) | TN (真阴性)     |
 
+```python
+from sklearn.metrics import confusion_matrix
+
+confusion_matrix(y_true, y_pred)
+# 返回 shape=(2,2) 的 ndarray:
+# [[TN, FP],
+#  [FN, TP]]
+```
+
 **4 个格子的助记口诀**：
 - **第一个字母**：T/F = 预测**对没对**（True 对、False 错）
 - **第二个字母**：P/N = 预测**说是正还是负**（Positive 正、Negative 负）
@@ -559,13 +568,13 @@ loss.backward()
 <a id="precision-recall-f1"></a>
 #### 二、衍生指标（5 个最常用）
 
-| 指标 | 公式 | 含义 | 适用场景 |
-|------|------|------|----------|
-| **准确率 (Accuracy)** | `(TP+TN)/(TP+TN+FP+FN)` | 整体预测正确的比例 | 类别平衡的数据集 |
-| **精确率 (Precision)** | `TP/(TP+FP)` | **预测为正**的里头有多少真的是正 | 关注误报成本（如垃圾邮件） |
-| **召回率 (Recall)** | `TP/(TP+FN)` | **真正是正**的里头有多少被找出来 | 关注漏报成本（如疾病检测） |
-| **F1 分数** | `2·P·R/(P+R)` | 精确率和召回率的调和平均 | 需要兼顾两者 |
-| **特异度 (Specificity)** | `TN/(TN+FP)` | 真正是负的里头有多少被识别 | 医学检测、ROC 曲线 |
+| 指标 | 公式 | 含义 | 适用场景 | sklearn API |
+|------|------|------|----------|-------------|
+| **准确率 (Accuracy)** | `(TP+TN)/(TP+TN+FP+FN)` | 整体预测正确的比例 | 类别平衡的数据集 | `accuracy_score(y_true, y_pred)` |
+| **精确率 (Precision)** | `TP/(TP+FP)` | **预测为正**的里头有多少真的是正 | 关注误报成本（如垃圾邮件） | `precision_score(y_true, y_pred, average='binary')` |
+| **召回率 (Recall)** | `TP/(TP+FN)` | **真正是正**的里头有多少被找出来 | 关注漏报成本（如疾病检测） | `recall_score(y_true, y_pred, average='binary')` |
+| **F1 分数** | `2·P·R/(P+R)` | 精确率和召回率的调和平均 | 需要兼顾两者 | `f1_score(y_true, y_pred, average='binary')` |
+| **特异度 (Specificity)** | `TN/(TN+FP)` | 真正是负的里头有多少被识别 | 医学检测、ROC 曲线 | `recall_score(y_true, y_pred, pos_label=0)` |
 
 > 🌰 **精确率 vs 召回率怎么记**：
 > - **精确率 = "宁缺勿滥"**：我说是正的就一定是正的（垃圾邮件：宁可漏几个垃圾，不能把正常邮件丢进垃圾箱）
