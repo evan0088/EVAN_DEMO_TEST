@@ -43,6 +43,7 @@ class DecoderLayer(nn.Module):
         x = self.sublayer[2](x, self.feed_forward)
         return x
 
+
 # 测试
 def dm_test_DecoderLayer():
     vocab = 1000  # 词表大小是1000
@@ -94,7 +95,6 @@ def dm_test_DecoderLayer():
 
     print('dl_result.shape--->', dl_result.shape)
     print('dl_result--->', dl_result)
-
 
 
 # 解码器类 Decoder 实现思路分析
@@ -178,3 +178,4 @@ if __name__ == '__main__':
     dm_test_DecoderLayer()
     # 解码器
     # de_result = dm_test_Decoder()
+    de_result = dm_test_Decoder()

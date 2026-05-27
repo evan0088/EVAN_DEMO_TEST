@@ -100,8 +100,6 @@ def dm_test_attention():
     print("注意力权重 p_attn2--->", p_attn2.shape, '\n', p_attn2)
     print("注意力表示结果 attn2--->", attn2.shape, '\n', attn2)
 
-
-
 import copy
 
 # 多头注意力机制类 MultiHeadedAttention 实现思路分析
@@ -203,6 +201,7 @@ def dm_test_MultiHeadedAttention():
     # unsqueeze(1) -> (2,1,4), 后续masked_fill操作时在1轴上进行广播变成(2,4,4)和scores对齐
     # unsqueeze(2) -> (2,1,1,4), 后续masked_fill操作时在1/2轴上进行广播变成(2,8,4,4)和scores对齐
     mask = (x != 0).type(torch.uint8).unsqueeze(1).unsqueeze(2)
+    # print("mask---->",mask, mask.shape)
 
     # 多头注意力机制
     my_mha = MultiHeadedAttention(head, d_model, dropout_p)
@@ -580,7 +579,7 @@ if __name__ == '__main__':
     # 注意力机制封装函数
     # dm_test_attention()
     # 多头注意力层
-    # dm_test_MultiHeadedAttention()
+    dm_test_MultiHeadedAttention()
     # 前馈全连接层
     # dm_test_PositionwiseFeedForward()
     # 规范化层
@@ -590,4 +589,4 @@ if __name__ == '__main__':
     # 编码器层
     # dm_test_EncoderLayer()
     # 编码器
-    dm_test_Encoder()
+    # dm_test_Encoder()

@@ -56,10 +56,14 @@ class PositionalEncoding(nn.Module):
         # print('pe--->', pe.shape, pe)
 
         # 定义位置列-矩阵position  数据形状[max_len,1] eg: [0,1,2,3,4...60]^T
+        # position 表示词在句子中的位置 (即公式中的 pos)
         position = torch.arange(0, max_len).unsqueeze(1)
         # print('position--->', position.shape, position)
 
         # 方式一计算
+        # i 表示每个特征在嵌入维度中的位置 (即公式中的 i)，_2i 表示偶数索引 0,2,4,...
+        # PE(pos, 2i) = sin(pos / 10000^(2i/d_model))
+        # PE(pos, 2i+1) = cos(pos / 10000^(2i/d_model))
         _2i = torch.arange(0, d_model, step=2).float()
         pe[:, 0::2] = torch.sin(position / 10000 ** (_2i / d_model))
         pe[:, 1::2] = torch.cos(position / 10000 ** (_2i / d_model))
@@ -85,9 +89,11 @@ class PositionalEncoding(nn.Module):
         print("x--->", x.shape, x)
         # print("x.shape[1]--->", x.shape[1])
         # print("pe--->", self.pe.shape, self.pe)
+        # x.shape[1] 是当前句子的词数量(seq_len), 用于从pe中按实际长度截取位置编码
         print("self.pe[:, :x.shape[1], :]--->", self.pe[:, :x.shape[1], :])
         # x->2个句子  pe->1个  所以使用了广播机制, 让pe变成2个
-        # 输入层输出 = 词信息 + 位置信息
+        # 输入层输出 = 词嵌入层输出(词信息) + 位置编码层输出(位置信息)
+        # 此处是词嵌入层与位置编码层的融合, 通过相加将词义信息与位置信息合并
         x = x + self.pe[:, :x.shape[1], :]
         print("x--->", x)
         return self.dropout(x)
