@@ -1,0 +1,1214 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      <link rel="icon" href="../img/AI.jpg">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-8.5.10">
+    
+    
+      
+        <title>7.2 问答系统关键技术 - 红蜘蛛知识图谱项目V3.0</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.975780f9.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.2505c338.min.css">
+        
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="None" data-md-color-accent="None">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#nlu" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href=".." title="红蜘蛛知识图谱项目V3.0" class="md-header__button md-logo" aria-label="红蜘蛛知识图谱项目V3.0" data-md-component="logo">
+      
+  <img src="../img/AI.jpg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            红蜘蛛知识图谱项目V3.0
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              7.2 问答系统关键技术
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="红蜘蛛知识图谱项目V3.0" class="md-nav__button md-logo" aria-label="红蜘蛛知识图谱项目V3.0" data-md-component="logo">
+      
+  <img src="../img/AI.jpg" alt="logo">
+
+    </a>
+    红蜘蛛知识图谱项目V3.0
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_1" type="checkbox" id="__nav_1" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_1">
+          第一章:红蜘蛛项目简介
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="第一章:红蜘蛛项目简介" data-md-level="1">
+        <label class="md-nav__title" for="__nav_1">
+          <span class="md-nav__icon md-icon"></span>
+          第一章:红蜘蛛项目简介
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E4%B8%80%E7%AB%A0%EF%BC%9A%E9%A1%B9%E7%9B%AE%E8%83%8C%E6%99%AF/1.%E9%A1%B9%E7%9B%AE%E7%AE%80%E4%BB%8B.html" class="md-nav__link">
+        1.1 项目背景介绍
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E4%B8%80%E7%AB%A0%EF%BC%9A%E9%A1%B9%E7%9B%AE%E8%83%8C%E6%99%AF/2.%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E6%8A%80%E6%9C%AF%E6%A6%82%E6%8B%AC.html" class="md-nav__link">
+        1.2 知识图谱技术概括
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2">
+          第二章:项目工具介绍
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="第二章:项目工具介绍" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          第二章:项目工具介绍
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E4%BA%8C%E7%AB%A0%EF%BC%9A%E9%A1%B9%E7%9B%AE%E5%B7%A5%E5%85%B7/01-%E9%A1%B9%E7%9B%AE%E5%BA%94%E7%94%A8%E5%B7%A5%E5%85%B7.html" class="md-nav__link">
+        2.1 项目应用工具概览
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E4%BA%8C%E7%AB%A0%EF%BC%9A%E9%A1%B9%E7%9B%AE%E5%B7%A5%E5%85%B7/02-doccano%E6%95%B0%E6%8D%AE%E6%A0%87%E6%B3%A8%E5%B9%B3%E5%8F%B0.html" class="md-nav__link">
+        2.2 doccano数据标注平台
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E4%BA%8C%E7%AB%A0%EF%BC%9A%E9%A1%B9%E7%9B%AE%E5%B7%A5%E5%85%B7/03-%E7%9F%A5%E8%AF%86%E6%9F%A5%E8%AF%A2%E8%AF%AD%E8%A8%80.html" class="md-nav__link">
+        2.3 知识查询语言
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E4%BA%8C%E7%AB%A0%EF%BC%9A%E9%A1%B9%E7%9B%AE%E5%B7%A5%E5%85%B7/04-Neo4j%E5%9B%BE%E6%95%B0%E6%8D%AE%E5%BA%93.html" class="md-nav__link">
+        2.4 Neo4j图数据库
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3">
+          第三章:实体抽取
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="第三章:实体抽取" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          第三章:实体抽取
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E4%B8%89%E7%AB%A0%EF%BC%9A%E5%AE%9E%E4%BD%93%E6%8A%BD%E5%8F%96/01-%E5%AE%9E%E4%BD%93%E8%AF%86%E5%88%AB%E5%9F%BA%E6%9C%AC%E7%9F%A5%E8%AF%86.html" class="md-nav__link">
+        3.1 实体识别基本知识
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E4%B8%89%E7%AB%A0%EF%BC%9A%E5%AE%9E%E4%BD%93%E6%8A%BD%E5%8F%96/02-%E5%9F%BA%E4%BA%8E%E8%A7%84%E5%88%99%E5%AE%9E%E7%8E%B0NER.html" class="md-nav__link">
+        3.2 基于规则实现NER
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E4%B8%89%E7%AB%A0%EF%BC%9A%E5%AE%9E%E4%BD%93%E6%8A%BD%E5%8F%96/03-%E5%9F%BA%E4%BA%8EBiLSTM%2BCRF%E6%A8%A1%E5%9E%8B%E5%AE%9E%E7%8E%B0NER.html" class="md-nav__link">
+        3.3 基于深度学习模型实现NER
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E4%B8%89%E7%AB%A0%EF%BC%9A%E5%AE%9E%E4%BD%93%E6%8A%BD%E5%8F%96/04-Veterbi%E7%AE%97%E6%B3%95%E4%BB%8B%E7%BB%8D%28%E6%89%A9%E5%B1%95%E8%B5%84%E6%96%99%29.html" class="md-nav__link">
+        3.4 Veterbi算法介绍(扩展资料)
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4">
+          第四章:关系抽取
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="第四章:关系抽取" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          第四章:关系抽取
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E5%9B%9B%E7%AB%A0%EF%BC%9A%E5%85%B3%E7%B3%BB%E6%8A%BD%E5%8F%96/01-%E5%85%B3%E7%B3%BB%E6%8A%BD%E5%8F%96%E5%9F%BA%E6%9C%AC%E7%9F%A5%E8%AF%86.html" class="md-nav__link">
+        4.1 关系抽取基本知识
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E5%9B%9B%E7%AB%A0%EF%BC%9A%E5%85%B3%E7%B3%BB%E6%8A%BD%E5%8F%96/02-%E8%A7%84%E5%88%99%E6%96%B9%E6%B3%95%E5%AE%9E%E7%8E%B0%E5%85%B3%E7%B3%BB%E6%8A%BD%E5%8F%96.html" class="md-nav__link">
+        4.2 规则方法实现关系抽
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E5%9B%9B%E7%AB%A0%EF%BC%9A%E5%85%B3%E7%B3%BB%E6%8A%BD%E5%8F%96/03-Pipeline%E6%96%B9%E6%B3%95%E5%AE%9E%E7%8E%B0%E5%85%B3%E7%B3%BB%E6%8A%BD%E5%8F%96.html" class="md-nav__link">
+        4.3 Pipeline方法实现关系抽取
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E5%9B%9B%E7%AB%A0%EF%BC%9A%E5%85%B3%E7%B3%BB%E6%8A%BD%E5%8F%96/04-Joint%E6%96%B9%E6%B3%95%E5%AE%9E%E7%8E%B0%E5%85%B3%E7%B3%BB%E6%8A%BD%E5%8F%96.html" class="md-nav__link">
+        4.4 Joint方法实现关系抽取
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5">
+          第五章:知识融合
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="第五章:知识融合" data-md-level="1">
+        <label class="md-nav__title" for="__nav_5">
+          <span class="md-nav__icon md-icon"></span>
+          第五章:知识融合
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E4%BA%94%E7%AB%A0%EF%BC%9A%E7%9F%A5%E8%AF%86%E8%9E%8D%E5%90%88/01-%E7%9F%A5%E8%AF%86%E8%9E%8D%E5%90%88%E5%9F%BA%E6%9C%AC%E7%9F%A5%E8%AF%86.html" class="md-nav__link">
+        5.1 知识融合基本知识
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E4%BA%94%E7%AB%A0%EF%BC%9A%E7%9F%A5%E8%AF%86%E8%9E%8D%E5%90%88/02-%E5%AE%9E%E4%BD%93%E6%B6%88%E6%AD%A7%E4%BB%BB%E5%8A%A1.html" class="md-nav__link">
+        5.2 实体消歧任务
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6" type="checkbox" id="__nav_6" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_6">
+          第六章:图谱搭建
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="第六章:图谱搭建" data-md-level="1">
+        <label class="md-nav__title" for="__nav_6">
+          <span class="md-nav__icon md-icon"></span>
+          第六章:图谱搭建
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E5%85%AD%E7%AB%A0%EF%BC%9A%E5%9B%BE%E8%B0%B1%E6%90%AD%E5%BB%BA/01-Neo4j%E5%9B%BE%E6%95%B0%E6%8D%AE%E5%BA%93.html" class="md-nav__link">
+        6.1 Neo4j图数据库
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E5%85%AD%E7%AB%A0%EF%BC%9A%E5%9B%BE%E8%B0%B1%E6%90%AD%E5%BB%BA/02-%E5%8C%BB%E7%96%97%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E7%9A%84%E6%90%AD%E5%BB%BA.html" class="md-nav__link">
+        6.2 医疗知识图谱的搭建
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_7" type="checkbox" id="__nav_7" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_7">
+          第七章:图谱应用
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="第七章:图谱应用" data-md-level="1">
+        <label class="md-nav__title" for="__nav_7">
+          <span class="md-nav__icon md-icon"></span>
+          第七章:图谱应用
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="01-%E9%97%AE%E7%AD%94%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86.html" class="md-nav__link">
+        7.1 问答系统基础知识
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          7.2 问答系统关键技术
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="02-%E9%97%AE%E7%AD%94%E7%B3%BB%E7%BB%9F%E5%85%B3%E9%94%AE%E6%8A%80%E6%9C%AF.html" class="md-nav__link md-nav__link--active">
+        7.2 问答系统关键技术
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    学习目标
+  </a>
+  
+    <nav class="md-nav" aria-label="学习目标">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    1 什么是意图识别
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    2 什么是槽位填充
+  </a>
+  
+    <nav class="md-nav" aria-label="2 什么是槽位填充">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21" class="md-nav__link">
+    2.1 语义槽的设计
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    3 意图识别的方法
+  </a>
+  
+    <nav class="md-nav" aria-label="3 意图识别的方法">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31" class="md-nav__link">
+    3.1 规则模板
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32" class="md-nav__link">
+    3.2 统计机器学习
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33" class="md-nav__link">
+    3.3 深度学习
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    4 槽位填充的方法
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    小节总结
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="03-%E5%8C%BB%E7%96%97KBQA%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84.html" class="md-nav__link">
+        7.3 医疗KBQA系统架构
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="04-%E5%8C%BB%E7%96%97KBQA%E7%B3%BB%E7%BB%9F%E5%AE%9E%E7%8E%B0.html" class="md-nav__link">
+        7.4 医疗KBQA系统实现
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    学习目标
+  </a>
+  
+    <nav class="md-nav" aria-label="学习目标">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    1 什么是意图识别
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    2 什么是槽位填充
+  </a>
+  
+    <nav class="md-nav" aria-label="2 什么是槽位填充">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21" class="md-nav__link">
+    2.1 语义槽的设计
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    3 意图识别的方法
+  </a>
+  
+    <nav class="md-nav" aria-label="3 意图识别的方法">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31" class="md-nav__link">
+    3.1 规则模板
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32" class="md-nav__link">
+    3.2 统计机器学习
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33" class="md-nav__link">
+    3.3 深度学习
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    4 槽位填充的方法
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    小节总结
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="nlu">自然语言理解NLU<a class="headerlink" href="#nlu" title="Permanent link">&para;</a></h1>
+<h2 id="_1">学习目标<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<ul>
+<li>理解什么是意图识别</li>
+<li>理解什么是槽位填充填充</li>
+</ul>
+<hr />
+<p>本文主要介绍问答系统中的自然语言理解部分，问答机器人要能准确的利用知识库回答用户的问题，前提是机器人能够准确理解用户的问题，也就是能够对用户输入的文本进行自然语言理解。它主要包括：意图识别和槽位填充。</p>
+<hr />
+<h3 id="1">1 什么是意图识别<a class="headerlink" href="#1" title="Permanent link">&para;</a></h3>
+<ul>
+<li>意图识别是判断用户意图的过程，例如在聊天机器人中，用户提出问题时，系统需要确定用户是在询问天气、咨询旅游或还是问某部电影信息等。</li>
+<li>意图识别本质上是一个文本分类问题，因此需要预先定义意图类别。与情感分类不同，不管什么场景，都能划分成积极、消极和中立情感三分类。而意图分类需根据特定场景进行定义，不同应用有不同的意图类别。比如在美团APP上，它把用户的搜索意图分为订外卖、订酒店、订旅游门票、订电影票、订机票等类别。</li>
+</ul>
+<hr />
+<h3 id="2">2 什么是槽位填充<a class="headerlink" href="#2" title="Permanent link">&para;</a></h3>
+<ul>
+<li>
+<p>识别用户意图后有什么用呢？比如用户输入“订一张今天下午场次的战狼电影票”，系统识别出“订电影票”的意图，于是系统开始操作订电影票的事了，但是系统犯迷糊了，是给用户订战狼1还是战狼2呢？订哪个电影院的呢？系统查了一下最近上映的电影，发现当前只有战狼2在重映；系统又查了一下离用户当前所在位置最近的电影院是一家叫XX影城的电影院；系统又计算了一下时间，现在是下午1点，XX影城战狼2在下午一点半有一个场次，而稍远一点的YY影城在下午两点半有一个场次；于是系统和用户进行交互互动：</p>
+<div class="highlight"><pre><span></span><code>“您好，战狼2在XX影城于下午一点半上映，YY影城将在下午两点半上映；你需要去哪个电影院呢？”
+“去YY影城”
+“您好，您可以选择电影票张数和座位号完成预定”
+</code></pre></div>
+</li>
+</ul>
+<ul>
+<li>
+<p>为什么系统会像人一样思考并且和用户互动？其实系统会有针对性的“思考”是全靠槽位填充来实现的，当系统识别出你的“订电影票”意图之后，它掏出了该意图所对应的语义槽来做“填空”，语义槽格式如下所示：</p>
+<div class="highlight"><pre><span></span><code>&quot;订电影票&quot;: {
+          &quot;电影名&quot;:__________,
+          &quot;电影院名称&quot;:__________,
+          &quot;时间&quot;:__________,
+          &quot;数量&quot;:__________,
+          &quot;座位位置&quot;:__________,
+          }
+</code></pre></div>
+</li>
+</ul>
+<ul>
+<li>
+<p>需要填的空包含了电影名、影院名称、时间、数量、座位位置等信息，系统通过命名实体识别和槽位预测来填空。过程如下：</p>
+<blockquote>
+<p>首先对用户的输入"订一张今天下午场次的战狼电影票"识别出电影名是“战狼”，时间是“今天下午”；没有识别到影院名称，系统根据用户当前的位置，将其预测为XX影院或YY影院，数量和座位位置无法预测。针对无法预测的槽位，系统向用户发问或者提供选择来确认 您可以选择电影票张数和座位号完成预定 ；对于预测到槽位值不唯一的情况，比如XX影院或YY影院，系统让用户自己进行二选一；对于识别到的槽位存在歧义的问题，系统会进行“澄清”，比如战狼实体不是很明确，需要澄清是战狼1还是战狼2，系统根据现在正上映的是战狼2这一情况来进行自动澄清，但如果此时两部电影都在上映的话，系统就得向用户发问澄清了，比如问 您是想要看战狼1还是战狼2？ 。</p>
+</blockquote>
+</li>
+</ul>
+<ul>
+<li>可以看到系统的思考过程完全是按照语义槽来进行的，有什么槽位它就思考什么。当语义槽完全填充且消除了歧义之后，也就完成了整个自然语言理解任务，开始利用知识库回答用户问题或者完成某种操作。但是语义槽到底是怎么来的呢？它是如何和用户进行“发问”交互的呢？</li>
+</ul>
+<h4 id="21">2.1 语义槽的设计<a class="headerlink" href="#21" title="Permanent link">&para;</a></h4>
+<ul>
+<li>
+<p>上文中提到意图识别的类别是预定义好的，其实我们也会预定义好意图所对应的语义槽，也就是你的应用场景有多少个意图，那么你就需要事先定义好多少个所对应的语义槽。在上文的例子中我把“订电影票”意图所对应的语义槽定义的形式，似乎有点简单，并没有体现出系统是依靠什么技能来和用户进行交互的，其实只要在语义槽的每个槽位加上相对应的“话术”就行了，系统发现哪个槽位没填充或者有歧义就使用该槽位事先预定义好的话术去“发问”就好了。因此我们可以把上述“订电影票”的语义槽改为如下所示：</p>
+<div class="highlight"><pre><span></span><code>&quot;订电影票&quot;: {
+          &quot;电影名&quot;:,
+                {
+                &quot;槽位值&quot;:___,
+                &quot;追问话术&quot;:&quot;请问您需要看那部电影？&quot;,
+                &quot;歧义澄清话术&quot;:&quot;你想看XX还是YYY&quot;,
+                &quot;槽位预测&quot;:&quot;/api/predict_movie_name/&quot;
+                }
+          &quot;电影院名称&quot;:,
+                {
+                &quot;槽位值&quot;:___,
+                &quot;追问话术&quot;:&quot;请问您要去的电影院是哪个？&quot;,
+                &quot;歧义澄清话术&quot;:&quot;你想看XX影院还是YY影院？&quot;,
+                &quot;槽位预测&quot;:&quot;/api/predict_cinema/&quot;
+                }
+          &quot;时间&quot;:,
+                {
+                &quot;槽位值&quot;:___,
+                &quot;追问话术&quot;:&quot;请问您要什么时候去看？&quot;,
+                &quot;歧义澄清话术&quot;:&quot;你想X点去还是Y点去？&quot;,
+                &quot;槽位预测&quot;:&quot;/api/predict_time/&quot;
+                }
+          &quot;数量&quot;:,
+                {
+                &quot;槽位值&quot;:___,
+                &quot;追问话术&quot;:&quot;请问您需要预订几张？&quot;,
+                &quot;歧义澄清话术&quot;:&quot;你想订X张还是Y张？&quot;,
+                &quot;槽位预测&quot;:&quot;/api/predict_number/&quot;
+                }
+          &quot;座位位置&quot;:,
+                {
+                &quot;槽位值&quot;:___,
+                &quot;追问话术&quot;:&quot;请您选择座位号？&quot;,
+                &quot;歧义澄清话术&quot;:&quot;你想订X号还是Y号？&quot;,
+                &quot;槽位预测&quot;:&quot;/api/predict_seat/&quot;
+                }
+          }
+</code></pre></div>
+</li>
+</ul>
+<ul>
+<li>上述语义槽的设计并不是最好或者最合适的，此处只是随便设计举个例子而已，实际业务中的语义槽更为复杂；通过上述例子你已经完全明白了意图识别和槽位填充是什么意思，以及理解了为什么要做意图识别和槽位填充。那么如何去做意图识别和槽位填充呢？</li>
+</ul>
+<h3 id="3">3 意图识别的方法<a class="headerlink" href="#3" title="Permanent link">&para;</a></h3>
+<h4 id="31">3.1 规则模板<a class="headerlink" href="#31" title="Permanent link">&para;</a></h4>
+<ul>
+<li>
+<p>通过人工分析每个意图下的有代表性的例句总结出规则模板，然后将用户的输入语句进行分词、词性标注、命名实体识别、依存句法分析、语义分析等操作后套用已有的模板，当与之匹对的某个意图模板达到一定的阈值之后就认为该输入就属于该意图类别。以订机票意图为例，我们可以事先收集一些用户的相关query，然后再进行总结归纳制定模板。</p>
+<div class="highlight"><pre><span></span><code>从广州到贵阳市的航班
+东营到济南的航班
+济南去大连的航班
+查询大大后天广州到武汉的航班
+十月四号从广州到北京的飞机票多少钱
+查询上海到丽江飞机票的价格
+明天从桂林飞往杭州的航班
+武汉到北京的飞机票
+</code></pre></div>
+</li>
+</ul>
+<ul>
+<li>
+<p>根据以上的示例，可以总结归纳出以下模板：</p>
+<div class="highlight"><pre><span></span><code>.*?[地名]{到|去|飞|飞往}[地名].*?{机票|飞机票|航班}.*?
+</code></pre></div>
+<blockquote>
+<p>? 表示任意字符，[]表示实体类型或词性，{}表示关键词，|表示或。</p>
+<p>当用户输入“查询后天广州到上海的航班”，我们对query进行分词和词性标注，匹配到地名“广州”、“上海”，关键词“到”、“航班”，他们的组合和预定义好的模板高度匹配，于是我们确认该query是“订机票”意图；另外对于“有没有下周二到贵阳的航班”只能匹配到一个地名和关键词“航班”，也算是和模板比较匹配了，而且如果这个匹配度和其与其他意图的模板的匹配度相比更高的话，那也可以大胆的认为该query是“订机票”意图。</p>
+</blockquote>
+</li>
+</ul>
+<ul>
+<li>使用规则模板做意图识别精确率较高，但是召回率较低，特别是对长尾query；另外该方法需要大量人工参与制定规则模板，不易自动化，更难以将其移植。</li>
+</ul>
+<h4 id="32">3.2 统计机器学习<a class="headerlink" href="#32" title="Permanent link">&para;</a></h4>
+<ul>
+<li>使用统计机器学习算法做文本分类，需要人工提取文本特征，比如ngram、词性特征、实体类型特征；提完特征后进行tf-idf向量化表示，然后使用支持向量机、逻辑回归、随机森林等算法进行训练。该方法显然也需要大量人工操作设计领域相关的特征，且用统计机器学习算法做文本分类效果是不怎么理想的。</li>
+</ul>
+<h4 id="33">3.3 深度学习<a class="headerlink" href="#33" title="Permanent link">&para;</a></h4>
+<ul>
+<li>使用神经网络来建模做文本分类，它省略了人工设计特征、提取特征的过程，还能借助预训练好的具有语义知识的词向量进行训练；但是该方法需要很多训练数据，这就需要依赖很多人工标注数据了，相比之下规则模板方法则不需要标注数据。</li>
+</ul>
+<ol>
+<li>意图识别的难点
+  输入不规范：错别字、堆砌关键词、非标准自然语言
+  多意图：输入的语句信息量太少造成意图不明确，且有歧义。比如输入仙剑奇侠传，那么是想获得游戏下载、电视剧、电影、音乐还是小说下载
+  意图强度：输入的语句好像即属于A意图，又属于B意图，每个意图的的得分都不高
+  时效性：用户的意图是有较强时效性的，用户在不同时间节点的相同的query可能是属于不同意图的，比如query为“战狼”，在当前时间节点可能是想在线观看战狼1或者战狼2，而如果是在战狼3开拍的时间节点搜的话，可能很大概率是想了解战狼3的一些相关新闻了</li>
+</ol>
+<hr />
+<h3 id="4">4 槽位填充的方法<a class="headerlink" href="#4" title="Permanent link">&para;</a></h3>
+<ul>
+<li>槽位填充包括命名实体识别和槽位预测，其实说命名实体识别是不严谨的，比如在“订机票”意图下的语义槽中，应该有“出发地”和“目的地”，虽然他们都是地名，但是有区别，他们的顺序不能变，也就是不能用“地名”来统一代替，而命名实体识别的做法就是将他们都当做“地名”了。我们只能称槽位填充是一个序列标注任务，但绝不能说序列标注任务就是命名实体识别，且我们在标注数据的时候也不能一样标注。命名实体识别与槽位填充标注的区别如下：</li>
+</ul>
+<div align=center><img src="./img/04.png" style="zoom:70%" ><img/></div>
+
+<ul>
+<li>可以看到槽位填充标注中，针对订机票意图的城市实体的标注，我们使用dept和arr来区分出发地和目的地实体，所以我们应该使用上图中第二种标注方式来标注数据，然后训练序列标注模型，最后用该模型去做槽位值识别。</li>
+<li>槽位预测是指当在用户的query中识别不到某些槽位值时，系统首先需要去做一个较为靠谱的预测，而不是凡事都去跟用户互动来获取这些槽位值。</li>
+</ul>
+<h2 id="_2">小节总结<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<ul>
+<li>本章节主要介绍了自然语言理解中的意图识别和槽位填充两大核心技术模块，详细讲解了不同模块的定义以及实现方法，方便后续进行知识图谱问答系统的搭建。</li>
+</ul>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+    <nav class="md-footer__inner md-grid" aria-label="页脚" >
+      
+        
+        <a href="01-%E9%97%AE%E7%AD%94%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86.html" class="md-footer__link md-footer__link--prev" aria-label="上一页: 7.1 问答系统基础知识" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                上一页
+              </span>
+              7.1 问答系统基础知识
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="03-%E5%8C%BB%E7%96%97KBQA%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84.html" class="md-footer__link md-footer__link--next" aria-label="下一页: 7.3 医疗KBQA系统架构" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                下一页
+              </span>
+              7.3 医疗KBQA系统架构
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.16e2a7d4.min.js", "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.config.lang": "ja", "search.config.pipeline": "trimmer, stemmer", "search.config.separator": "[\\s\\-\uff0c\u3002]+", "search.placeholder": "\u641c\u7d22", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version.title": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.5a2dcb6a.min.js"></script>
+      
+        <script src="../js/extra.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+      
+    
+    
+  </body>
+</html>

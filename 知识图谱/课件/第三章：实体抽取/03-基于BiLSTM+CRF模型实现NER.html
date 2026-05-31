@@ -1,0 +1,2274 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      <link rel="icon" href="../img/AI.jpg">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-8.5.10">
+    
+    
+      
+        <title>3.3 基于深度学习模型实现NER - 红蜘蛛知识图谱项目V3.0</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.975780f9.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.2505c338.min.css">
+        
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="None" data-md-color-accent="None">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#bilstmcrfner" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href=".." title="红蜘蛛知识图谱项目V3.0" class="md-header__button md-logo" aria-label="红蜘蛛知识图谱项目V3.0" data-md-component="logo">
+      
+  <img src="../img/AI.jpg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            红蜘蛛知识图谱项目V3.0
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              3.3 基于深度学习模型实现NER
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="红蜘蛛知识图谱项目V3.0" class="md-nav__button md-logo" aria-label="红蜘蛛知识图谱项目V3.0" data-md-component="logo">
+      
+  <img src="../img/AI.jpg" alt="logo">
+
+    </a>
+    红蜘蛛知识图谱项目V3.0
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_1" type="checkbox" id="__nav_1" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_1">
+          第一章:红蜘蛛项目简介
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="第一章:红蜘蛛项目简介" data-md-level="1">
+        <label class="md-nav__title" for="__nav_1">
+          <span class="md-nav__icon md-icon"></span>
+          第一章:红蜘蛛项目简介
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E4%B8%80%E7%AB%A0%EF%BC%9A%E9%A1%B9%E7%9B%AE%E8%83%8C%E6%99%AF/1.%E9%A1%B9%E7%9B%AE%E7%AE%80%E4%BB%8B.html" class="md-nav__link">
+        1.1 项目背景介绍
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E4%B8%80%E7%AB%A0%EF%BC%9A%E9%A1%B9%E7%9B%AE%E8%83%8C%E6%99%AF/2.%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E6%8A%80%E6%9C%AF%E6%A6%82%E6%8B%AC.html" class="md-nav__link">
+        1.2 知识图谱技术概括
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2">
+          第二章:项目工具介绍
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="第二章:项目工具介绍" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          第二章:项目工具介绍
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E4%BA%8C%E7%AB%A0%EF%BC%9A%E9%A1%B9%E7%9B%AE%E5%B7%A5%E5%85%B7/01-%E9%A1%B9%E7%9B%AE%E5%BA%94%E7%94%A8%E5%B7%A5%E5%85%B7.html" class="md-nav__link">
+        2.1 项目应用工具概览
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E4%BA%8C%E7%AB%A0%EF%BC%9A%E9%A1%B9%E7%9B%AE%E5%B7%A5%E5%85%B7/02-doccano%E6%95%B0%E6%8D%AE%E6%A0%87%E6%B3%A8%E5%B9%B3%E5%8F%B0.html" class="md-nav__link">
+        2.2 doccano数据标注平台
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E4%BA%8C%E7%AB%A0%EF%BC%9A%E9%A1%B9%E7%9B%AE%E5%B7%A5%E5%85%B7/03-%E7%9F%A5%E8%AF%86%E6%9F%A5%E8%AF%A2%E8%AF%AD%E8%A8%80.html" class="md-nav__link">
+        2.3 知识查询语言
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E4%BA%8C%E7%AB%A0%EF%BC%9A%E9%A1%B9%E7%9B%AE%E5%B7%A5%E5%85%B7/04-Neo4j%E5%9B%BE%E6%95%B0%E6%8D%AE%E5%BA%93.html" class="md-nav__link">
+        2.4 Neo4j图数据库
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3">
+          第三章:实体抽取
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="第三章:实体抽取" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          第三章:实体抽取
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="01-%E5%AE%9E%E4%BD%93%E8%AF%86%E5%88%AB%E5%9F%BA%E6%9C%AC%E7%9F%A5%E8%AF%86.html" class="md-nav__link">
+        3.1 实体识别基本知识
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="02-%E5%9F%BA%E4%BA%8E%E8%A7%84%E5%88%99%E5%AE%9E%E7%8E%B0NER.html" class="md-nav__link">
+        3.2 基于规则实现NER
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          3.3 基于深度学习模型实现NER
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="03-%E5%9F%BA%E4%BA%8EBiLSTM%2BCRF%E6%A8%A1%E5%9E%8B%E5%AE%9E%E7%8E%B0NER.html" class="md-nav__link md-nav__link--active">
+        3.3 基于深度学习模型实现NER
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    学习目标
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-bilstmcrf" class="md-nav__link">
+    1 BiLSTM+CRF模型介绍
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-crf" class="md-nav__link">
+    2 CRF原理
+  </a>
+  
+    <nav class="md-nav" aria-label="2 CRF原理">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-crf" class="md-nav__link">
+    2.1 线性CRF的定义
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22" class="md-nav__link">
+    2.2 发射分数和转移分数
+  </a>
+  
+    <nav class="md-nav" aria-label="2.2 发射分数和转移分数">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#221" class="md-nav__link">
+    2.2.1 发射分数
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#222" class="md-nav__link">
+    2.2.2 转移分数
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-crf" class="md-nav__link">
+    2.3 CRF建模的损失函数
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24" class="md-nav__link">
+    2.4 单条路径的分数计算
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#25" class="md-nav__link">
+    2.5 全部路径的分数计算
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#26-viterbi" class="md-nav__link">
+    2.6 Viterbi解码
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-bilstmcrf" class="md-nav__link">
+    3 BiLSTM+CRF项目完整实现
+  </a>
+  
+    <nav class="md-nav" aria-label="3 BiLSTM+CRF项目完整实现">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31" class="md-nav__link">
+    3.1 整体代码架构图
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32" class="md-nav__link">
+    3.2 数据预处理
+  </a>
+  
+    <nav class="md-nav" aria-label="3.2 数据预处理">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    第一步: 查看项目数据集
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    第二步: 构造序列标注数据
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config" class="md-nav__link">
+    第三步: 编写Config类项目文件配置代码
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    第四步:  编写数据处理相关函数
+  </a>
+  
+    <nav class="md-nav" aria-label="第四步:  编写数据处理相关函数">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-xyvocabs" class="md-nav__link">
+    4.1 构造(x,y)样本对，以及获取vocabs
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42" class="md-nav__link">
+    4.2 构造数据迭代器
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-bilstmcrf" class="md-nav__link">
+    3.3 BiLSTM+CRF模型搭建
+  </a>
+  
+    <nav class="md-nav" aria-label="3.3 BiLSTM+CRF模型搭建">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    第一步: 编写模型类的代码
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    第二步: 编写训练函数
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    第三步: 编写模型预测函数
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    小节总结
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="04-Veterbi%E7%AE%97%E6%B3%95%E4%BB%8B%E7%BB%8D%28%E6%89%A9%E5%B1%95%E8%B5%84%E6%96%99%29.html" class="md-nav__link">
+        3.4 Veterbi算法介绍(扩展资料)
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4">
+          第四章:关系抽取
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="第四章:关系抽取" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          第四章:关系抽取
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E5%9B%9B%E7%AB%A0%EF%BC%9A%E5%85%B3%E7%B3%BB%E6%8A%BD%E5%8F%96/01-%E5%85%B3%E7%B3%BB%E6%8A%BD%E5%8F%96%E5%9F%BA%E6%9C%AC%E7%9F%A5%E8%AF%86.html" class="md-nav__link">
+        4.1 关系抽取基本知识
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E5%9B%9B%E7%AB%A0%EF%BC%9A%E5%85%B3%E7%B3%BB%E6%8A%BD%E5%8F%96/02-%E8%A7%84%E5%88%99%E6%96%B9%E6%B3%95%E5%AE%9E%E7%8E%B0%E5%85%B3%E7%B3%BB%E6%8A%BD%E5%8F%96.html" class="md-nav__link">
+        4.2 规则方法实现关系抽
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E5%9B%9B%E7%AB%A0%EF%BC%9A%E5%85%B3%E7%B3%BB%E6%8A%BD%E5%8F%96/03-Pipeline%E6%96%B9%E6%B3%95%E5%AE%9E%E7%8E%B0%E5%85%B3%E7%B3%BB%E6%8A%BD%E5%8F%96.html" class="md-nav__link">
+        4.3 Pipeline方法实现关系抽取
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E5%9B%9B%E7%AB%A0%EF%BC%9A%E5%85%B3%E7%B3%BB%E6%8A%BD%E5%8F%96/04-Joint%E6%96%B9%E6%B3%95%E5%AE%9E%E7%8E%B0%E5%85%B3%E7%B3%BB%E6%8A%BD%E5%8F%96.html" class="md-nav__link">
+        4.4 Joint方法实现关系抽取
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5">
+          第五章:知识融合
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="第五章:知识融合" data-md-level="1">
+        <label class="md-nav__title" for="__nav_5">
+          <span class="md-nav__icon md-icon"></span>
+          第五章:知识融合
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E4%BA%94%E7%AB%A0%EF%BC%9A%E7%9F%A5%E8%AF%86%E8%9E%8D%E5%90%88/01-%E7%9F%A5%E8%AF%86%E8%9E%8D%E5%90%88%E5%9F%BA%E6%9C%AC%E7%9F%A5%E8%AF%86.html" class="md-nav__link">
+        5.1 知识融合基本知识
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E4%BA%94%E7%AB%A0%EF%BC%9A%E7%9F%A5%E8%AF%86%E8%9E%8D%E5%90%88/02-%E5%AE%9E%E4%BD%93%E6%B6%88%E6%AD%A7%E4%BB%BB%E5%8A%A1.html" class="md-nav__link">
+        5.2 实体消歧任务
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6" type="checkbox" id="__nav_6" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_6">
+          第六章:图谱搭建
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="第六章:图谱搭建" data-md-level="1">
+        <label class="md-nav__title" for="__nav_6">
+          <span class="md-nav__icon md-icon"></span>
+          第六章:图谱搭建
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E5%85%AD%E7%AB%A0%EF%BC%9A%E5%9B%BE%E8%B0%B1%E6%90%AD%E5%BB%BA/01-Neo4j%E5%9B%BE%E6%95%B0%E6%8D%AE%E5%BA%93.html" class="md-nav__link">
+        6.1 Neo4j图数据库
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E5%85%AD%E7%AB%A0%EF%BC%9A%E5%9B%BE%E8%B0%B1%E6%90%AD%E5%BB%BA/02-%E5%8C%BB%E7%96%97%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E7%9A%84%E6%90%AD%E5%BB%BA.html" class="md-nav__link">
+        6.2 医疗知识图谱的搭建
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_7" type="checkbox" id="__nav_7" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_7">
+          第七章:图谱应用
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="第七章:图谱应用" data-md-level="1">
+        <label class="md-nav__title" for="__nav_7">
+          <span class="md-nav__icon md-icon"></span>
+          第七章:图谱应用
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E4%B8%83%E7%AB%A0%EF%BC%9A%E5%9B%BE%E8%B0%B1%E5%BA%94%E7%94%A8/01-%E9%97%AE%E7%AD%94%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86.html" class="md-nav__link">
+        7.1 问答系统基础知识
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E4%B8%83%E7%AB%A0%EF%BC%9A%E5%9B%BE%E8%B0%B1%E5%BA%94%E7%94%A8/02-%E9%97%AE%E7%AD%94%E7%B3%BB%E7%BB%9F%E5%85%B3%E9%94%AE%E6%8A%80%E6%9C%AF.html" class="md-nav__link">
+        7.2 问答系统关键技术
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E4%B8%83%E7%AB%A0%EF%BC%9A%E5%9B%BE%E8%B0%B1%E5%BA%94%E7%94%A8/03-%E5%8C%BB%E7%96%97KBQA%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84.html" class="md-nav__link">
+        7.3 医疗KBQA系统架构
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E4%B8%83%E7%AB%A0%EF%BC%9A%E5%9B%BE%E8%B0%B1%E5%BA%94%E7%94%A8/04-%E5%8C%BB%E7%96%97KBQA%E7%B3%BB%E7%BB%9F%E5%AE%9E%E7%8E%B0.html" class="md-nav__link">
+        7.4 医疗KBQA系统实现
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    学习目标
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-bilstmcrf" class="md-nav__link">
+    1 BiLSTM+CRF模型介绍
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-crf" class="md-nav__link">
+    2 CRF原理
+  </a>
+  
+    <nav class="md-nav" aria-label="2 CRF原理">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-crf" class="md-nav__link">
+    2.1 线性CRF的定义
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22" class="md-nav__link">
+    2.2 发射分数和转移分数
+  </a>
+  
+    <nav class="md-nav" aria-label="2.2 发射分数和转移分数">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#221" class="md-nav__link">
+    2.2.1 发射分数
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#222" class="md-nav__link">
+    2.2.2 转移分数
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-crf" class="md-nav__link">
+    2.3 CRF建模的损失函数
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24" class="md-nav__link">
+    2.4 单条路径的分数计算
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#25" class="md-nav__link">
+    2.5 全部路径的分数计算
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#26-viterbi" class="md-nav__link">
+    2.6 Viterbi解码
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-bilstmcrf" class="md-nav__link">
+    3 BiLSTM+CRF项目完整实现
+  </a>
+  
+    <nav class="md-nav" aria-label="3 BiLSTM+CRF项目完整实现">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31" class="md-nav__link">
+    3.1 整体代码架构图
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32" class="md-nav__link">
+    3.2 数据预处理
+  </a>
+  
+    <nav class="md-nav" aria-label="3.2 数据预处理">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    第一步: 查看项目数据集
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    第二步: 构造序列标注数据
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config" class="md-nav__link">
+    第三步: 编写Config类项目文件配置代码
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    第四步:  编写数据处理相关函数
+  </a>
+  
+    <nav class="md-nav" aria-label="第四步:  编写数据处理相关函数">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-xyvocabs" class="md-nav__link">
+    4.1 构造(x,y)样本对，以及获取vocabs
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42" class="md-nav__link">
+    4.2 构造数据迭代器
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-bilstmcrf" class="md-nav__link">
+    3.3 BiLSTM+CRF模型搭建
+  </a>
+  
+    <nav class="md-nav" aria-label="3.3 BiLSTM+CRF模型搭建">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    第一步: 编写模型类的代码
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    第二步: 编写训练函数
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    第三步: 编写模型预测函数
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    小节总结
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="bilstmcrfner">基于BiLSTM+CRF实现NER<a class="headerlink" href="#bilstmcrfner" title="Permanent link">&para;</a></h1>
+<h2 id="_1">学习目标<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<ul>
+<li>理解BiLSTM实现NER的原理</li>
+<li>理解什么是CRF算法</li>
+<li>掌握CRF的损失函数原理</li>
+</ul>
+<hr />
+<hr />
+<h2 id="1-bilstmcrf">1 BiLSTM+CRF模型介绍<a class="headerlink" href="#1-bilstmcrf" title="Permanent link">&para;</a></h2>
+<ul>
+<li>
+<p>BiLSTM+CRF模型的作用</p>
+<div class="highlight"><pre><span></span><code><span class="na">BiLSTM+CRF</span><span class="o">:</span><span class="w"> </span><span class="s">解决NER问题</span><span class="w"></span>
+<span class="na">实现方式</span><span class="o">:</span><span class="w"> </span><span class="s">从一段自然语言文本中找出相关实体，并标注出其位置以及类型。</span><span class="w"></span>
+<span class="na">命名实体识别问题实际上是序列标注问题</span><span class="o">:</span><span class="w"> </span><span class="s">以中文分词任务进行举例, 例如输入序列是一串文字: “我是中国人”, 输出序列是一串标签: “OOBII”, 其中&quot;BIO&quot;组成了一种中文分词的标签体系: B表示这个字是词的开始, I表示词的中间到结尾, O表示其他类型词. 因此我们可以根据输出序列&quot;OOBII&quot;进行解码, 得到分词结果&quot;我\是\中国人&quot;。</span><span class="w"></span>
+<span class="na">序列标注问题涵盖了自然语言处理中的很多任务</span><span class="o">:</span><span class="s">包括语音识别, 中文分词, 机器翻译, 命名实体识别等, 而常见的序列标注模型包括HMM, CRF, RNN, LSTM, GRU等模型。</span><span class="w"></span>
+<span class="na">其中在命名实体识别技术上, 目前主流的技术</span><span class="o">:</span><span class="w"> </span><span class="s">通过BiLSTM+CRF模型进行序列标注。</span><span class="w"></span>
+</code></pre></div>
+</li>
+</ul>
+<ul>
+<li>
+<p>数据标签（假定，具体情况根据业务）</p>
+<div class="highlight"><pre><span></span><code><span class="err">B-Person</span><span class="w"> </span><span class="err">（人名的开始部分）</span><span class="w"></span>
+<span class="err">I-Person</span><span class="w"> </span><span class="err">（人名的中间部分）</span><span class="w"></span>
+<span class="err">B-Organization</span><span class="w"> </span><span class="err">（组织机构的开始部分）</span><span class="w"></span>
+<span class="err">I-Organization</span><span class="w"> </span><span class="err">（组织机构的中间部分）</span><span class="w"></span>
+<span class="err">O</span><span class="w"> </span><span class="err">（非实体信息）</span><span class="w"></span>
+</code></pre></div>
+</li>
+</ul>
+<ul>
+<li>模型架构（图1）</li>
+</ul>
+<div align=center><img src="./img/3-3-1.png" style="zoom:55%" ><img/></div>
+
+<ul>
+<li>BiLSTM网络结构：<ul>
+<li>所谓的BiLSTM，就是(Bidirectional LSTM)双向LSTM. 单向的LSTM模型只能捕捉到从前向后传递的信息，而双向的网络可以同时捕捉正向信息和反向信息，使得对文本信息的利用更全面，效果也更好。</li>
+<li>在BiLSTM网络最终的输出层后面增加了一个线性层，用来将BiLSTM产生的隐藏层输出结果投射到具有某种表达标签特征意义的区间</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>
+<p>CRF网络结构：</p>
+<ul>
+<li>从图中可以看到，在BiLSTM上方我们添加了一个CRF层。具体地，在基于BiLSTM获得各个位置的标签向量之后，这些标签向量将被作为【发射分数】传入CRF中，发射这个概念是从CRF里面带出来的，后边在介绍CRF部分会更多地提及，这里先不用纠结这一点。</li>
+</ul>
+<blockquote>
+<p>这些发射分数（标签向量）传入CRF之后，CRF会据此解码出一串标签序列。那么问题来了，从上图最上边的解码过程可以看出，这里可能对应着很多条不同的路径，例如：</p>
+<p>B-Person, I-Person, O, …, I-Organization</p>
+<p>B-Organization, I-Person, O, …, I-Person</p>
+<p>B-Organization, I-Organization, O, …, O</p>
+<p>CRF的作用就是在所有可能的路径中，找出得出概率最大，效果最优的一条路径，那这个标签序列就是模型的输出。</p>
+</blockquote>
+</li>
+</ul>
+<ul>
+<li>总结一下：使用BiLSTM+CRF模型架构实现NER任务，大致分为两个阶段：<ul>
+<li>使用BiLSTM生成发射分数（标签向量）。</li>
+<li>基于发射分数使用CRF解码最优的标签路径。</li>
+</ul>
+</li>
+</ul>
+<h2 id="2-crf">2 CRF原理<a class="headerlink" href="#2-crf" title="Permanent link">&para;</a></h2>
+<ul>
+<li>本小节将开始聚焦在CRF原理本身进行讲解，力图为大家展现一个清楚明白，基础本质的CRF。</li>
+</ul>
+<h3 id="21-crf">2.1 线性CRF的定义<a class="headerlink" href="#21-crf" title="Permanent link">&para;</a></h3>
+<ul>
+<li>通常我们会使用线性链CRF来建模NER任务，所以本项目将聚焦在线性链CRF来探讨。那什么是线性链CRF呢，我们来看下李航老师在《统计学习方法》书中的定义：</li>
+</ul>
+<blockquote>
+<p>设𝑋=[𝑥1,𝑥2,...,𝑥𝑛]，𝑌=[𝑦1,𝑦2,...,𝑦𝑛]；𝑋，𝑌均为线性链表示的随机变量序列，若在给定随机变量序列的𝑋的条件下，随机变量序列𝑌的条件概率分布𝑃(𝑌|𝑋)构成条件随机场，即满足马尔可夫性:</p>
+<p>𝑃(𝑦𝑖|𝑋,𝑦1,...,𝑦𝑖−1,𝑦𝑖+1,...,𝑦𝑛)=𝑃(𝑦𝑖|𝑋,𝑦𝑖−1,𝑦𝑖+1)      i=1,2,...,𝑛(在𝑖=1和𝑛时只考虑单边)；则称𝑃(𝑌|𝑋)为【线性链条件随机场】</p>
+</blockquote>
+<ul>
+<li>同学们看到这个定义，或许会有些疑惑，但是不用着急，我们来探讨下这个定义。下图（图2）展示了一种经典的线性链CRF的结构图，从这张结构图来理解这个定义，主要包含两个点：<ul>
+<li>确保输入序列𝑋和输出序列𝑌是线性序列</li>
+<li>每个标签𝑦𝑖的产生，只与这些因素有关系：当前位置的输入𝑥𝑖，𝑦𝑖直接相连的两个邻居𝑦𝑖−1和𝑦𝑖+1，与其他的标签和输入没有关系。</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>这样的定义，其实帮助我们减小了建模CRF的代价。</li>
+</ul>
+<div align=center><img src="./img/3-3-2.png" style="zoom:40%" ><img/></div>
+
+<h3 id="22">2.2 发射分数和转移分数<a class="headerlink" href="#22" title="Permanent link">&para;</a></h3>
+<ul>
+<li>上边我们探讨了线性链CRF的定义以及它的一种经典图结构，接下来我们继续回到我们建模的命名实体任务上来。</li>
+</ul>
+<ul>
+<li>
+<p>在上图中，𝑥=[𝑥0,𝑥1,...,𝑥𝑖,...,𝑥𝑛]代表输入变量，对应到我们当前任务就是输入文本序列, 𝑦=[𝑦0,𝑦1,...,𝑦𝑖,...,𝑦𝑛]代表相应的标签序列</p>
+<blockquote>
+<p>其中，每个输入𝑥𝑖均对应着一个标签𝑦𝑖，这一步对应的就是发射分数，它指示了当前的输入𝑥𝑖应该对应什么样的标签；在每个标签𝑦𝑖之间也存在连线，它表示当前位置的标签𝑦𝑖向下一个位置的标签𝑦𝑖+1的一种转移。</p>
+<p>举个例子，假设当前位置的标签是”B-Person”，那下一个位置就很有可能是”I-Person”标签，即标签”B-Person”向”I-Person”转移的概率会比较大。</p>
+</blockquote>
+</li>
+</ul>
+<ul>
+<li>这里我们带出了建模CRF过程中两个重要的概念：发射分数和转移分数，下边我们来看看他们是什么。</li>
+</ul>
+<h4 id="221">2.2.1 发射分数<a class="headerlink" href="#221" title="Permanent link">&para;</a></h4>
+<ul>
+<li>前边我们已经提到过发射分数了，即BiLSTM后产生的标签向量。下图（图3）以矩阵的形式展示了发射分数的生成过程。</li>
+</ul>
+<div align=center><img src="./img/3-3-3.png" style="zoom:45%" ><img/></div>
+
+<ul>
+<li>当给定的文本序列𝑥=[𝑥1,𝑥2,𝑥3,...,𝑥𝑛]映射为对应词向量之后，将会得到一个shape为[𝑛,𝑒𝑚𝑏𝑒𝑑𝑑𝑖𝑛𝑔_𝑠𝑖𝑧𝑒]的词向量矩阵，其中每对应一个字词（样例只使用了4个词），例如𝑥0对应的词向量是[𝑒00,𝑒01,𝑒02,𝑒03]。</li>
+</ul>
+<ul>
+<li>然后将𝑒𝑚𝑏𝑠传入BiLSTM后，每个词的位置都会产生一个上下文向量，所有的向量组合之后会得到一个向量矩阵𝑐𝑜𝑛𝑡𝑒𝑥𝑡_𝑣𝑒𝑐𝑡𝑜𝑟，其中每行代表对应单词经过BiLSTM后的上下文向量。</li>
+</ul>
+<ul>
+<li>这里的每个位置的上下文向量可以用来指导当前位置应该输出的标签信息，但这里有个问题，这个输出向量的维度并不是标签的数量，它不能直接用来指示应该输出什么标签。一般的做法是在后边加一层线性层，将这个上下文向量的维度映射为标签的数量，这样的话就会生成前边所讲的标签向量，其中的每个元素分别对应着相应标签的分数，根据这个分数可以用来指导最终标签的输出。</li>
+</ul>
+<ul>
+<li>具体地，线性层这里只是做了这样的一个线性变换：𝑦=𝑋𝑊+𝑏，显然，这里的𝑋就是𝑐𝑜𝑛𝑡𝑒𝑥𝑡_𝑣𝑒𝑐𝑡𝑜𝑟， 𝑦是相应的𝑒𝑚𝑖𝑠𝑠𝑖𝑜𝑛_𝑠𝑐𝑜𝑟𝑒，𝑊和𝑏是线性层的可学习参数。 前边提到，𝑐𝑜𝑛𝑡𝑒𝑥𝑡_𝑣𝑒𝑐𝑡𝑜𝑟的shape为[𝑛，𝑐𝑜𝑛𝑡𝑒𝑥𝑡_𝑠𝑖𝑧𝑒]，那么线性层的𝑊的shape应该是[𝑐𝑜𝑛𝑡𝑒𝑥𝑡_𝑠𝑖𝑧𝑒,𝑡𝑎𝑔_𝑠𝑖𝑧𝑒]，经过以上公式的线性变换，就可以得到发射分数𝑒𝑚𝑖𝑠𝑠𝑖𝑜𝑛_𝑠𝑐𝑜𝑟𝑒，其中每个字词对应一行的标签分数（图中只设置了三列，代表一共有3个标签），例如，𝑥0对第一个标签的分数预测为𝑡00，对第二个标签的分数预测为𝑡01，对第三个标签的分数预测为𝑡02，依次类推。</li>
+</ul>
+<h4 id="222">2.2.2 转移分数<a class="headerlink" href="#222" title="Permanent link">&para;</a></h4>
+<ul>
+<li>下面我们来聊聊转移分数，这个转移分数表示一个标签向另一个标签转移的分数，分数越高，转移概率就越大，反之亦然。下图（图4）展示了记录转移分数的矩阵。</li>
+</ul>
+<div align=center><img src="./img/3-3-4.png" style="zoom:35%" ><img/></div>
+
+<blockquote>
+<p>让我们从列到行地来看下这个转移矩阵𝑇，B-Person向I-Person转移的分数为0.93，B-Person向I-Organization转移的分数为0.02，前者的分数远远大于后者。I-Person向I-Person转移的概率是0.71，I-Organization向I-Organization转移的分数是0.95，因为一个人或者组织的名字往往包含多个字，所以这个概率相对是比较高的，这其实也是很符合我们直观认识的。</p>
+</blockquote>
+<ul>
+<li>假设我们现在有个标签序列：B-Person, I-Person, O, O，B-Organization, I-Organization。那么这个序列的转移分数可按照如下方式计算: 
+  𝑆𝑒𝑞𝑡=𝑇[𝐼−𝑃𝑒𝑟𝑠𝑜𝑛,𝐵−𝑃𝑒𝑟𝑠𝑜𝑛] + 𝑇[𝑂,𝐼−𝑃𝑒𝑟𝑠𝑜𝑛] 
+  + 𝑇[𝑂,𝑂] + 𝑇[𝑂,𝐵−𝑂𝑟𝑔𝑎𝑛𝑖𝑧𝑎𝑡𝑖𝑜𝑛] + 𝑇[𝐵−𝑂𝑟𝑔𝑎𝑛𝑖𝑧𝑎𝑡𝑖𝑜𝑛,𝐼−𝑂𝑟𝑔𝑎𝑛𝑖𝑧𝑎𝑡𝑖𝑜𝑛]</li>
+</ul>
+<ul>
+<li>这个转移分数矩阵是CRF中的一个**可学习的参数矩阵**，它的存在能够帮助我们显示地去建模标签之间的转移关系，提高命名实体识别的准确率。</li>
+</ul>
+<h3 id="23-crf">2.3 CRF建模的损失函数<a class="headerlink" href="#23-crf" title="Permanent link">&para;</a></h3>
+<ul>
+<li>前边我们讲到，CRF能够帮助我们以一种全局的方式建模，在所有可能的路径中选择效果最优，分数最高的那条路径。那么我们应该怎么去建模这个策略呢，下面我们来具体谈谈。(图5)</li>
+</ul>
+<div align=center><img src="./img/3-3-6.png" style="zoom:35%" ><img/></div>
+
+<ul>
+<li>
+<p>上图5展示了CRF的工作图，现在我们有一串输入𝑥=[𝑥0,𝑥1,𝑥2,𝑥𝑛]（这里的𝑥是文本串对应的发射分数，每个字词𝑥𝑖都对应着一个发射分数向量，也就是前边提到的标签向量，该向量的维度就是标签数量），期待解码出相应的标签序列𝑦=[𝑦0,𝑦1,𝑦2,...,𝑦𝑛]，形式化为对应的条件概率公式如下：</p>
+<div align=center><img src="./img/3-3-5.png" style="zoom:65%" ><img/></div>
+
+</li>
+</ul>
+<ul>
+<li>
+<p>在前面内容我们提到，CRF的解码策略在所有可能的路径中，找出得出概率最大，效果最优的一条路径，那这个标签序列就是模型的输出，假设标签数量是𝑘，文本长度是𝑛，显然会有𝑁=𝑘𝑛条路径，若用𝑆𝑖代表第𝑖条路径的分数，那我们可以这样去算一个标签序列出现的概率：</p>
+<div align=center><img src="./img/3-3-7.png" style="zoom:55%" ><img/></div>
+
+</li>
+</ul>
+<ul>
+<li>
+<p>现在我们有一条真实的路径𝑟𝑒𝑎𝑙，即我们期待CRF解码出来的序列就是这一条。那它的分数可以表示为𝑠𝑟𝑒𝑎𝑙，它出现的概率就是：</p>
+<div align=center><img src="./img/3-3-8.png" style="zoom:55%" ><img/></div>
+
+</li>
+</ul>
+<ul>
+<li>
+<p>所以我们建模学习的目的就是为了不断的提高𝑃(𝑆𝑟𝑒𝑎𝑙)的概率值，这就是我们的目标函数，当目标函数越大时，它对应的损失就应该越小，所以我们可以这样去建模它的损失函数：</p>
+<div align=center><img src="./img/3-3-9.png" style="zoom:55%" ><img/></div>
+
+</li>
+</ul>
+<ul>
+<li>为方便求解，我们一般将这样的损失放到log空间去求解，因为log函数本身是单调递增的，所以它并不影响我们去迭代优化损失函数。</li>
+</ul>
+<div align=center><img src="./img/3-3-10.png" style="zoom:55%" ><img/></div>
+
+<ul>
+<li>千呼万唤始出来，这就是我们CRF建模的损失函数了。我们整个BiLSTM+CRF建模的目的就是为了让这个函数越来越小。从这个损失函数可以看出，这个损失函数包含两部分：<ul>
+<li>单条真实路径的分数𝑆𝑟𝑒𝑎𝑙和归一化项𝑙𝑜𝑔(𝑒𝑆1+𝑒𝑆2+...+𝑒𝑆𝑁)，</li>
+<li>即将全部的路径分数进行𝑙𝑜𝑔_𝑠𝑢𝑚_𝑒𝑥𝑝操作，即先将每条路径分数𝑆𝑖进行𝑒𝑥𝑝(𝑆𝑖)，然后再将所有的项加起来，最后取𝑙𝑜𝑔值。</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>讲到这里，有的同学可能会有疑惑，这里的每条路径分数应该怎么算呢？接下来，我们就来解决这个问题。</li>
+</ul>
+<h3 id="24">2.4 单条路径的分数计算<a class="headerlink" href="#24" title="Permanent link">&para;</a></h3>
+<ul>
+<li>在开始之前，我们再来做一些约定，前边我们提到了发射分数和转移分数，假设𝐸代表发射分数矩阵，𝑇代表转移分数矩阵，𝑛代表文本序列长度，𝑡𝑎𝑔_𝑠𝑖𝑧𝑒代表标签的数量。另外为方便书写，我们为每个标签编个id号。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="center">Tag</th>
+<th align="center">B-Person</th>
+<th align="center">I-Person</th>
+<th align="center">B-Organization</th>
+<th align="center">I-organization</th>
+<th align="center">O</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">Tag_id</td>
+<td align="center">0</td>
+<td align="center">1</td>
+<td align="center">2</td>
+<td align="center">3</td>
+<td align="center">4</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>其中, 𝐸的shape为[𝑛,𝑡𝑎𝑔_𝑠𝑖𝑧𝑒], 每行对应着一个文本字词的发射分数，每列代表一个标签，例如，𝐸01代表𝑥0取id为1的标签分数，𝐸23代表𝑥2取id为3的标签分数。𝑇的shape为[𝑡𝑎𝑔_𝑠𝑖𝑧𝑒,𝑡𝑎𝑔_𝑠𝑖𝑧𝑒]，它代表了标签之间相互转移的分数，例如，𝑇03代表【id为3】的标签向【id为0】的标签转移分数。</li>
+</ul>
+<ul>
+<li>
+<p>每条路径的分数就是由对应的发射分数和转移分数组合而成的，对于图5标记出来的黄色路径来说，𝑥0的标签是B-Person，对应的发射分数是𝐸00，𝑥1的标签是I-Person，对应的发射分数是𝐸11，由B-Person向I-Person转移的分数是𝑇10，因此到这一步的分数就是：𝐸00+𝑇10+𝐸11。</p>
+</li>
+</ul>
+<ul>
+<li>
+<p>接下来𝑥2的标签是𝑂，由𝑥1的标签向I-Person向𝑥2的标签O转移的概率是𝑇41，因此到这一步的分数是：𝐸00+𝑇10+𝐸11+𝑇41+𝐸24，依次类推，我们可以计算完整条路径的分数。假设第𝑖个位置对应的标签为𝑦，则整条路径的分数计算形式化公式为：</p>
+<div align=center><img src="./img/3-3-11.png" style="zoom:55%" ><img/></div>
+
+</li>
+</ul>
+<h3 id="25">2.5 全部路径的分数计算<a class="headerlink" href="#25" title="Permanent link">&para;</a></h3>
+<ul>
+<li>2.3节中的损失函数包括两项，单条真实路径分数的计算和归一化项（如上所述，全部路径分数的𝑙𝑜𝑔_𝑠𝑢𝑚_𝑒𝑥𝑝，为方便描述，后续直接将个归一化项描述为全部路径之和）的计算。这里你或许会问，现在知道了单条路径分数的计算方式，遍历一下所有的路径算个分数，不就可以轻松算出全部路径之和吗？是的，这在理论上是可行的。</li>
+</ul>
+<ul>
+<li>但是，前边我们提到这个路径的数量是个指数级别的量纲，假设我对串包含50个字的文本串进行实体识别，标签的数量是31，那么这个路径的数量将是<span class="arithmatex"><span class="MathJax_Preview">31^{50}​</span><script type="math/tex">31^{50}​</script></span>条，这是真的是难以接受的一件事情，它会远远拖慢模型的训练和预测效率。</li>
+</ul>
+<ul>
+<li>
+<p>因此，我们要换一种高效的思路，这里其实用到了一种被称为前向算法（这里不再讲解）的动态规划，它能帮助我们将图5所有路径的和计算，拆解为每个位置的和计算，最终得出所有的路径之和。</p>
+<div align=center><img src="./img/3-3-12.png" style="zoom:55%" ><img/></div>
+
+</li>
+</ul>
+<h3 id="26-viterbi">2.6 Viterbi解码<a class="headerlink" href="#26-viterbi" title="Permanent link">&para;</a></h3>
+<ul>
+<li>在前边几节，我们讲过了CRF的损失函数、单条路径分数的计算、全部路径分数的计算，根据这些内容完全可以进行BiLSTM+CRF的训练。但是，我们如何使用CRF从全部的路径中解码出得分最高的那条路径呢？</li>
+<li>同2.5节所述，计算全部路径分数后，选择得分最大的那条路径肯定是不行的。其实这里是使用了一种被称为**Viterbi（扩展资料）**的算法，它的思想和2.5节介绍的**前向算法**有些类似，将从全部路径中查找最优路径的过程，拆解为选择每个位置累计的最大路径。</li>
+</ul>
+<hr />
+<h2 id="3-bilstmcrf">3 BiLSTM+CRF项目完整实现<a class="headerlink" href="#3-bilstmcrf" title="Permanent link">&para;</a></h2>
+<h3 id="31">3.1 整体代码架构图<a class="headerlink" href="#31" title="Permanent link">&para;</a></h3>
+<div align=center><img src="./img/3-3-13.png" style="zoom:55%" ><img/></div>
+
+<h3 id="32">3.2 数据预处理<a class="headerlink" href="#32" title="Permanent link">&para;</a></h3>
+<ul>
+<li>本项目中对数据部分的预处理步骤如下:<ul>
+<li>第一步: 查看项目数据集</li>
+<li>第二步: 构造序列标注数据</li>
+<li>第三步: 编写Config类项目文件配置代码</li>
+<li>第四步: 构建DataSet类与dataloader函数</li>
+</ul>
+</li>
+</ul>
+<hr />
+<h4 id="_2">第一步: 查看项目数据集<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h4>
+<ul>
+<li>数据说明：本次项目数据一共存放在两个文件夹中，路径分别为：<ul>
+<li>/MedicalKB/Ner/LSTM_CRF/data_origin</li>
+<li>/MedicalKB/Ner/LSTM_CRF/data</li>
+</ul>
+</li>
+</ul>
+<hr />
+<ul>
+<li>
+<p>data_origin数据说明：</p>
+<ul>
+<li>该文件中的数据来源为**医院真实病患的医疗数据，数据量有限，但是足够掌握本次实现实体抽取的模型思想。</li>
+</ul>
+<ul>
+<li>该文件中共包括4个文件夹:</li>
+</ul>
+<ul>
+<li>
+<p>每个文件夹下共有两类文件：</p>
+<ul>
+<li>以.txt结尾的文件，是标注好的数据，包括其位置和类型，格式如下：</li>
+</ul>
+<div class="highlight"><pre><span></span><code>右髋部 21  23  身体部位
+疼痛  27  28  症状和体征
+肿胀  29  30  症状和体征
+</code></pre></div>
+<blockquote>
+<p>txt中，每行有4列，列之间用空格隔开</p>
+<p>第一列：实体名称；第二列：实体开始位置；第三列：实体结束位置；第四列：实体类型</p>
+</blockquote>
+<ul>
+<li>以txtoriginal.txt结尾的文件，是原始文档</li>
+</ul>
+<div class="highlight"><pre><span></span><code>女性，88岁，农民，双滦应营子村人，主因右髋部摔伤后疼痛肿胀，活动受限5小时于2016-10-29，11：12入院。
+</code></pre></div>
+</li>
+</ul>
+<ul>
+<li>注意：我们需要对data_origin中所有的文件数据进行格式转换，将其转换为BIO数据标注形式，符合NER任务要求。</li>
+</ul>
+</li>
+</ul>
+<hr />
+<ul>
+<li>
+<p>data数据说明：</p>
+<ul>
+<li>该文件中原始包括两个json文件：labels.json和tag2id.json</li>
+<li>labels.json文件说明：</li>
+</ul>
+<div class="highlight"><pre><span></span><code> {
+   &quot;治疗&quot;: &quot;TREATMENT&quot;,
+   &quot;身体部位&quot;: &quot;BODY&quot;,
+   &quot;症状和体征&quot;: &quot;SIGNS&quot;,
+   &quot;检查和检验&quot;: &quot;CHECK&quot;,
+   &quot;疾病和诊断&quot;: &quot;DISEASE&quot;
+ }
+</code></pre></div>
+<blockquote>
+<p>一共包含5种实体类型：TREATMENT治疗方式, BODY身体部位, SIGN疾病症状, CHECK医学检查, DISEASE疾病实体.O非实体部分,</p>
+<ul>
+<li>tag2id.json文件说明：</li>
+</ul>
+</blockquote>
+<div class="highlight"><pre><span></span><code><span class="p">{</span><span class="w"></span>
+<span class="w"> </span><span class="nt">&quot;O&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"></span>
+<span class="w"> </span><span class="nt">&quot;B-TREATMENT&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"></span>
+<span class="w"> </span><span class="nt">&quot;I-TREATMENT&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"></span>
+<span class="w"> </span><span class="nt">&quot;B-BODY&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"></span>
+<span class="w"> </span><span class="nt">&quot;I-BODY&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"></span>
+<span class="w"> </span><span class="nt">&quot;B-SIGNS&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"></span>
+<span class="w"> </span><span class="nt">&quot;I-SIGNS&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">6</span><span class="p">,</span><span class="w"></span>
+<span class="w"> </span><span class="nt">&quot;B-CHECK&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">7</span><span class="p">,</span><span class="w"></span>
+<span class="w"> </span><span class="nt">&quot;I-CHECK&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span><span class="w"></span>
+<span class="w"> </span><span class="nt">&quot;B-DISEASE&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">9</span><span class="p">,</span><span class="w"></span>
+<span class="w"> </span><span class="nt">&quot;I-DISEASE&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+<blockquote>
+<p>将上述5种实体类型，转换为标签形式，每个token对应11种可能的标签（注意还有一个非实体类型O）</p>
+</blockquote>
+</li>
+</ul>
+<h4 id="_3">第二步: 构造序列标注数据<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h4>
+<ul>
+<li>
+<p>需要对上述的origin数据进行处理，进行序列标注，选择标注方式：BIO，目的：对句子中的每个token都要标记上对应的标签，并统计所有tokens（去重后）并保存</p>
+<blockquote>
+<p>举例说明：</p>
+<ul>
+<li>未标注前：</li>
+</ul>
+<div class="highlight"><pre><span></span><code>[&#39;以&#39;, &#39;咳&#39;, &#39;嗽&#39;, &#39;，&#39;, &#39;咳&#39;, &#39;痰&#39;, &#39;，&#39;, &#39;发&#39;, &#39;热&#39;, &#39;为&#39;, &#39;主&#39;, &#39;症&#39;, &#39;。&#39;]
+</code></pre></div>
+<ul>
+<li>标注后：</li>
+</ul>
+<div class="highlight"><pre><span></span><code>[&#39;O&#39;, &#39;B-SIGNS&#39;, &#39;I-SIGNS&#39;, &#39;O&#39;, &#39;B-SIGNS&#39;, &#39;I-SIGNS&#39;, &#39;O&#39;, &#39;B-SIGNS&#39;, &#39;I-SIGNS&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;]
+</code></pre></div>
+</blockquote>
+</li>
+</ul>
+<ul>
+<li>
+<p>构造序列标注数据</p>
+<ul>
+<li>代码路径：/MedicalKB/Ner/LSTM_CRF/utils/data_process.py</li>
+<li>在data_process.py脚本中，定义一个TransferData类，实现数据格式的转换</li>
+<li>具体代码：</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
+<span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="s1">&#39;..&#39;</span><span class="p">)</span>
+<span class="n">cur</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;当前数据处理默认工作目录：&#39;</span><span class="p">,</span> <span class="n">cur</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">TransferData</span><span class="p">():</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label_dict</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cur</span><span class="p">,</span> <span class="s1">&#39;data/labels.json&#39;</span><span class="p">)))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">seq_tag_dict</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cur</span><span class="p">,</span><span class="s1">&#39;data/tag2id.json&#39;</span><span class="p">)))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">origin_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cur</span><span class="p">,</span> <span class="s1">&#39;data_origin&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">train_filepath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cur</span><span class="p">,</span> <span class="s1">&#39;data/train.txt&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">transfer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_filepath</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fr</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">dirs</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">origin_path</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+                    <span class="n">filepath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="s1">&#39;original&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">filepath</span><span class="p">:</span>
+                        <span class="k">continue</span>
+                    <span class="n">label_filepath</span> <span class="o">=</span> <span class="n">filepath</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.txtoriginal&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\t\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">label_filepath</span><span class="p">)</span>
+                    <span class="n">res_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_label_text</span><span class="p">(</span><span class="n">label_filepath</span><span class="p">)</span>
+                    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span><span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                        <span class="n">content</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                        <span class="k">for</span> <span class="n">indx</span><span class="p">,</span> <span class="n">char</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">content</span><span class="p">):</span>
+                            <span class="n">char_label</span> <span class="o">=</span> <span class="n">res_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">indx</span><span class="p">,</span> <span class="s1">&#39;O&#39;</span><span class="p">)</span>
+                            <span class="n">fr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">char</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">char_label</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">read_label_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label_filepath</span><span class="p">):</span>
+        <span class="n">res_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">open</span><span class="p">(</span><span class="n">label_filepath</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">):</span>
+            <span class="c1"># line--》[右髋部\t21\t23\t身体部位]</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="c1"># res--&gt;[&#39;右髋部&#39;, &#39;21&#39;, &#39;23&#39;, &#39;身体部位&#39;]</span>
+            <span class="n">start</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">end</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+            <span class="n">label</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+            <span class="n">label_tag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">start</span><span class="p">:</span>
+                    <span class="n">tag</span> <span class="o">=</span> <span class="s2">&quot;B-&quot;</span> <span class="o">+</span> <span class="n">label_tag</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">tag</span> <span class="o">=</span> <span class="s2">&quot;I-&quot;</span> <span class="o">+</span> <span class="n">label_tag</span>
+                <span class="n">res_dict</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">tag</span>
+        <span class="k">return</span> <span class="n">res_dict</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">handler</span> <span class="o">=</span> <span class="n">TransferData</span><span class="p">()</span>
+    <span class="n">handler</span><span class="o">.</span><span class="n">transfer</span><span class="p">()</span>
+</code></pre></div>
+<blockquote>
+<p>经过数据转换后，我们会得到一个train.txt文档，此时，对于所有origin中的数据，都实现了BIO标注</p>
+<div class="highlight"><pre><span></span><code>咳   B-SIGNS
+痰   I-SIGNS
+，   O
+发   B-SIGNS
+热   I-SIGNS
+，   O
+饮   O
+食   O
+、   O
+睡   O
+眠   O
+尚   O
+可   O
+</code></pre></div>
+</blockquote>
+</li>
+</ul>
+<hr />
+<hr />
+<h4 id="config">第三步: 编写Config类项目文件配置代码<a class="headerlink" href="#config" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Config类文件路径为:/MedicalKB/Ner/LSTM_CRF/config.py</li>
+</ul>
+<hr />
+<ul>
+<li>config文件目的: 配置项目常用变量，一般这些变量属于不经常改变的，比如: 训练文件路径、模型训练次数、模型超参数等等</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">json</span>
+
+
+<span class="k">class</span> <span class="nc">Config</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># 如果是windows或者linux电脑（使用GPU）</span>
+        <span class="c1"># self.device = &quot;cuda:0&quot; if torch.cuda.is_available() else &quot;cpu:0&quot;</span>
+        <span class="c1"># M1芯片及其以上的电脑（使用GPU）</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="s1">&#39;mps&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">train_path</span> <span class="o">=</span> <span class="s1">&#39;/MedicalKB/Ner/LSTM_CRF/data/train.txt&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vocab_path</span> <span class="o">=</span> <span class="s1">&#39;/MedicalKB/Ner/LSTM_CRF/vocab/vocab.txt&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">embedding_dim</span> <span class="o">=</span> <span class="mi">300</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">epochs</span> <span class="o">=</span> <span class="mi">5</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">=</span> <span class="mi">8</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hidden_dim</span> <span class="o">=</span> <span class="mi">256</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lr</span> <span class="o">=</span> <span class="mf">2e-3</span> <span class="c1"># crf的时候，lr可以小点，比如1e-3</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dropout</span> <span class="o">=</span> <span class="mf">0.2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="s2">&quot;BiLSTM_CRF&quot;</span> <span class="c1"># 可以只用&quot;BiLSTM&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tag2id</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s1">&#39;/MedicalKB/Ner/LSTM_CRF/data/tag2id.json&#39;</span><span class="p">))</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">conf</span> <span class="o">=</span> <span class="n">Config</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">conf</span><span class="o">.</span><span class="n">train_path</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">conf</span><span class="o">.</span><span class="n">tag2id</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h4 id="_4">第四步:  编写数据处理相关函数<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h4>
+<ul>
+<li>构造数据预处理函数，分为两步骤：<ul>
+<li>1.构造样本x以及标签y数据对，以及获取vocabs</li>
+<li>2.构造数据迭代器</li>
+</ul>
+</li>
+</ul>
+<hr />
+<h5 id="41-xyvocabs">4.1 构造(x,y)样本对，以及获取vocabs<a class="headerlink" href="#41-xyvocabs" title="Permanent link">&para;</a></h5>
+<ul>
+<li>因为在第二步构造序列标注数据时，没有对样本进行明确的分割，这里我们采用标点符号为分隔符，构造不同的(x, y)样本对</li>
+<li>代码实现：<ul>
+<li>路径：/MedicalKB/Ner/LSTM_CRF/utils/common.py</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">LSTM_CRF.config</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="n">conf</span> <span class="o">=</span> <span class="n">Config</span><span class="p">()</span>
+
+<span class="sd">&#39;&#39;&#39;构造数据集&#39;&#39;&#39;</span>
+
+<span class="k">def</span> <span class="nf">build_data</span><span class="p">():</span>
+    <span class="n">datas</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">sample_x</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">sample_y</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">vocab_list</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;PAD&quot;</span><span class="p">,</span> <span class="s1">&#39;UNK&#39;</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">open</span><span class="p">(</span><span class="n">conf</span><span class="o">.</span><span class="n">train_path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">):</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">char</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">char</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">cate</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">sample_x</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">char</span><span class="p">)</span>
+        <span class="n">sample_y</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cate</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">char</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">vocab_list</span><span class="p">:</span>
+            <span class="n">vocab_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">char</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">char</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;。&#39;</span><span class="p">,</span> <span class="s1">&#39;?&#39;</span><span class="p">,</span> <span class="s1">&#39;!&#39;</span><span class="p">,</span> <span class="s1">&#39;！&#39;</span><span class="p">,</span> <span class="s1">&#39;？&#39;</span><span class="p">]:</span>
+            <span class="n">datas</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">sample_x</span><span class="p">,</span> <span class="n">sample_y</span><span class="p">])</span>
+            <span class="n">sample_x</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">sample_y</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">word2id</span> <span class="o">=</span> <span class="p">{</span><span class="n">wd</span><span class="p">:</span> <span class="n">index</span> <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">wd</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">vocab_list</span><span class="p">)}</span>
+    <span class="n">write_file</span><span class="p">(</span><span class="n">vocab_list</span><span class="p">,</span> <span class="n">conf</span><span class="o">.</span><span class="n">vocab_path</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">datas</span><span class="p">,</span> <span class="n">word2id</span>
+
+
+<span class="sd">&#39;&#39;&#39;保存字典文件&#39;&#39;&#39;</span>
+
+
+<span class="k">def</span> <span class="nf">write_file</span><span class="p">(</span><span class="n">wordlist</span><span class="p">,</span> <span class="n">filepath</span><span class="p">):</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">wordlist</span><span class="p">))</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">datas</span><span class="p">,</span> <span class="n">word2id</span> <span class="o">=</span> <span class="n">build_data</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">datas</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">datas</span><span class="p">[:</span><span class="mi">4</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">word2id</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">word2id</span><span class="p">))</span>
+</code></pre></div>
+<hr />
+<h5 id="42">4.2 构造数据迭代器<a class="headerlink" href="#42" title="Permanent link">&para;</a></h5>
+<ul>
+<li>代码路径：/MedicalKB/Ner/LSTM_CRF/utils/data_loader.py</li>
+</ul>
+<ul>
+<li>
+<p>第一步：导入必备的工具包</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">common</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">Dataset</span>
+<span class="kn">from</span> <span class="nn">torch.nn.utils.rnn</span> <span class="kn">import</span> <span class="n">pad_sequence</span>
+
+<span class="n">datas</span><span class="p">,</span> <span class="n">word2id</span> <span class="o">=</span> <span class="n">build_data</span><span class="p">()</span>
+</code></pre></div>
+</li>
+</ul>
+<ul>
+<li>第二步：构建Dataset类</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">NerDataset</span><span class="p">(</span><span class="n">Dataset</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datas</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">datas</span> <span class="o">=</span> <span class="n">datas</span>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">datas</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">datas</span><span class="p">[</span><span class="n">item</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">datas</span><span class="p">[</span><span class="n">item</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span>
+</code></pre></div>
+<hr />
+<ul>
+<li>第三步：构建自定义函数collate_fn()</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">collate_fn</span><span class="p">(</span><span class="n">batch</span><span class="p">):</span>
+    <span class="n">x_train</span> <span class="o">=</span> <span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="n">word2id</span><span class="p">[</span><span class="n">char</span><span class="p">]</span> <span class="k">for</span> <span class="n">char</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span> <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">]</span>
+    <span class="n">y_train</span> <span class="o">=</span> <span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="n">conf</span><span class="o">.</span><span class="n">tag2id</span><span class="p">[</span><span class="n">label</span><span class="p">]</span> <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span> <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">]</span>
+    <span class="c1"># 补齐input_ids, 使用0作为填充值</span>
+    <span class="n">input_ids_padded</span> <span class="o">=</span> <span class="n">pad_sequence</span><span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="n">batch_first</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">padding_value</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="c1"># # 补齐labels，使用0作为填充值</span>
+    <span class="n">labels_padded</span> <span class="o">=</span> <span class="n">pad_sequence</span><span class="p">(</span><span class="n">y_train</span><span class="p">,</span> <span class="n">batch_first</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">padding_value</span><span class="o">=-</span><span class="mi">100</span><span class="p">)</span>
+
+    <span class="c1"># 创建attention mask</span>
+    <span class="n">attention_mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">input_ids_padded</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">long</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">input_ids_padded</span><span class="p">,</span> <span class="n">labels_padded</span><span class="p">,</span> <span class="n">attention_mask</span>
+</code></pre></div>
+<hr />
+<ul>
+<li>第四步：构建get_data函数，获得数据迭代器</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_data</span><span class="p">():</span>
+    <span class="n">train_dataset</span> <span class="o">=</span> <span class="n">NerDataset</span><span class="p">(</span><span class="n">datas</span><span class="p">[:</span><span class="mi">6200</span><span class="p">])</span>
+    <span class="n">train_dataloader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="n">train_dataset</span><span class="p">,</span>
+                                  <span class="n">batch_size</span><span class="o">=</span><span class="n">conf</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
+                                  <span class="n">collate_fn</span><span class="o">=</span><span class="n">collate_fn</span><span class="p">,</span>
+                                  <span class="n">drop_last</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                  <span class="p">)</span>
+
+    <span class="n">dev_dataset</span> <span class="o">=</span> <span class="n">NerDataset</span><span class="p">(</span><span class="n">datas</span><span class="p">[</span><span class="mi">6200</span><span class="p">:])</span>
+    <span class="n">dev_dataloader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="n">dev_dataset</span><span class="p">,</span>
+                                <span class="n">batch_size</span><span class="o">=</span><span class="n">conf</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
+                                <span class="n">collate_fn</span><span class="o">=</span><span class="n">collate_fn</span><span class="p">,</span>
+                                <span class="n">drop_last</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                <span class="p">)</span>
+    <span class="k">return</span> <span class="n">train_dataloader</span><span class="p">,</span> <span class="n">dev_dataloader</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">train_dataloader</span><span class="p">,</span> <span class="n">dev_dataloader</span> <span class="o">=</span> <span class="n">get_data</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">input_ids_padded</span><span class="p">,</span> <span class="n">labels_padded</span><span class="p">,</span> <span class="n">attention_mask</span> <span class="ow">in</span> <span class="n">train_dataloader</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">input_ids_padded</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">labels_padded</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">attention_mask</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="k">break</span>
+</code></pre></div>
+<hr />
+<h3 id="33-bilstmcrf">3.3 BiLSTM+CRF模型搭建<a class="headerlink" href="#33-bilstmcrf" title="Permanent link">&para;</a></h3>
+<ul>
+<li>本项目中BiLSTN+CRF模型搭建的步骤如下:<ul>
+<li>第一步: 编写模型类的代码</li>
+<li>第二步: 编写训练函数</li>
+<li>第三步: 编写使用模型预测代码的实现.</li>
+</ul>
+</li>
+</ul>
+<hr />
+<h4 id="_5">第一步: 编写模型类的代码<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h4>
+<ul>
+<li>构建BiLSTM模型</li>
+<li>代码路径: /MedicalKB/Ner/LSTM_CRF/model/BiLSTM.py</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+
+
+<span class="k">class</span> <span class="nc">NERLSTM</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">embedding_dim</span><span class="p">,</span> <span class="n">hidden_dim</span><span class="p">,</span> <span class="n">dropout</span><span class="p">,</span> <span class="n">word2id</span><span class="p">,</span> <span class="n">tag2id</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">NERLSTM</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;BiLSTM&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">embedding_dim</span> <span class="o">=</span> <span class="n">embedding_dim</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hidden_dim</span> <span class="o">=</span> <span class="n">hidden_dim</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vocab_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">word2id</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tag_to_ix</span> <span class="o">=</span> <span class="n">tag2id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tag_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">tag2id</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">word_embeds</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Embedding</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vocab_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">embedding_dim</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dropout</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="n">dropout</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lstm</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">LSTM</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">embedding_dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hidden_dim</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span>
+                            <span class="n">bidirectional</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">batch_first</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hidden2tag</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hidden_dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tag_size</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">mask</span><span class="p">):</span>
+        <span class="n">embedding</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">word_embeds</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">outputs</span><span class="p">,</span> <span class="n">hidden</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lstm</span><span class="p">(</span><span class="n">embedding</span><span class="p">)</span>
+        <span class="n">outputs</span> <span class="o">=</span> <span class="n">outputs</span> <span class="o">*</span> <span class="n">mask</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># 仅保留有效位置的输出</span>
+        <span class="n">outputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dropout</span><span class="p">(</span><span class="n">outputs</span><span class="p">)</span>
+        <span class="n">outputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hidden2tag</span><span class="p">(</span><span class="n">outputs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">outputs</span>
+</code></pre></div>
+<hr />
+<ul>
+<li>构建BiLSTM_CRF模型类</li>
+</ul>
+<ul>
+<li>代码路径: /MedicalKB/Ner/LSTM_CRF/model/BiLSTM_CRF.py</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+<span class="kn">from</span> <span class="nn">TorchCRF</span> <span class="kn">import</span> <span class="n">CRF</span>
+
+
+<span class="k">class</span> <span class="nc">NERLSTM_CRF</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">embedding_dim</span><span class="p">,</span> <span class="n">hidden_dim</span><span class="p">,</span> <span class="n">dropout</span><span class="p">,</span> <span class="n">word2id</span><span class="p">,</span> <span class="n">tag2id</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">NERLSTM_CRF</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;BiLSTM_CRF&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">embedding_dim</span> <span class="o">=</span> <span class="n">embedding_dim</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hidden_dim</span> <span class="o">=</span> <span class="n">hidden_dim</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vocab_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">word2id</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tag_to_ix</span> <span class="o">=</span> <span class="n">tag2id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tag_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">tag2id</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">word_embeds</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Embedding</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vocab_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">embedding_dim</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dropout</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="n">dropout</span><span class="p">)</span>
+
+        <span class="c1">#CRF</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lstm</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">LSTM</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">embedding_dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hidden_dim</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span>
+                            <span class="n">bidirectional</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">batch_first</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">hidden2tag</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hidden_dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tag_size</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">crf</span> <span class="o">=</span> <span class="n">CRF</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tag_size</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">mask</span><span class="p">):</span>
+        <span class="c1">#lstm模型得到的结果</span>
+        <span class="n">outputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_lstm2linear</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">outputs</span> <span class="o">=</span> <span class="n">outputs</span> <span class="o">*</span> <span class="n">mask</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">outputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">crf</span><span class="o">.</span><span class="n">viterbi_decode</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">mask</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">outputs</span>
+
+    <span class="k">def</span> <span class="nf">log_likelihood</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">tags</span><span class="p">,</span> <span class="n">mask</span><span class="p">):</span>
+        <span class="c1"># lstm模型得到的结果</span>
+        <span class="n">outputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_lstm2linear</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">outputs</span> <span class="o">=</span> <span class="n">outputs</span> <span class="o">*</span> <span class="n">mask</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="c1"># 计算损失</span>
+        <span class="k">return</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">crf</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">tags</span><span class="p">,</span> <span class="n">mask</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_lstm2linear</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">embedding</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">word_embeds</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">outputs</span><span class="p">,</span> <span class="n">hidden</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lstm</span><span class="p">(</span><span class="n">embedding</span><span class="p">)</span>
+        <span class="n">outputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dropout</span><span class="p">(</span><span class="n">outputs</span><span class="p">)</span>
+        <span class="n">outputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hidden2tag</span><span class="p">(</span><span class="n">outputs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">outputs</span>
+</code></pre></div>
+<hr />
+<h4 id="_6">第二步: 编写训练函数<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h4>
+<ul>
+<li>实现训练函数train.py</li>
+<li>代码位置:/MedicalKB/Ner/LSTM_CRF/trian.py</li>
+<li>第一步：导入必备工具包</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+<span class="kn">import</span> <span class="nn">torch.optim</span> <span class="k">as</span> <span class="nn">optim</span>
+<span class="kn">from</span> <span class="nn">model.BiLSTM</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">model.BiLSTM_CRF</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">utils.data_loader</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span>  <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+<span class="c1"># classification_report可以导出字典格式，修改参数：output_dict=True，可以将字典在保存为csv格式输出</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">precision_score</span><span class="p">,</span> <span class="n">recall_score</span><span class="p">,</span> <span class="n">f1_score</span><span class="p">,</span> <span class="n">classification_report</span>
+<span class="kn">from</span> <span class="nn">config</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="n">conf</span> <span class="o">=</span> <span class="n">Config</span><span class="p">()</span>
+</code></pre></div>
+<hr />
+<ul>
+<li>第二步：实现模型训练函数的搭建：mode2trian()</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">model2train</span><span class="p">():</span>
+    <span class="c1"># 获取数据</span>
+    <span class="n">train_dataloader</span><span class="p">,</span> <span class="n">dev_dataloader</span> <span class="o">=</span> <span class="n">get_data</span><span class="p">()</span>
+    <span class="c1"># 实例化模型</span>
+    <span class="n">models</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;BiLSTM&#39;</span><span class="p">:</span> <span class="n">NERLSTM</span><span class="p">,</span>
+              <span class="s1">&#39;BiLSTM_CRF&#39;</span><span class="p">:</span> <span class="n">NERLSTM_CRF</span><span class="p">}</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">models</span><span class="p">[</span><span class="n">conf</span><span class="o">.</span><span class="n">model</span><span class="p">](</span><span class="n">conf</span><span class="o">.</span><span class="n">embedding_dim</span><span class="p">,</span> <span class="n">conf</span><span class="o">.</span><span class="n">hidden_dim</span><span class="p">,</span> <span class="n">conf</span><span class="o">.</span><span class="n">dropout</span><span class="p">,</span> <span class="n">word2id</span><span class="p">,</span> <span class="n">conf</span><span class="o">.</span><span class="n">tag2id</span><span class="p">)</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">conf</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+    <span class="c1"># 实例化损失函数</span>
+    <span class="n">criterion</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">()</span>
+    <span class="c1"># 实例化优化器</span>
+    <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="n">conf</span><span class="o">.</span><span class="n">lr</span><span class="p">)</span>
+    <span class="c1"># 选择模型进行训练</span>
+    <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">conf</span><span class="o">.</span><span class="n">model</span> <span class="o">==</span> <span class="s1">&#39;BiLSTM&#39;</span><span class="p">:</span>
+        <span class="n">f1_score</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1000</span>
+        <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">conf</span><span class="o">.</span><span class="n">epochs</span><span class="p">):</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">mask</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tqdm</span><span class="p">(</span><span class="n">train_dataloader</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;BiLSTM训练&#39;</span><span class="p">)):</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">conf</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+                <span class="n">mask</span> <span class="o">=</span> <span class="n">mask</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">conf</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+                <span class="n">y</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">conf</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+                <span class="n">pred</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">mask</span><span class="p">)</span>
+                <span class="n">pred</span> <span class="o">=</span> <span class="n">pred</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">conf</span><span class="o">.</span><span class="n">tag2id</span><span class="p">))</span>
+                <span class="n">my_loss</span> <span class="o">=</span> <span class="n">criterion</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">y</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+                <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+                <span class="n">my_loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+                <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">index</span> <span class="o">%</span> <span class="mi">200</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;epoch:</span><span class="si">%04d</span><span class="s1">,------------loss:</span><span class="si">%f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">epoch</span><span class="p">,</span> <span class="n">my_loss</span><span class="o">.</span><span class="n">item</span><span class="p">()))</span>
+            <span class="n">precision</span><span class="p">,</span> <span class="n">recall</span><span class="p">,</span> <span class="n">f1</span><span class="p">,</span> <span class="n">report</span> <span class="o">=</span> <span class="n">model2dev</span><span class="p">(</span><span class="n">dev_dataloader</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">criterion</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">f1</span> <span class="o">&gt;</span> <span class="n">f1_score</span><span class="p">:</span>
+                <span class="n">f1_score</span> <span class="o">=</span> <span class="n">f1</span>
+                <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">state_dict</span><span class="p">(),</span> <span class="s1">&#39;save_model/bilstm_best.pth&#39;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">report</span><span class="p">)</span>
+        <span class="n">end_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;训练总耗时：</span><span class="si">{</span><span class="n">end_time</span> <span class="o">-</span> <span class="n">start_time</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">conf</span><span class="o">.</span><span class="n">model</span> <span class="o">==</span> <span class="s1">&#39;BiLSTM_CRF&#39;</span><span class="p">:</span>
+        <span class="n">f1_score</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1000</span>
+        <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">conf</span><span class="o">.</span><span class="n">epochs</span><span class="p">):</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">mask</span><span class="p">)</span><span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tqdm</span><span class="p">(</span><span class="n">train_dataloader</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;bilstm+crf训练&#39;</span><span class="p">)):</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">conf</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+                <span class="n">mask</span> <span class="o">=</span> <span class="n">mask</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">conf</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+                <span class="n">tags</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">conf</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+                <span class="c1"># CRF</span>
+                <span class="n">loss</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">log_likelihood</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">tags</span><span class="p">,</span> <span class="n">mask</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+                <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+                <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+                <span class="c1"># CRF</span>
+                <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">clip_grad_norm_</span><span class="p">(</span><span class="n">parameters</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">max_norm</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+                <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">index</span> <span class="o">%</span> <span class="mi">200</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;epoch:</span><span class="si">%04d</span><span class="s1">,------------loss:</span><span class="si">%f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">epoch</span><span class="p">,</span> <span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">()))</span>
+            <span class="n">precision</span><span class="p">,</span> <span class="n">recall</span><span class="p">,</span> <span class="n">f1</span><span class="p">,</span> <span class="n">report</span> <span class="o">=</span> <span class="n">model2dev</span><span class="p">(</span><span class="n">dev_dataloader</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">f1</span> <span class="o">&gt;</span> <span class="n">f1_score</span><span class="p">:</span>
+                <span class="n">f1_score</span> <span class="o">=</span> <span class="n">f1</span>
+                <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">state_dict</span><span class="p">(),</span> <span class="s1">&#39;save_model/bilstm_crf_best.pth&#39;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">report</span><span class="p">)</span>
+        <span class="n">end_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;训练总耗时：</span><span class="si">{</span><span class="n">end_time</span><span class="o">-</span><span class="n">start_time</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</code></pre></div>
+<ul>
+<li>第三步：实现模型验证函数的搭建：model2dev()</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">model2dev</span><span class="p">(</span><span class="n">dev_iter</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">criterion</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="n">aver_loss</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">preds</span><span class="p">,</span> <span class="n">golds</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">mask</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tqdm</span><span class="p">(</span><span class="n">dev_iter</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;测试集验证&quot;</span><span class="p">)):</span>
+        <span class="n">val_x</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">conf</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">mask</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">conf</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">val_y</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">conf</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">predict</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">model</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;BiLSTM&quot;</span><span class="p">:</span>
+            <span class="n">pred</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">val_x</span><span class="p">,</span> <span class="n">mask</span><span class="p">)</span>
+            <span class="n">predict</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+            <span class="n">pred</span> <span class="o">=</span> <span class="n">pred</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">conf</span><span class="o">.</span><span class="n">tag2id</span><span class="p">))</span>
+            <span class="n">val_loss</span> <span class="o">=</span> <span class="n">criterion</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">val_y</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+            <span class="n">aver_loss</span> <span class="o">+=</span> <span class="n">val_loss</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">model</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;BiLSTM_CRF&quot;</span><span class="p">:</span>
+            <span class="n">mask</span> <span class="o">=</span> <span class="n">mask</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
+            <span class="n">predict</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">val_x</span><span class="p">,</span> <span class="n">mask</span><span class="p">)</span>
+            <span class="n">loss</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">log_likelihood</span><span class="p">(</span><span class="n">val_x</span><span class="p">,</span> <span class="n">val_y</span><span class="p">,</span> <span class="n">mask</span><span class="p">)</span>
+            <span class="n">aver_loss</span> <span class="o">+=</span> <span class="n">loss</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+        <span class="c1"># 统计非0的，也就是真实标签的长度</span>
+        <span class="n">leng</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">val_y</span><span class="o">.</span><span class="n">cpu</span><span class="p">():</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">i</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">j</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">tmp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">j</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
+            <span class="n">leng</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
+        <span class="c1"># 提取真实长度的预测标签</span>
+
+        <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">predict</span><span class="p">):</span>
+            <span class="n">preds</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">i</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="n">leng</span><span class="p">[</span><span class="n">index</span><span class="p">])])</span>
+
+        <span class="c1"># 提取真实长度的真实标签</span>
+        <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">val_y</span><span class="o">.</span><span class="n">tolist</span><span class="p">()):</span>
+            <span class="n">golds</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">i</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="n">leng</span><span class="p">[</span><span class="n">index</span><span class="p">])])</span>
+    <span class="n">aver_loss</span> <span class="o">/=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dev_iter</span><span class="p">)</span> <span class="o">*</span> <span class="mi">64</span><span class="p">)</span>
+    <span class="n">precision</span> <span class="o">=</span> <span class="n">precision_score</span><span class="p">(</span><span class="n">golds</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="s1">&#39;macro&#39;</span><span class="p">)</span>
+    <span class="n">recall</span> <span class="o">=</span> <span class="n">recall_score</span><span class="p">(</span><span class="n">golds</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="s1">&#39;macro&#39;</span><span class="p">)</span>
+    <span class="n">f1</span> <span class="o">=</span> <span class="n">f1_score</span><span class="p">(</span><span class="n">golds</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="s1">&#39;macro&#39;</span><span class="p">)</span>
+    <span class="n">report</span> <span class="o">=</span> <span class="n">classification_report</span><span class="p">(</span><span class="n">golds</span><span class="p">,</span> <span class="n">preds</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">precision</span><span class="p">,</span> <span class="n">recall</span><span class="p">,</span> <span class="n">f1</span><span class="p">,</span> <span class="n">report</span>
+</code></pre></div>
+<ul>
+<li>模型训练效果：</li>
+</ul>
+<ul>
+<li>BiLSTM：训练5轮，总共耗时：105s</li>
+</ul>
+<ul>
+<li>
+<p>训练日志：</p>
+<div align=center><img src="./img/3-3-14.png" style="zoom:45%" ><img/></div>
+</li>
+</ul>
+<hr />
+<ul>
+<li>BiLSTM+CRF：训练5轮，总共耗时：831s</li>
+</ul>
+<ul>
+<li>
+<p>训练日志：</p>
+<div align=center><img src="./img/3-3-15.png" style="zoom:45%" ><img/></div>
+
+</li>
+</ul>
+<hr />
+<ul>
+<li>整体对比：BiLSTM+CRF虽然比BiLSTM速度慢，但是精度有所提升，这个效果随着数据量的增加还会进一步提升。</li>
+</ul>
+<h4 id="_7">第三步: 编写模型预测函数<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h4>
+<ul>
+<li>使用训练好的模型，随机抽取文本进行NER</li>
+<li>代码位置: /MedicalKB/Ner/LSTM_CRF/ner_predict.py</li>
+<li>第一步：导入必备的工具包</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+<span class="kn">import</span> <span class="nn">torch.optim</span> <span class="k">as</span> <span class="nn">optim</span>
+<span class="kn">from</span> <span class="nn">model.BiLSTM</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">model.BiLSTM_CRF</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">utils.data_loader</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+
+<span class="c1"># 实例化模型</span>
+<span class="n">models</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;BiLSTM&#39;</span><span class="p">:</span> <span class="n">NERLSTM</span><span class="p">,</span>
+          <span class="s1">&#39;BiLSTM_CRF&#39;</span><span class="p">:</span> <span class="n">NERLSTM_CRF</span><span class="p">}</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">models</span><span class="p">[</span><span class="s2">&quot;BiLSTM_CRF&quot;</span><span class="p">](</span><span class="n">conf</span><span class="o">.</span><span class="n">embedding_dim</span><span class="p">,</span> <span class="n">conf</span><span class="o">.</span><span class="n">hidden_dim</span><span class="p">,</span> <span class="n">conf</span><span class="o">.</span><span class="n">dropout</span><span class="p">,</span> <span class="n">word2id</span><span class="p">,</span> <span class="n">conf</span><span class="o">.</span><span class="n">tag2id</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;save_model/bilstm_crf_best.pth&#39;</span><span class="p">))</span>
+
+<span class="n">id2tag</span> <span class="o">=</span> <span class="p">{</span><span class="n">value</span><span class="p">:</span> <span class="n">key</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">conf</span><span class="o">.</span><span class="n">tag2id</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+</code></pre></div>
+<hr />
+<ul>
+<li>第二步：实现模型预测函数：model2test</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">model2test</span><span class="p">(</span><span class="n">sample</span><span class="p">):</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">char</span> <span class="ow">in</span> <span class="n">sample</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">char</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">word2id</span><span class="p">:</span>
+            <span class="n">char</span> <span class="o">=</span> <span class="s2">&quot;UNK&quot;</span>
+        <span class="n">x</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">word2id</span><span class="p">[</span><span class="n">char</span><span class="p">])</span>
+
+    <span class="n">x_train</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="n">x</span><span class="p">])</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">x_train</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">long</span><span class="p">()</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+    <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">model</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span><span class="s2">&quot;BiLSTM&quot;</span><span class="p">:</span>
+            <span class="n">outputs</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="n">mask</span><span class="p">)</span>
+            <span class="n">preds_ids</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">tags</span> <span class="o">=</span> <span class="p">[</span><span class="n">id2tag</span><span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">item</span><span class="p">()]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">preds_ids</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">preds_ids</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="n">mask</span><span class="p">)</span>
+            <span class="n">tags</span> <span class="o">=</span> <span class="p">[</span><span class="n">id2tag</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">preds_ids</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="n">chars</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">sample</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">chars</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">tags</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">extract_entities</span><span class="p">(</span><span class="n">chars</span><span class="p">,</span> <span class="n">tags</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">model2test</span><span class="p">(</span><span class="n">sample</span><span class="o">=</span><span class="s1">&#39;小明的父亲患有冠心病及糖尿病，无手术外伤史及药物过敏史&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<ul>
+<li>第三步：实现实体解析函数：extract_entities</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">extract_entities</span><span class="p">(</span><span class="n">tokens</span><span class="p">,</span> <span class="n">labels</span><span class="p">):</span>
+    <span class="n">entities</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">entity</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">entity_type</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">for</span> <span class="n">token</span><span class="p">,</span> <span class="n">label</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">tokens</span><span class="p">,</span> <span class="n">labels</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">label</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;B-&quot;</span><span class="p">):</span>  <span class="c1"># 实体的开始</span>
+            <span class="k">if</span> <span class="n">entity</span><span class="p">:</span>  <span class="c1"># 如果已经有实体，先保存</span>
+                <span class="n">entities</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">entity_type</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">entity</span><span class="p">)))</span>
+                <span class="n">entity</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">entity_type</span> <span class="o">=</span> <span class="n">label</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">entity</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">label</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;I-&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">entity</span><span class="p">:</span>  <span class="c1"># 实体的中间或结尾</span>
+            <span class="n">entity</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">entity</span><span class="p">:</span>  <span class="c1"># 保存上一个实体</span>
+                <span class="n">entities</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">entity_type</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">entity</span><span class="p">)))</span>
+                <span class="n">entity</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">entity_type</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1"># 如果最后一个实体没有保存，手动保存</span>
+    <span class="k">if</span> <span class="n">entity</span><span class="p">:</span>
+        <span class="n">entities</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">entity_type</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">entity</span><span class="p">)))</span>
+
+    <span class="k">return</span> <span class="p">{</span><span class="n">entity</span><span class="p">:</span> <span class="n">entity_type</span> <span class="k">for</span> <span class="n">entity_type</span><span class="p">,</span> <span class="n">entity</span> <span class="ow">in</span> <span class="n">entities</span><span class="p">}</span>
+</code></pre></div>
+<hr />
+<h2 id="_8">小节总结<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<p>本小节主要介绍了基于BiLSTM+CRF模型实现NER任务的训练，并详细的介绍了CRF的原理以及如何和BiLSTM进行融合。</p>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+    <nav class="md-footer__inner md-grid" aria-label="页脚" >
+      
+        
+        <a href="02-%E5%9F%BA%E4%BA%8E%E8%A7%84%E5%88%99%E5%AE%9E%E7%8E%B0NER.html" class="md-footer__link md-footer__link--prev" aria-label="上一页: 3.2 基于规则实现NER" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                上一页
+              </span>
+              3.2 基于规则实现NER
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="04-Veterbi%E7%AE%97%E6%B3%95%E4%BB%8B%E7%BB%8D%28%E6%89%A9%E5%B1%95%E8%B5%84%E6%96%99%29.html" class="md-footer__link md-footer__link--next" aria-label="下一页: 3.4 Veterbi算法介绍(扩展资料)" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                下一页
+              </span>
+              3.4 Veterbi算法介绍(扩展资料)
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.16e2a7d4.min.js", "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.config.lang": "ja", "search.config.pipeline": "trimmer, stemmer", "search.config.separator": "[\\s\\-\uff0c\u3002]+", "search.placeholder": "\u641c\u7d22", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version.title": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.5a2dcb6a.min.js"></script>
+      
+        <script src="../js/extra.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+      
+    
+    
+  </body>
+</html>

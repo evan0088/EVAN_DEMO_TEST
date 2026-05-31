@@ -1,0 +1,2412 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      <link rel="icon" href="../img/AI.jpg">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-8.5.10">
+    
+    
+      
+        <title>7.4 医疗KBQA系统实现 - 红蜘蛛知识图谱项目V3.0</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.975780f9.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.2505c338.min.css">
+        
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="None" data-md-color-accent="None">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#kbqa" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href=".." title="红蜘蛛知识图谱项目V3.0" class="md-header__button md-logo" aria-label="红蜘蛛知识图谱项目V3.0" data-md-component="logo">
+      
+  <img src="../img/AI.jpg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            红蜘蛛知识图谱项目V3.0
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              7.4 医疗KBQA系统实现
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="红蜘蛛知识图谱项目V3.0" class="md-nav__button md-logo" aria-label="红蜘蛛知识图谱项目V3.0" data-md-component="logo">
+      
+  <img src="../img/AI.jpg" alt="logo">
+
+    </a>
+    红蜘蛛知识图谱项目V3.0
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_1" type="checkbox" id="__nav_1" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_1">
+          第一章:红蜘蛛项目简介
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="第一章:红蜘蛛项目简介" data-md-level="1">
+        <label class="md-nav__title" for="__nav_1">
+          <span class="md-nav__icon md-icon"></span>
+          第一章:红蜘蛛项目简介
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E4%B8%80%E7%AB%A0%EF%BC%9A%E9%A1%B9%E7%9B%AE%E8%83%8C%E6%99%AF/1.%E9%A1%B9%E7%9B%AE%E7%AE%80%E4%BB%8B.html" class="md-nav__link">
+        1.1 项目背景介绍
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E4%B8%80%E7%AB%A0%EF%BC%9A%E9%A1%B9%E7%9B%AE%E8%83%8C%E6%99%AF/2.%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E6%8A%80%E6%9C%AF%E6%A6%82%E6%8B%AC.html" class="md-nav__link">
+        1.2 知识图谱技术概括
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2">
+          第二章:项目工具介绍
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="第二章:项目工具介绍" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          第二章:项目工具介绍
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E4%BA%8C%E7%AB%A0%EF%BC%9A%E9%A1%B9%E7%9B%AE%E5%B7%A5%E5%85%B7/01-%E9%A1%B9%E7%9B%AE%E5%BA%94%E7%94%A8%E5%B7%A5%E5%85%B7.html" class="md-nav__link">
+        2.1 项目应用工具概览
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E4%BA%8C%E7%AB%A0%EF%BC%9A%E9%A1%B9%E7%9B%AE%E5%B7%A5%E5%85%B7/02-doccano%E6%95%B0%E6%8D%AE%E6%A0%87%E6%B3%A8%E5%B9%B3%E5%8F%B0.html" class="md-nav__link">
+        2.2 doccano数据标注平台
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E4%BA%8C%E7%AB%A0%EF%BC%9A%E9%A1%B9%E7%9B%AE%E5%B7%A5%E5%85%B7/03-%E7%9F%A5%E8%AF%86%E6%9F%A5%E8%AF%A2%E8%AF%AD%E8%A8%80.html" class="md-nav__link">
+        2.3 知识查询语言
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E4%BA%8C%E7%AB%A0%EF%BC%9A%E9%A1%B9%E7%9B%AE%E5%B7%A5%E5%85%B7/04-Neo4j%E5%9B%BE%E6%95%B0%E6%8D%AE%E5%BA%93.html" class="md-nav__link">
+        2.4 Neo4j图数据库
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3">
+          第三章:实体抽取
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="第三章:实体抽取" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          第三章:实体抽取
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E4%B8%89%E7%AB%A0%EF%BC%9A%E5%AE%9E%E4%BD%93%E6%8A%BD%E5%8F%96/01-%E5%AE%9E%E4%BD%93%E8%AF%86%E5%88%AB%E5%9F%BA%E6%9C%AC%E7%9F%A5%E8%AF%86.html" class="md-nav__link">
+        3.1 实体识别基本知识
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E4%B8%89%E7%AB%A0%EF%BC%9A%E5%AE%9E%E4%BD%93%E6%8A%BD%E5%8F%96/02-%E5%9F%BA%E4%BA%8E%E8%A7%84%E5%88%99%E5%AE%9E%E7%8E%B0NER.html" class="md-nav__link">
+        3.2 基于规则实现NER
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E4%B8%89%E7%AB%A0%EF%BC%9A%E5%AE%9E%E4%BD%93%E6%8A%BD%E5%8F%96/03-%E5%9F%BA%E4%BA%8EBiLSTM%2BCRF%E6%A8%A1%E5%9E%8B%E5%AE%9E%E7%8E%B0NER.html" class="md-nav__link">
+        3.3 基于深度学习模型实现NER
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E4%B8%89%E7%AB%A0%EF%BC%9A%E5%AE%9E%E4%BD%93%E6%8A%BD%E5%8F%96/04-Veterbi%E7%AE%97%E6%B3%95%E4%BB%8B%E7%BB%8D%28%E6%89%A9%E5%B1%95%E8%B5%84%E6%96%99%29.html" class="md-nav__link">
+        3.4 Veterbi算法介绍(扩展资料)
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4">
+          第四章:关系抽取
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="第四章:关系抽取" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          第四章:关系抽取
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E5%9B%9B%E7%AB%A0%EF%BC%9A%E5%85%B3%E7%B3%BB%E6%8A%BD%E5%8F%96/01-%E5%85%B3%E7%B3%BB%E6%8A%BD%E5%8F%96%E5%9F%BA%E6%9C%AC%E7%9F%A5%E8%AF%86.html" class="md-nav__link">
+        4.1 关系抽取基本知识
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E5%9B%9B%E7%AB%A0%EF%BC%9A%E5%85%B3%E7%B3%BB%E6%8A%BD%E5%8F%96/02-%E8%A7%84%E5%88%99%E6%96%B9%E6%B3%95%E5%AE%9E%E7%8E%B0%E5%85%B3%E7%B3%BB%E6%8A%BD%E5%8F%96.html" class="md-nav__link">
+        4.2 规则方法实现关系抽
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E5%9B%9B%E7%AB%A0%EF%BC%9A%E5%85%B3%E7%B3%BB%E6%8A%BD%E5%8F%96/03-Pipeline%E6%96%B9%E6%B3%95%E5%AE%9E%E7%8E%B0%E5%85%B3%E7%B3%BB%E6%8A%BD%E5%8F%96.html" class="md-nav__link">
+        4.3 Pipeline方法实现关系抽取
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E5%9B%9B%E7%AB%A0%EF%BC%9A%E5%85%B3%E7%B3%BB%E6%8A%BD%E5%8F%96/04-Joint%E6%96%B9%E6%B3%95%E5%AE%9E%E7%8E%B0%E5%85%B3%E7%B3%BB%E6%8A%BD%E5%8F%96.html" class="md-nav__link">
+        4.4 Joint方法实现关系抽取
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5">
+          第五章:知识融合
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="第五章:知识融合" data-md-level="1">
+        <label class="md-nav__title" for="__nav_5">
+          <span class="md-nav__icon md-icon"></span>
+          第五章:知识融合
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E4%BA%94%E7%AB%A0%EF%BC%9A%E7%9F%A5%E8%AF%86%E8%9E%8D%E5%90%88/01-%E7%9F%A5%E8%AF%86%E8%9E%8D%E5%90%88%E5%9F%BA%E6%9C%AC%E7%9F%A5%E8%AF%86.html" class="md-nav__link">
+        5.1 知识融合基本知识
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E4%BA%94%E7%AB%A0%EF%BC%9A%E7%9F%A5%E8%AF%86%E8%9E%8D%E5%90%88/02-%E5%AE%9E%E4%BD%93%E6%B6%88%E6%AD%A7%E4%BB%BB%E5%8A%A1.html" class="md-nav__link">
+        5.2 实体消歧任务
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6" type="checkbox" id="__nav_6" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_6">
+          第六章:图谱搭建
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="第六章:图谱搭建" data-md-level="1">
+        <label class="md-nav__title" for="__nav_6">
+          <span class="md-nav__icon md-icon"></span>
+          第六章:图谱搭建
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E5%85%AD%E7%AB%A0%EF%BC%9A%E5%9B%BE%E8%B0%B1%E6%90%AD%E5%BB%BA/01-Neo4j%E5%9B%BE%E6%95%B0%E6%8D%AE%E5%BA%93.html" class="md-nav__link">
+        6.1 Neo4j图数据库
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E5%85%AD%E7%AB%A0%EF%BC%9A%E5%9B%BE%E8%B0%B1%E6%90%AD%E5%BB%BA/02-%E5%8C%BB%E7%96%97%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E7%9A%84%E6%90%AD%E5%BB%BA.html" class="md-nav__link">
+        6.2 医疗知识图谱的搭建
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_7" type="checkbox" id="__nav_7" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_7">
+          第七章:图谱应用
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="第七章:图谱应用" data-md-level="1">
+        <label class="md-nav__title" for="__nav_7">
+          <span class="md-nav__icon md-icon"></span>
+          第七章:图谱应用
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="01-%E9%97%AE%E7%AD%94%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86.html" class="md-nav__link">
+        7.1 问答系统基础知识
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="02-%E9%97%AE%E7%AD%94%E7%B3%BB%E7%BB%9F%E5%85%B3%E9%94%AE%E6%8A%80%E6%9C%AF.html" class="md-nav__link">
+        7.2 问答系统关键技术
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="03-%E5%8C%BB%E7%96%97KBQA%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84.html" class="md-nav__link">
+        7.3 医疗KBQA系统架构
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          7.4 医疗KBQA系统实现
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="04-%E5%8C%BB%E7%96%97KBQA%E7%B3%BB%E7%BB%9F%E5%AE%9E%E7%8E%B0.html" class="md-nav__link md-nav__link--active">
+        7.4 医疗KBQA系统实现
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    学习目标
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    系统架构
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kbqa_1" class="md-nav__link">
+    KBQA问答系统实现步骤：
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#nlu" class="md-nav__link">
+    NLU模块
+  </a>
+  
+    <nav class="md-nav" aria-label="NLU模块">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    第一个意图识别模型：
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    第二个意图识别模型：
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ner" class="md-nav__link">
+    第三个槽位填充（NER）模型
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dm" class="md-nav__link">
+    DM模块
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    主逻辑模块
+  </a>
+  
+    <nav class="md-nav" aria-label="主逻辑模块">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#modules" class="md-nav__link">
+    modules模块
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chat_app" class="md-nav__link">
+    chat_app模块
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    上线使用
+  </a>
+  
+    <nav class="md-nav" aria-label="上线使用">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    启动服务
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    启动知识图谱服务
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    启动主程序
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    运行效果截图
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    小节总结
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    学习目标
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    系统架构
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kbqa_1" class="md-nav__link">
+    KBQA问答系统实现步骤：
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#nlu" class="md-nav__link">
+    NLU模块
+  </a>
+  
+    <nav class="md-nav" aria-label="NLU模块">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    第一个意图识别模型：
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    第二个意图识别模型：
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ner" class="md-nav__link">
+    第三个槽位填充（NER）模型
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dm" class="md-nav__link">
+    DM模块
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    主逻辑模块
+  </a>
+  
+    <nav class="md-nav" aria-label="主逻辑模块">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#modules" class="md-nav__link">
+    modules模块
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chat_app" class="md-nav__link">
+    chat_app模块
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    上线使用
+  </a>
+  
+    <nav class="md-nav" aria-label="上线使用">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    启动服务
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    启动知识图谱服务
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    启动主程序
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    运行效果截图
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    小节总结
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="kbqa">医疗KBQA系统实现<a class="headerlink" href="#kbqa" title="Permanent link">&para;</a></h1>
+<h2 id="_1">学习目标<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<ul>
+<li>了解KBQA系统的工作流程</li>
+<li>掌握KBQA系统中意图分类原理和代码实现</li>
+<li>掌握KBQA系统中槽位填充原理和代码实现</li>
+<li>掌握KBQA系统中对话管理代码的实现</li>
+</ul>
+<hr />
+<h2 id="_2">系统架构<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<p>下图为本次项目中，基于医疗知识图谱实现智能问答系统的流程框架（其属于任务型对话机器人），其主要环节依然包括三部分：NLU（自然语言理解），DM（对话管理），NLG（自然语言生成）。</p>
+<ul>
+<li><div align=center><img src="./img/03.png" style="zoom:50%" ><img/></div> </li>
+</ul>
+<hr />
+<hr />
+<h2 id="kbqa_1">KBQA问答系统实现步骤：<a class="headerlink" href="#kbqa_1" title="Permanent link">&para;</a></h2>
+<ul>
+<li>NLU模块<ul>
+<li>实现第一个意图识别模型：判断是否是闲聊类的意图</li>
+<li>实现第二个意图识别模型：包括13个医疗类的意图</li>
+<li>实现第三个槽位填充（NER）模型：这里直接使用NER任务模型</li>
+</ul>
+</li>
+<li>DM模块<ul>
+<li>基于不同意图，设计对应的语义槽</li>
+</ul>
+</li>
+<li>主逻辑服务模块实现<ul>
+<li>设计整个对话逻辑</li>
+</ul>
+</li>
+</ul>
+<h2 id="nlu">NLU模块<a class="headerlink" href="#nlu" title="Permanent link">&para;</a></h2>
+<h3 id="_3">第一个意图识别模型：<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<ul>
+<li>
+<p>目的：判断是否是闲聊类的意图</p>
+<ul>
+<li>
+<p>共支持6种类型：greet、goodbye、deny、isbot、accept、 diagnosis</p>
+<div class="highlight"><pre><span></span><code><span class="mi">-</span><span class="w"> </span><span class="err">命中前四个意图，那就进入Chi</span><span class="kc">t</span><span class="err">cha</span><span class="kc">t</span><span class="err">_bo</span><span class="kc">t</span><span class="err">，从准备好的回复语料中随机抽取一条返回给用户，对话结束；</span><span class="w"></span>
+<span class="mi">-</span><span class="w"> </span><span class="err">命中accep</span><span class="kc">t</span><span class="err">，accep</span><span class="kc">t</span><span class="err">意图是在进行**问题澄清**时发挥作用；</span><span class="w"></span>
+<span class="mi">-</span><span class="w"> </span><span class="err">命中diag</span><span class="kc">n</span><span class="err">osis，进入Medical_bo</span><span class="kc">t</span><span class="err">；</span><span class="w"></span>
+</code></pre></div>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>具体代码：<ul>
+<li>代码位置：./MedicalKB/NLU/sklearn_Classification</li>
+<li>实现步骤：<ul>
+<li>查看数据</li>
+<li>训练模型及保存</li>
+<li>模型加载重利用</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<hr />
+<ul>
+<li>
+<p>查看数据</p>
+<ul>
+<li>数据存储位置：./MedicalKB/NLU/Chatty_intention/data/train.txt</li>
+</ul>
+<ul>
+<li>
+<p>示例</p>
+<div class="highlight"><pre><span></span><code>你好呀,greet
+再见,goodbye
+你错了,deny
+你是谁,isbot
+可以,accept
+这个病可以预防吗,diagnosis
+</code></pre></div>
+<blockquote>
+<p>train.txt一共包含：208行数据，分为两列；第一列为原始文本；第二列为意图类别。</p>
+</blockquote>
+</li>
+</ul>
+</li>
+</ul>
+<hr />
+<ul>
+<li>
+<p>训练模型及保存</p>
+<ul>
+<li>脚本位置及名称：./NLP/MedicalKB/NLU/Chatty_intention/train.py</li>
+</ul>
+<ul>
+<li>
+<p>具体代码</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># -*- coding:utf-8 -*-</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pickle</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">svm</span>
+<span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LogisticRegression</span>
+<span class="kn">from</span> <span class="nn">sklearn.ensemble</span> <span class="kn">import</span> <span class="n">GradientBoostingClassifier</span>
+<span class="kn">from</span> <span class="nn">sklearn.feature_extraction.text</span> <span class="kn">import</span> <span class="n">CountVectorizer</span><span class="p">,</span> <span class="n">TfidfVectorizer</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">f1_score</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">classification_report</span><span class="p">,</span> <span class="n">confusion_matrix</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+
+<span class="n">seed</span> <span class="o">=</span> <span class="mi">222</span>
+<span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">load_data</span><span class="p">(</span><span class="n">data_path</span><span class="p">):</span>
+    <span class="n">X</span><span class="p">,</span><span class="n">y</span> <span class="o">=</span> <span class="p">[],[]</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">data_path</span><span class="p">,</span><span class="s1">&#39;r&#39;</span><span class="p">,</span><span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">():</span>
+            <span class="n">text</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">lower</span><span class="p">()))</span>
+            <span class="n">X</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+            <span class="n">y</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
+
+    <span class="n">index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">))</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="p">[</span><span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">index</span><span class="p">]</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="p">[</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">index</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">X</span><span class="p">,</span><span class="n">y</span>
+
+<span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="n">data_path</span><span class="p">,</span> <span class="n">model_save_path</span><span class="p">):</span>
+    <span class="n">X</span><span class="p">,</span><span class="n">y</span> <span class="o">=</span> <span class="n">load_data</span><span class="p">(</span><span class="n">data_path</span><span class="p">)</span>
+
+    <span class="n">label_set</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">y</span><span class="p">)))</span>
+    <span class="n">label2id</span> <span class="o">=</span> <span class="p">{</span><span class="n">label</span><span class="p">:</span> <span class="n">idx</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span><span class="n">label</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">label_set</span><span class="p">)}</span>
+    <span class="n">id2label</span> <span class="o">=</span> <span class="p">{</span><span class="n">idx</span><span class="p">:</span> <span class="n">label</span> <span class="k">for</span> <span class="n">label</span><span class="p">,</span><span class="n">idx</span> <span class="ow">in</span> <span class="n">label2id</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
+    <span class="n">y</span> <span class="o">=</span> <span class="p">[</span><span class="n">label2id</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">y</span><span class="p">]</span>
+
+    <span class="n">label_names</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">label2id</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">kv</span><span class="p">:</span><span class="n">kv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">target_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">label_names</span><span class="p">]</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">label_names</span><span class="p">]</span>
+
+    <span class="n">train_X</span><span class="p">,</span> <span class="n">text_X</span><span class="p">,</span> <span class="n">train_y</span><span class="p">,</span> <span class="n">text_y</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.15</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+
+    <span class="n">vec</span> <span class="o">=</span> <span class="n">TfidfVectorizer</span><span class="p">(</span><span class="n">ngram_range</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span> <span class="n">min_df</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">max_df</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">analyzer</span><span class="o">=</span><span class="s1">&#39;char&#39;</span><span class="p">)</span>
+    <span class="n">train_X</span> <span class="o">=</span> <span class="n">vec</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">train_X</span><span class="p">)</span>
+    <span class="n">text_X</span> <span class="o">=</span> <span class="n">vec</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">text_X</span><span class="p">)</span>
+    <span class="c1"># -------------LR--------------</span>
+    <span class="n">LR</span> <span class="o">=</span> <span class="n">LogisticRegression</span><span class="p">(</span><span class="n">C</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">dual</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">n_jobs</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span><span class="n">max_iter</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span><span class="n">multi_class</span><span class="o">=</span><span class="s1">&#39;ovr&#39;</span><span class="p">,</span><span class="n">random_state</span><span class="o">=</span><span class="mi">122</span><span class="p">)</span>
+    <span class="n">LR</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train_X</span><span class="p">,</span> <span class="n">train_y</span><span class="p">)</span>
+    <span class="n">pred</span> <span class="o">=</span> <span class="n">LR</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">text_X</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">classification_report</span><span class="p">(</span><span class="n">text_y</span><span class="p">,</span> <span class="n">pred</span><span class="p">,</span><span class="n">target_names</span><span class="o">=</span><span class="n">target_names</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">confusion_matrix</span><span class="p">(</span><span class="n">text_y</span><span class="p">,</span> <span class="n">pred</span><span class="p">,</span><span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">))</span>
+
+    <span class="c1"># -------------gbdt--------------</span>
+    <span class="n">gbdt</span> <span class="o">=</span> <span class="n">GradientBoostingClassifier</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">450</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span><span class="n">max_depth</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">24</span><span class="p">)</span>
+    <span class="n">gbdt</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train_X</span><span class="p">,</span> <span class="n">train_y</span><span class="p">)</span>
+    <span class="n">pred</span> <span class="o">=</span> <span class="n">gbdt</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">text_X</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">classification_report</span><span class="p">(</span><span class="n">text_y</span><span class="p">,</span> <span class="n">pred</span><span class="p">,</span><span class="n">target_names</span><span class="o">=</span><span class="n">target_names</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">confusion_matrix</span><span class="p">(</span><span class="n">text_y</span><span class="p">,</span> <span class="n">pred</span><span class="p">,</span><span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">))</span>
+
+    <span class="c1"># -------------融合--------------</span>
+    <span class="n">pred_prob1</span> <span class="o">=</span> <span class="n">LR</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">text_X</span><span class="p">)</span>
+    <span class="n">pred_prob2</span> <span class="o">=</span> <span class="n">gbdt</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">text_X</span><span class="p">)</span>
+
+    <span class="n">pred</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">((</span><span class="n">pred_prob1</span><span class="o">+</span><span class="n">pred_prob2</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">classification_report</span><span class="p">(</span><span class="n">text_y</span><span class="p">,</span> <span class="n">pred</span><span class="p">,</span><span class="n">target_names</span><span class="o">=</span><span class="n">target_names</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">confusion_matrix</span><span class="p">(</span><span class="n">text_y</span><span class="p">,</span> <span class="n">pred</span><span class="p">,</span><span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">))</span>
+
+    <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">id2label</span><span class="p">,</span><span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model_save_path</span><span class="p">,</span><span class="s1">&#39;id2label.pkl&#39;</span><span class="p">),</span><span class="s1">&#39;wb&#39;</span><span class="p">))</span>
+    <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">vec</span><span class="p">,</span><span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model_save_path</span><span class="p">,</span><span class="s1">&#39;vec.pkl&#39;</span><span class="p">),</span><span class="s1">&#39;wb&#39;</span><span class="p">))</span>
+    <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">LR</span><span class="p">,</span><span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span>    <span class="n">join</span><span class="p">(</span><span class="n">model_save_path</span><span class="p">,</span><span class="s1">&#39;LR.pkl&#39;</span><span class="p">),</span><span class="s1">&#39;wb&#39;</span><span class="p">))</span>
+    <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">gbdt</span><span class="p">,</span><span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model_save_path</span><span class="p">,</span><span class="s1">&#39;gbdt.pkl&#39;</span><span class="p">),</span><span class="s1">&#39;wb&#39;</span><span class="p">))</span>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">run</span><span class="p">(</span><span class="s2">&quot;./data/intent_recog_data.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;./model_file/&quot;</span><span class="p">)</span>
+</code></pre></div>
+</li>
+</ul>
+</li>
+</ul>
+<hr />
+<ul>
+<li>
+<p>模型加载重利用</p>
+<ul>
+<li>脚本位置及名称：./NLP/MedicalKB/NLU/Chatty_intention/clf_model.py</li>
+</ul>
+<ul>
+<li>
+<p>具体代码</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># -*- coding:utf-8 -*-</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pickle</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">svm</span>
+
+
+
+<span class="k">class</span> <span class="nc">CLFModel</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_save_path</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">CLFModel</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_save_path</span> <span class="o">=</span> <span class="n">model_save_path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">id2label</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_save_path</span><span class="p">,</span><span class="s1">&#39;id2label.pkl&#39;</span><span class="p">),</span><span class="s1">&#39;rb&#39;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vec</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_save_path</span><span class="p">,</span><span class="s1">&#39;vec.pkl&#39;</span><span class="p">),</span><span class="s1">&#39;rb&#39;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">LR_clf</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_save_path</span><span class="p">,</span><span class="s1">&#39;LR.pkl&#39;</span><span class="p">),</span><span class="s1">&#39;rb&#39;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gbdt_clf</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_save_path</span><span class="p">,</span><span class="s1">&#39;gbdt.pkl&#39;</span><span class="p">),</span><span class="s1">&#39;rb&#39;</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">text</span><span class="p">):</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">lower</span><span class="p">()))</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vec</span><span class="o">.</span><span class="n">transform</span><span class="p">([</span><span class="n">text</span><span class="p">])</span>
+        <span class="n">proba1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">LR_clf</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+        <span class="n">proba2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gbdt_clf</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">((</span><span class="n">proba1</span><span class="o">+</span><span class="n">proba2</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">id2label</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">label</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">CLFModel</span><span class="p">(</span><span class="s1">&#39;./model_file&#39;</span><span class="p">)</span>
+
+    <span class="n">text</span><span class="o">=</span><span class="s1">&#39;你是谁&#39;</span>
+    <span class="n">label</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
+</code></pre></div>
+</li>
+</ul>
+</li>
+</ul>
+<hr />
+<h3 id="_4">第二个意图识别模型：<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<ul>
+<li>
+<p>目的：判断文本属于13个医疗类的哪种医疗类别（意图）</p>
+<ul>
+<li>
+<p>共支持13种类型（label.txt）</p>
+<div class="highlight"><pre><span></span><code>定义
+病因
+预防
+临床表现(病症表现)
+相关病症
+治疗方法
+所属科室
+传染性
+治愈率
+禁忌
+化验/体检方案
+治疗时间
+其他
+</code></pre></div>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>具体代码：<ul>
+<li>位置：./NLP/MedicalKB/NLU/Medical_intention</li>
+<li>实现步骤：<ul>
+<li>查看数据</li>
+<li>编写配置文件</li>
+<li>数据预处理</li>
+<li>构建模型</li>
+<li>实现模型训练和保存</li>
+<li>模型加载与利用</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<hr />
+<ul>
+<li>
+<p>查看数据</p>
+<ul>
+<li>数据位置：./NLP/MedicalKB/NLU/Medical_intention/data</li>
+</ul>
+<ul>
+<li>在data文件夹中，一共三个文件，分别为：train.csv, test.csv,label.txt</li>
+</ul>
+<ul>
+<li>
+<p>train.csv：示例 (test.csv格式一郅)</p>
+<div class="highlight"><pre><span></span><code>text,label_class,label_id
+肾结石，输尿管结石一般用什么药呢而且效果较好？,治疗方法,5
+婴儿会有痔疮吗,其他,12
+睡一觉醒睡不着咋搞的？现在怀孕7个月了，晚上经常准点醒，然后就睡不着了。,病因,1
+请问出血性脑梗死症状是什么,临床表现(病症表现),3
+</code></pre></div>
+<blockquote>
+<p>train.csv共计7273条，每行样本分为3列，第一列为原始文本了；第二列为医疗类别名称；第三列为类别对应的id，不同列之间用逗号隔开</p>
+</blockquote>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>
+<p>编写配置文件</p>
+<ul>
+<li>代码位置及名称：./NLP/MedicalKB/NLU/Medical_intention/intent_config.py</li>
+</ul>
+<ul>
+<li>
+<p>具体代码</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">torch</span>
+
+<span class="k">class</span> <span class="nc">Config</span><span class="p">():</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="s2">&quot;mps&quot;</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s2">&quot;cpu&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">train_path</span> <span class="o">=</span> <span class="s1">&#39;./NLP/MedicalKB/NLU/Bert_IntentRe/data/train.csv&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">test_path</span> <span class="o">=</span> <span class="s1">&#39;./NLP/MedicalKB/NLU/Bert_IntentRe/data/test.csv&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label_path</span> <span class="o">=</span> <span class="s1">&#39;./NLP/MedicalKB/NLU/Bert_IntentRe/data/label.txt&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">epochs</span> <span class="o">=</span> <span class="mi">10</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lr</span> <span class="o">=</span> <span class="mf">2e-5</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">=</span> <span class="mi">16</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_len</span> <span class="o">=</span> <span class="mi">60</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_class</span> <span class="o">=</span> <span class="mi">13</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bert_path</span> <span class="o">=</span> <span class="s1">&#39;./NLP/MedicalKB/bert-base-chinese&#39;</span>
+</code></pre></div>
+</li>
+</ul>
+</li>
+</ul>
+<hr />
+<ul>
+<li>
+<p>数据预处理</p>
+<ul>
+<li>代码位置及名称：./NLU/Medical_intention/utils/data_loader.py</li>
+</ul>
+<ul>
+<li>
+<p>脚本中一共三个函数一个类</p>
+<ul>
+<li>load_data(): 将csv文件中的数据加载到内存</li>
+<li>MyDataset(): 自定义Dataset类</li>
+<li>collate_fn(): 自定义函数，处理来自dataset中的数据</li>
+<li>get_dataloader(): 获得训练以及测试数据迭代器</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>
+<p>将csv文件中的数据加载到内存：load_data()</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">intent_config</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">DataLoader</span>
+<span class="kn">from</span> <span class="nn">transformers</span> <span class="kn">import</span> <span class="n">BertModel</span><span class="p">,</span> <span class="n">BertTokenizer</span>
+<span class="kn">from</span> <span class="nn">transformers</span> <span class="kn">import</span> <span class="n">BertForSequenceClassification</span><span class="p">,</span> <span class="n">AutoModelForMaskedLM</span>
+<span class="n">conf</span> <span class="o">=</span> <span class="n">Config</span><span class="p">()</span>
+<span class="n">tokenizer</span> <span class="o">=</span> <span class="n">BertTokenizer</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">conf</span><span class="o">.</span><span class="n">bert_path</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">load_data</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+    <span class="n">train</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="s2">&quot;label_class&quot;</span><span class="p">,</span> <span class="s2">&quot;label_id&quot;</span><span class="p">])</span>
+    <span class="n">texts</span> <span class="o">=</span> <span class="n">train</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">to_list</span><span class="p">()</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="n">train</span><span class="o">.</span><span class="n">label_id</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span><span class="o">.</span><span class="n">to_list</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">texts</span><span class="p">,</span> <span class="n">labels</span>
+</code></pre></div>
+</li>
+</ul>
+<hr />
+<ul>
+<li>
+<p>自定义Dataset类：MyDataset()</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">MyDataset</span><span class="p">(</span><span class="n">Dataset</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_path</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">texts</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">labels</span> <span class="o">=</span> <span class="n">load_data</span><span class="p">(</span><span class="n">data_path</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">texts</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">texts</span><span class="p">[</span><span class="n">item</span><span class="p">]</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">[</span><span class="n">item</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">text</span><span class="p">,</span> <span class="n">label</span>
+</code></pre></div>
+</li>
+</ul>
+<hr />
+<ul>
+<li>
+<p>自定义函数，处理来自dataset中的数据:collate_fn()</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">collate_fn</span><span class="p">(</span><span class="n">datas</span><span class="p">):</span>
+    <span class="n">batch_text</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">datas</span><span class="p">]</span>
+    <span class="n">batch_label</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">datas</span><span class="p">]</span>
+    <span class="n">inputs</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">batch_encode_plus</span><span class="p">(</span><span class="n">batch_text</span><span class="p">,</span>
+                                         <span class="n">padding</span><span class="o">=</span><span class="s1">&#39;max_length&#39;</span><span class="p">,</span>
+                                         <span class="n">truncation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                         <span class="n">max_length</span><span class="o">=</span><span class="n">conf</span><span class="o">.</span><span class="n">max_len</span><span class="p">,</span>
+                                         <span class="n">return_tensors</span><span class="o">=</span><span class="s1">&#39;pt&#39;</span><span class="p">)</span>
+    <span class="n">input_ids</span> <span class="o">=</span> <span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;input_ids&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">conf</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+    <span class="n">attention_mask</span> <span class="o">=</span> <span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;attention_mask&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">conf</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+    <span class="n">token_type_ids</span> <span class="o">=</span> <span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;token_type_ids&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">conf</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">batch_label</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">conf</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">input_ids</span><span class="p">,</span> <span class="n">attention_mask</span><span class="p">,</span> <span class="n">token_type_ids</span><span class="p">,</span> <span class="n">labels</span>
+</code></pre></div>
+</li>
+</ul>
+<hr />
+<ul>
+<li>
+<p>获得训练以及测试数据迭代器: get_dataloader()</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_dataloader</span><span class="p">():</span>
+    <span class="n">train_dataset</span> <span class="o">=</span> <span class="n">MyDataset</span><span class="p">(</span><span class="n">conf</span><span class="o">.</span><span class="n">train_path</span><span class="p">)</span>
+    <span class="n">train_iter</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">train_dataset</span><span class="p">,</span>
+                            <span class="n">batch_size</span><span class="o">=</span><span class="n">conf</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
+                            <span class="n">collate_fn</span><span class="o">=</span><span class="n">collate_fn</span><span class="p">,</span>
+                            <span class="n">drop_last</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                            <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">dev_dataset</span> <span class="o">=</span> <span class="n">MyDataset</span><span class="p">(</span><span class="n">conf</span><span class="o">.</span><span class="n">train_path</span><span class="p">)</span>
+    <span class="n">dev_iter</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">dev_dataset</span><span class="p">,</span>
+                          <span class="n">batch_size</span><span class="o">=</span><span class="n">conf</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
+                          <span class="n">collate_fn</span><span class="o">=</span><span class="n">collate_fn</span><span class="p">,</span>
+                          <span class="n">drop_last</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                          <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">train_iter</span><span class="p">,</span> <span class="n">dev_iter</span>
+</code></pre></div>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>
+<p>构建模型</p>
+<ul>
+<li>代码位置及名称：./NLP/MedicalKB/NLU/Medical_intention/model.py</li>
+</ul>
+<ul>
+<li>
+<p>具体代码</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+<span class="kn">from</span> <span class="nn">utils.data_loader</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">transformers</span> <span class="kn">import</span> <span class="n">BertModel</span>
+
+
+<span class="k">class</span> <span class="nc">MyModel</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bert_path</span><span class="p">,</span> <span class="n">bert_hidden</span><span class="p">,</span> <span class="n">tag_size</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bert</span> <span class="o">=</span> <span class="n">BertModel</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">bert_path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">linear</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">bert_hidden</span><span class="p">,</span> <span class="n">tag_size</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_ids</span><span class="p">,</span> <span class="n">attention_mask</span><span class="p">,</span> <span class="n">token_type_ids</span><span class="p">):</span>
+        <span class="n">pool_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bert</span><span class="p">(</span><span class="n">input_ids</span><span class="p">,</span> <span class="n">attention_mask</span><span class="p">,</span> <span class="n">token_type_ids</span><span class="p">)</span><span class="o">.</span><span class="n">pooler_output</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">linear</span><span class="p">(</span><span class="n">pool_output</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">output</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">train_iter</span><span class="p">,</span> <span class="n">dev_iter</span> <span class="o">=</span> <span class="n">get_dataloader</span><span class="p">()</span>
+    <span class="n">mymodel</span> <span class="o">=</span> <span class="n">MyModel</span><span class="p">(</span><span class="n">conf</span><span class="o">.</span><span class="n">bert_path</span><span class="p">,</span> <span class="mi">768</span><span class="p">,</span> <span class="n">conf</span><span class="o">.</span><span class="n">num_class</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">input_ids</span><span class="p">,</span> <span class="n">attention_mask</span><span class="p">,</span> <span class="n">token_type_ids</span><span class="p">,</span> <span class="n">labels</span> <span class="ow">in</span> <span class="n">train_iter</span><span class="p">:</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">mymodel</span><span class="p">(</span><span class="n">input_ids</span><span class="p">,</span> <span class="n">attention_mask</span><span class="p">,</span> <span class="n">token_type_ids</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="k">break</span>
+</code></pre></div>
+</li>
+</ul>
+</li>
+</ul>
+<hr />
+<ul>
+<li>
+<p>实现模型训练和保存</p>
+<ul>
+<li>
+<p>代码位置及名称：./NLP/MedicalKB/NLU/Medical_intention/train.py</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">time</span>
+
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.optim</span> <span class="k">as</span> <span class="nn">optim</span>
+<span class="kn">from</span> <span class="nn">model</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">from</span> <span class="nn">utils.data_loader</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="k">def</span> <span class="nf">model2train</span><span class="p">():</span>
+    <span class="c1"># 获取数据</span>
+    <span class="n">train_iter</span><span class="p">,</span> <span class="n">dev_iter</span> <span class="o">=</span> <span class="n">get_dataloader</span><span class="p">()</span>
+    <span class="c1"># 实例化模型</span>
+    <span class="n">my_model</span> <span class="o">=</span> <span class="n">MyModel</span><span class="p">(</span><span class="n">conf</span><span class="o">.</span><span class="n">bert_path</span><span class="p">,</span> <span class="mi">768</span><span class="p">,</span> <span class="n">conf</span><span class="o">.</span><span class="n">num_class</span><span class="p">)</span>
+    <span class="n">my_model</span> <span class="o">=</span> <span class="n">my_model</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">conf</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+    <span class="c1"># 实例化优化器</span>
+    <span class="n">my_optim</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">my_model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="n">conf</span><span class="o">.</span><span class="n">lr</span><span class="p">)</span>
+    <span class="c1"># 实例化损失函数对象</span>
+    <span class="n">criation</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">()</span>
+
+    <span class="c1"># 定义模型训练参数</span>
+    <span class="n">my_model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+    <span class="n">total_num</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1"># 训练样本参数</span>
+    <span class="n">total_loss</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1"># 训练样本的损失</span>
+    <span class="n">total_acc</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1"># 预测正确样本的个数</span>
+
+    <span class="c1"># 开始训练</span>
+    <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">epoch_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">conf</span><span class="o">.</span><span class="n">epochs</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">input_ids</span><span class="p">,</span> <span class="n">attention_mask</span><span class="p">,</span> <span class="n">token_type_ids</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tqdm</span><span class="p">(</span><span class="n">train_iter</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;训练集&#39;</span><span class="p">)):</span>
+            <span class="n">outputs</span> <span class="o">=</span> <span class="n">my_model</span><span class="p">(</span><span class="n">input_ids</span><span class="p">,</span> <span class="n">attention_mask</span><span class="p">,</span> <span class="n">token_type_ids</span><span class="p">)</span>
+            <span class="c1"># 计算损失</span>
+            <span class="n">my_loss</span> <span class="o">=</span> <span class="n">criation</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span>
+            <span class="c1"># 梯度清零</span>
+            <span class="n">my_optim</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+            <span class="c1"># 反向传播</span>
+            <span class="n">my_loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+            <span class="c1"># 梯度更新</span>
+            <span class="n">my_optim</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+
+            <span class="c1"># 打印训练日志</span>
+            <span class="n">total_num</span> <span class="o">=</span> <span class="n">total_num</span> <span class="o">+</span> <span class="n">outputs</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">total_loss</span> <span class="o">=</span> <span class="n">total_loss</span> <span class="o">+</span> <span class="n">my_loss</span>
+            <span class="n">acc_num</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="n">labels</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+            <span class="n">total_acc</span> <span class="o">=</span> <span class="n">total_acc</span> <span class="o">+</span> <span class="n">acc_num</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">%</span> <span class="mi">100</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">avg_loss</span> <span class="o">=</span> <span class="n">total_loss</span> <span class="o">/</span> <span class="n">total_num</span>
+                <span class="n">avg_acc</span> <span class="o">=</span> <span class="n">total_acc</span> <span class="o">/</span> <span class="n">total_num</span>
+                <span class="n">use_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;当前训练轮次%.d, 平均损失%.2f, 平均准确率%.2f, 耗时%.2f&#39;</span><span class="o">%</span> <span class="p">(</span><span class="n">epoch_idx</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">avg_loss</span><span class="p">,</span> <span class="n">avg_acc</span><span class="p">,</span> <span class="n">use_time</span><span class="p">))</span>
+        <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">my_model</span><span class="o">.</span><span class="n">state_dict</span><span class="p">(),</span> <span class="s1">&#39;./save_model/epoch_</span><span class="si">%s</span><span class="s1">.pth&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">epoch_idx</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+    <span class="n">end_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;总耗时--&gt;</span><span class="si">{</span><span class="n">end_time</span><span class="o">-</span><span class="n">start_time</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">model2train</span><span class="p">()</span>
+</code></pre></div>
+</li>
+</ul>
+</li>
+</ul>
+<hr />
+<ul>
+<li>
+<p>模型加载与利用</p>
+<ul>
+<li>
+<p>基于flask框架封装API接口</p>
+<ul>
+<li>
+<p>代码实现</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.optim</span> <span class="k">as</span> <span class="nn">optim</span>
+<span class="kn">from</span> <span class="nn">model</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">intent_config</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">jsonify</span>
+<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">conf</span> <span class="o">=</span> <span class="n">Config</span><span class="p">()</span>
+
+<span class="n">label_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;./data/label.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf8&#39;</span><span class="p">)]</span>
+<span class="n">id2label</span> <span class="o">=</span> <span class="p">{</span><span class="n">idx</span><span class="p">:</span> <span class="n">label</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">label</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">label_list</span><span class="p">)}</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;id2label--》</span><span class="si">{</span><span class="n">id2label</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">tokenizer</span> <span class="o">=</span> <span class="n">BertTokenizer</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">conf</span><span class="o">.</span><span class="n">bert_path</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">MyModel</span><span class="p">(</span><span class="n">bert_path</span><span class="o">=</span><span class="n">conf</span><span class="o">.</span><span class="n">bert_path</span><span class="p">,</span> <span class="n">bert_hidden</span><span class="o">=</span><span class="mi">768</span><span class="p">,</span> <span class="n">tag_size</span><span class="o">=</span><span class="n">conf</span><span class="o">.</span><span class="n">num_class</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;./save_model/epoch_10.pth&#39;</span><span class="p">))</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">conf</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">model2predict</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+    <span class="c1"># 对数据进行处理</span>
+    <span class="n">inputs</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">encode_plus</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span>
+                                   <span class="n">padding</span><span class="o">=</span><span class="s1">&#39;max_length&#39;</span><span class="p">,</span>
+                                   <span class="n">truncation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                   <span class="n">max_length</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span>
+                                   <span class="n">return_tensors</span><span class="o">=</span><span class="s1">&#39;pt&#39;</span><span class="p">)</span>
+    <span class="n">input_ids</span> <span class="o">=</span> <span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;input_ids&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">conf</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+    <span class="n">attention_mask</span> <span class="o">=</span> <span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;attention_mask&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">conf</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+    <span class="n">token_type_ids</span> <span class="o">=</span> <span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;token_type_ids&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">conf</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+    <span class="c1"># 将数据送入模型</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+    <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+        <span class="n">logits</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">input_ids</span><span class="p">,</span> <span class="n">attention_mask</span><span class="p">,</span> <span class="n">token_type_ids</span><span class="p">)</span>
+    <span class="n">logits</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+    <span class="n">value</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">topk</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">id2label</span><span class="p">[</span><span class="n">out</span><span class="p">],</span> <span class="s2">&quot;confidence&quot;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">item</span><span class="p">()),</span> <span class="mi">3</span><span class="p">)}</span>
+
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/service/api/bert_intent_recognize&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="s2">&quot;POST&quot;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">bert_intent_recognize</span><span class="p">():</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;sucess&quot;</span><span class="p">:</span><span class="mi">0</span><span class="p">}</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">param</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">get_json</span><span class="p">()</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">param</span><span class="p">[</span><span class="s2">&quot;text&quot;</span><span class="p">]</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">model2predict</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;result&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;sucess&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;模型调用有误&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s1">&#39;0.0.0.0&#39;</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">6001</span><span class="p">)</span>
+</code></pre></div>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>
+<p>测试API接口</p>
+<ul>
+<li>
+<p>代码实现</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">json</span>
+
+
+<span class="k">def</span> <span class="nf">intent_classifier</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;http://127.0.0.1:6001/service/api/bert_intent_recognize&#39;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">text</span><span class="p">}</span>
+    <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Content-Type&#39;</span><span class="p">:</span><span class="s1">&#39;application/json; charset=utf8&#39;</span><span class="p">}</span>
+    <span class="n">reponse</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">reponse</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+        <span class="n">reponse</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">reponse</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">reponse</span><span class="p">[</span><span class="s1">&#39;result&#39;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">intent_classifier</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;不同类型的肌无力症状表现有什么不同？&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;result--》</span><span class="si">{</span><span class="n">result</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</code></pre></div>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<hr />
+<h3 id="ner">第三个槽位填充（NER）模型<a class="headerlink" href="#ner" title="Permanent link">&para;</a></h3>
+<ul>
+<li>槽位填充（NER）模型，依然基于BiLSTM+CRF结构，不同于信息抽取任务中的NER, 数据集进行了替换，并且支持7种实体类型</li>
+<li>本次任务，作为项目实践（由学员自己动手实践完成）</li>
+</ul>
+<hr />
+<h2 id="dm">DM模块<a class="headerlink" href="#dm" title="Permanent link">&para;</a></h2>
+<ul>
+<li>基于不同的医疗意图，我们定义不同的语意槽</li>
+</ul>
+<ul>
+<li>定义config文件，位置：.NLP/MedicalKB/config.py</li>
+</ul>
+<ul>
+<li>
+<p>具体代码实现：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># -*- coding:utf-8 -*-</span>
+<span class="c1"># 语意槽</span>
+<span class="n">semantic_slot</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;定义&quot;</span><span class="p">:{</span>
+        <span class="s2">&quot;slot_list&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Disease&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;slot_values&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="s2">&quot;cql_template&quot;</span> <span class="p">:</span> <span class="s2">&quot;MATCH(p:疾病) WHERE p.name=&#39;</span><span class="si">{Disease}</span><span class="s2">&#39; RETURN p.desc&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;reply_template&quot;</span> <span class="p">:</span> <span class="s2">&quot;&#39;</span><span class="si">{Disease}</span><span class="s2">&#39; 是这样的：</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ask_template&quot;</span> <span class="p">:</span> <span class="s2">&quot;您问的是 &#39;</span><span class="si">{Disease}</span><span class="s2">&#39; 的定义吗？&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;intent_strategy&quot;</span> <span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;deny_response&quot;</span><span class="p">:</span><span class="s2">&quot;很抱歉没有理解你的意思呢~&quot;</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;病因&quot;</span><span class="p">:{</span>
+        <span class="s2">&quot;slot_list&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Disease&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;slot_values&quot;</span><span class="p">:</span><span class="kc">None</span><span class="p">,</span>
+        <span class="s2">&quot;cql_template&quot;</span> <span class="p">:</span> <span class="s2">&quot;MATCH(p:疾病) WHERE p.name=&#39;</span><span class="si">{Disease}</span><span class="s2">&#39; RETURN p.cause&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;reply_template&quot;</span> <span class="p">:</span> <span class="s2">&quot;&#39;</span><span class="si">{Disease}</span><span class="s2">&#39; 疾病的原因是：</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ask_template&quot;</span> <span class="p">:</span> <span class="s2">&quot;您问的是疾病 &#39;</span><span class="si">{Disease}</span><span class="s2">&#39; 的原因吗？&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;intent_strategy&quot;</span> <span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;deny_response&quot;</span><span class="p">:</span><span class="s2">&quot;您说的我有点不明白，您可以换个问法问我哦~&quot;</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;预防&quot;</span><span class="p">:{</span>
+        <span class="s2">&quot;slot_list&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Disease&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;slot_values&quot;</span><span class="p">:</span><span class="kc">None</span><span class="p">,</span>
+        <span class="s2">&quot;cql_template&quot;</span> <span class="p">:</span> <span class="s2">&quot;MATCH(p:疾病) WHERE p.name=&#39;</span><span class="si">{Disease}</span><span class="s2">&#39; RETURN p.prevent&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;reply_template&quot;</span> <span class="p">:</span> <span class="s2">&quot;关于 &#39;</span><span class="si">{Disease}</span><span class="s2">&#39; 疾病您可以这样预防：</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ask_template&quot;</span> <span class="p">:</span> <span class="s2">&quot;请问您问的是疾病 &#39;</span><span class="si">{Disease}</span><span class="s2">&#39; 的预防措施吗？&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;intent_strategy&quot;</span> <span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;deny_response&quot;</span><span class="p">:</span><span class="s2">&quot;额~似乎有点不理解你说的是啥呢~&quot;</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;临床表现(病症表现)&quot;</span><span class="p">:{</span>
+        <span class="s2">&quot;slot_list&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Disease&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;slot_values&quot;</span><span class="p">:</span><span class="kc">None</span><span class="p">,</span>
+        <span class="s2">&quot;cql_template&quot;</span> <span class="p">:</span> <span class="s2">&quot;MATCH(p:疾病)-[r:has_symptom]-&gt;(q:症状) WHERE p.name=&#39;</span><span class="si">{Disease}</span><span class="s2">&#39; RETURN q.name&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;reply_template&quot;</span> <span class="p">:</span> <span class="s2">&quot;&#39;</span><span class="si">{Disease}</span><span class="s2">&#39; 疾病的病症表现一般是这样的：</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ask_template&quot;</span> <span class="p">:</span> <span class="s2">&quot;您问的是疾病 &#39;</span><span class="si">{Disease}</span><span class="s2">&#39; 的症状表现吗？&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;intent_strategy&quot;</span> <span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;deny_response&quot;</span><span class="p">:</span><span class="s2">&quot;人类的语言太难了！！&quot;</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;相关病症&quot;</span><span class="p">:{</span>
+        <span class="s2">&quot;slot_list&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Disease&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;slot_values&quot;</span><span class="p">:</span><span class="kc">None</span><span class="p">,</span>
+        <span class="s2">&quot;cql_template&quot;</span> <span class="p">:</span> <span class="s2">&quot;MATCH(p:疾病)-[r:acompany_with]-&gt;(q:疾病) WHERE p.name=&#39;</span><span class="si">{Disease}</span><span class="s2">&#39; RETURN q.name&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;reply_template&quot;</span> <span class="p">:</span> <span class="s2">&quot;&#39;</span><span class="si">{Disease}</span><span class="s2">&#39; 疾病的具有以下并发疾病：</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ask_template&quot;</span> <span class="p">:</span> <span class="s2">&quot;您问的是疾病 &#39;</span><span class="si">{Disease}</span><span class="s2">&#39; 的并发疾病吗？&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;intent_strategy&quot;</span> <span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;deny_response&quot;</span><span class="p">:</span><span class="s2">&quot;人类的语言太难了！！~&quot;</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;治疗方法&quot;</span><span class="p">:{</span>
+        <span class="s2">&quot;slot_list&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Disease&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;slot_values&quot;</span><span class="p">:</span><span class="kc">None</span><span class="p">,</span>
+        <span class="s2">&quot;cql_template&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="s2">&quot;MATCH(p:疾病) WHERE p.name=&#39;</span><span class="si">{Disease}</span><span class="s2">&#39; RETURN p.cure_way&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;MATCH(p:疾病)-[r:recommand_drug]-&gt;(q) WHERE p.name=&#39;</span><span class="si">{Disease}</span><span class="s2">&#39; RETURN q.name&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;MATCH(p:疾病)-[r:recommand_recipes]-&gt;(q) WHERE p.name=&#39;</span><span class="si">{Disease}</span><span class="s2">&#39; RETURN q.name&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;reply_template&quot;</span> <span class="p">:</span> <span class="s2">&quot;&#39;</span><span class="si">{Disease}</span><span class="s2">&#39; 疾病的治疗方式、可用的药物、推荐菜肴有：</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ask_template&quot;</span> <span class="p">:</span> <span class="s2">&quot;您问的是疾病 &#39;</span><span class="si">{Disease}</span><span class="s2">&#39; 的治疗方法吗？&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;intent_strategy&quot;</span> <span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;deny_response&quot;</span><span class="p">:</span><span class="s2">&quot;没有理解您说的意思哦~&quot;</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;所属科室&quot;</span><span class="p">:{</span>
+        <span class="s2">&quot;slot_list&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Disease&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;slot_values&quot;</span><span class="p">:</span><span class="kc">None</span><span class="p">,</span>
+        <span class="s2">&quot;cql_template&quot;</span> <span class="p">:</span> <span class="s2">&quot;MATCH(p:疾病)-[r:cure_department]-&gt;(q:科室) WHERE p.name=&#39;</span><span class="si">{Disease}</span><span class="s2">&#39; RETURN q.name&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;reply_template&quot;</span> <span class="p">:</span> <span class="s2">&quot;得了 &#39;</span><span class="si">{Disease}</span><span class="s2">&#39; 可以挂这个科室哦：</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ask_template&quot;</span> <span class="p">:</span> <span class="s2">&quot;您想问的是疾病 &#39;</span><span class="si">{Disease}</span><span class="s2">&#39; 要挂什么科室吗？&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;intent_strategy&quot;</span> <span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;deny_response&quot;</span><span class="p">:</span><span class="s2">&quot;您说的我有点不明白，您可以换个问法问我哦~&quot;</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;传染性&quot;</span><span class="p">:{</span>
+        <span class="s2">&quot;slot_list&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Disease&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;slot_values&quot;</span><span class="p">:</span><span class="kc">None</span><span class="p">,</span>
+        <span class="s2">&quot;cql_template&quot;</span> <span class="p">:</span> <span class="s2">&quot;MATCH(p:疾病) WHERE p.name=&#39;</span><span class="si">{Disease}</span><span class="s2">&#39; RETURN p.easy_get&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;reply_template&quot;</span> <span class="p">:</span> <span class="s2">&quot;&#39;</span><span class="si">{Disease}</span><span class="s2">&#39; 较为容易感染这些人群：</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ask_template&quot;</span> <span class="p">:</span> <span class="s2">&quot;您想问的是疾病 &#39;</span><span class="si">{Disease}</span><span class="s2">&#39; 会感染哪些人吗？&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;intent_strategy&quot;</span> <span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;deny_response&quot;</span><span class="p">:</span><span class="s2">&quot;没有理解您说的意思哦~&quot;</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;治愈率&quot;</span><span class="p">:{</span>
+        <span class="s2">&quot;slot_list&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Disease&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;slot_values&quot;</span><span class="p">:</span><span class="kc">None</span><span class="p">,</span>
+        <span class="s2">&quot;cql_template&quot;</span> <span class="p">:</span> <span class="s2">&quot;MATCH(p:疾病) WHERE p.name=&#39;</span><span class="si">{Disease}</span><span class="s2">&#39; RETURN p.cured_prob&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;reply_template&quot;</span> <span class="p">:</span> <span class="s2">&quot;得了&#39;</span><span class="si">{Disease}</span><span class="s2">&#39; 的治愈率为：&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ask_template&quot;</span> <span class="p">:</span> <span class="s2">&quot;您想问 &#39;</span><span class="si">{Disease}</span><span class="s2">&#39; 的治愈率吗？&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;intent_strategy&quot;</span> <span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;deny_response&quot;</span><span class="p">:</span><span class="s2">&quot;您说的我有点不明白，您可以换个问法问我哦~&quot;</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;治疗时间&quot;</span><span class="p">:{</span>
+        <span class="s2">&quot;slot_list&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Disease&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;slot_values&quot;</span><span class="p">:</span><span class="kc">None</span><span class="p">,</span>
+        <span class="s2">&quot;cql_template&quot;</span> <span class="p">:</span> <span class="s2">&quot;MATCH(p:疾病) WHERE p.name=&#39;</span><span class="si">{Disease}</span><span class="s2">&#39; RETURN p.cure_lasttime&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;reply_template&quot;</span> <span class="p">:</span> <span class="s2">&quot;疾病 &#39;</span><span class="si">{Disease}</span><span class="s2">&#39; 的治疗周期为：&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ask_template&quot;</span> <span class="p">:</span> <span class="s2">&quot;您想问 &#39;</span><span class="si">{Disease}</span><span class="s2">&#39; 的治疗周期吗？&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;intent_strategy&quot;</span> <span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;deny_response&quot;</span><span class="p">:</span><span class="s2">&quot;很抱歉没有理解你的意思呢~&quot;</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;化验/体检方案&quot;</span><span class="p">:{</span>
+        <span class="s2">&quot;slot_list&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Disease&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;slot_values&quot;</span><span class="p">:</span><span class="kc">None</span><span class="p">,</span>
+        <span class="s2">&quot;cql_template&quot;</span> <span class="p">:</span> <span class="s2">&quot;MATCH(p:疾病)-[r:need_check]-&gt;(q:检查) WHERE p.name=&#39;</span><span class="si">{Disease}</span><span class="s2">&#39; RETURN q.name&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;reply_template&quot;</span> <span class="p">:</span> <span class="s2">&quot;得了 &#39;</span><span class="si">{Disease}</span><span class="s2">&#39; 需要做以下检查：</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ask_template&quot;</span> <span class="p">:</span> <span class="s2">&quot;您是想问 &#39;</span><span class="si">{Disease}</span><span class="s2">&#39; 要做什么检查吗？&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;intent_strategy&quot;</span> <span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;deny_response&quot;</span><span class="p">:</span><span class="s2">&quot;您说的我有点不明白，您可以换个问法问我哦~&quot;</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;禁忌&quot;</span><span class="p">:{</span>
+        <span class="s2">&quot;slot_list&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Disease&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;slot_values&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="s2">&quot;cql_template&quot;</span> <span class="p">:</span> <span class="s2">&quot;MATCH(p:疾病)-[r:not_eat]-&gt;(q:食物) WHERE p.name=&#39;</span><span class="si">{Disease}</span><span class="s2">&#39; RETURN q.name&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;reply_template&quot;</span> <span class="p">:</span> <span class="s2">&quot;得了 &#39;</span><span class="si">{Disease}</span><span class="s2">&#39; 切记不要吃这些食物哦：</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ask_template&quot;</span> <span class="p">:</span> <span class="s2">&quot;您是想问 &#39;</span><span class="si">{Disease}</span><span class="s2">&#39; 不可以吃的食物是什么吗？&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;intent_strategy&quot;</span> <span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;deny_response&quot;</span><span class="p">:</span><span class="s2">&quot;额~似乎有点不理解你说的是啥呢~~&quot;</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;unrecognized&quot;</span><span class="p">:{</span>
+        <span class="s2">&quot;slot_values&quot;</span><span class="p">:</span><span class="kc">None</span><span class="p">,</span>
+        <span class="s2">&quot;replay_answer&quot;</span> <span class="p">:</span> <span class="s2">&quot;非常抱歉，我还不知道如何回答您，我正在努力学习中~&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">intent_threshold_config</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;accept&quot;</span><span class="p">:</span><span class="mf">0.8</span><span class="p">,</span>
+    <span class="s2">&quot;deny&quot;</span><span class="p">:</span><span class="mf">0.4</span>
+<span class="p">}</span>
+
+<span class="n">default_answer</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;很抱歉我还不知道回答你这个问题</span><span class="se">\n</span><span class="s2"></span>
+<span class="s2">                    你可以问我一些有关疾病的</span><span class="se">\n</span><span class="s2"></span>
+<span class="s2">                    定义、原因、治疗方法、注意事项、挂什么科室</span><span class="se">\n</span><span class="s2"></span>
+<span class="s2">                    预防、禁忌等相关问题哦~&quot;&quot;&quot;</span>
+
+<span class="n">gossip_corpus</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;greet&quot;</span><span class="p">:[</span>
+            <span class="s2">&quot;hi&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;你好呀&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;我是智能医疗诊断机器人，有什么可以帮助你吗&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;hi，你好，你可以叫我小康&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;你好，你可以问我一些关于疾病诊断的问题哦&quot;</span>
+        <span class="p">],</span>
+    <span class="s2">&quot;goodbye&quot;</span><span class="p">:[</span>
+            <span class="s2">&quot;再见，很高兴为您服务&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;bye&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;再见，感谢使用我的服务&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;再见啦，祝你健康&quot;</span>
+        <span class="p">],</span>
+    <span class="s2">&quot;deny&quot;</span><span class="p">:[</span>
+            <span class="s2">&quot;很抱歉没帮到您&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;I am sorry&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;那您可以试着问我其他问题哟&quot;</span>
+        <span class="p">],</span>
+    <span class="s2">&quot;isbot&quot;</span><span class="p">:[</span>
+            <span class="s2">&quot;我是小康，你的智能健康顾问&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;你可以叫我小康哦~&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;我是医疗诊断机器人小康&quot;</span>
+        <span class="p">],</span>
+<span class="p">}</span>
+</code></pre></div>
+</li>
+</ul>
+<hr />
+<h2 id="_5">主逻辑模块<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h3 id="modules">modules模块<a class="headerlink" href="#modules" title="Permanent link">&para;</a></h3>
+<ul>
+<li>DST模块+PL模块组成了任务型对话机器人中的对话管理(DM)模块，在这个项目中界限并不是特别明显，主要实现逻辑都在<code>modules.py</code> 文件的 <code>semantic_parser</code> 函数中。</li>
+</ul>
+<ul>
+<li>modules脚本位置：./NLP/MedicalKB/modules.py；其中共包含8个函数。</li>
+</ul>
+<ul>
+<li>
+<p>导入必备的工具包：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># -*- coding:utf-8 -*-</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">from</span> <span class="nn">py2neo</span> <span class="kn">import</span> <span class="n">Graph</span>
+<span class="kn">from</span> <span class="nn">NLU.Chatty_intention.clf_model</span> <span class="kn">import</span> <span class="n">CLFModel</span>
+<span class="kn">from</span> <span class="nn">config</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="n">graph</span> <span class="o">=</span> <span class="n">Graph</span><span class="p">(</span><span class="s2">&quot;http://localhost:7474&quot;</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;neo4j&quot;</span><span class="p">,</span> <span class="s2">&quot;12345&quot;</span><span class="p">))</span>
+<span class="n">clf_model</span> <span class="o">=</span> <span class="n">CLFModel</span><span class="p">(</span><span class="s1">&#39;./NLU/Chatty_intention/model_file/&#39;</span><span class="p">)</span>
+</code></pre></div>
+</li>
+</ul>
+<hr />
+<ul>
+<li>
+<p>第一个函数: classifier()</p>
+<ul>
+<li>作用: 闲聊意图识别（第一个意图分类模型应用）</li>
+</ul>
+<ul>
+<li>
+<p>代码：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">classifier</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    判断是否是闲聊意图，以及是什么类型闲聊</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">clf_model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+</code></pre></div>
+</li>
+</ul>
+</li>
+</ul>
+<hr />
+<ul>
+<li>
+<p>第二个函数: intent_classifier()</p>
+<ul>
+<li>作用：医疗意图识别（第二个意图分类模型应用），如果不能正常预测结果，返回值默认为-1</li>
+</ul>
+<ul>
+<li>
+<p>代码：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">intent_classifier</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;http://127.0.0.1:6001/service/api/bert_intent_recognize&#39;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">text</span><span class="p">}</span>
+    <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Content-Type&#39;</span><span class="p">:</span> <span class="s1">&#39;application/json; charset=utf8&#39;</span><span class="p">}</span>
+    <span class="n">reponse</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">reponse</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+        <span class="n">reponse</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">reponse</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">reponse</span><span class="p">[</span><span class="s1">&#39;result&#39;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+</code></pre></div>
+</li>
+</ul>
+</li>
+</ul>
+<hr />
+<ul>
+<li>
+<p>第三个函数: slot_recognizer()</p>
+<ul>
+<li>作用：槽位填充，如果不能正常预测结果，返回值默认为-1</li>
+</ul>
+<ul>
+<li>
+<p>代码：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">slot_recognizer</span><span class="p">(</span><span class="n">sample</span><span class="p">):</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;http://127.0.0.1:6002/service/api/medical_ner&#39;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">sample</span><span class="p">}</span>
+    <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Content-Type&#39;</span><span class="p">:</span> <span class="s1">&#39;application/json;charset=utf8&#39;</span><span class="p">}</span>
+    <span class="n">reponse</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">reponse</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+        <span class="n">reponse</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">reponse</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+        <span class="c1"># print(f&#39;reponse--》{reponse}&#39;)</span>
+        <span class="k">return</span> <span class="n">reponse</span><span class="p">[</span><span class="s1">&#39;result&#39;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+</code></pre></div>
+</li>
+</ul>
+</li>
+</ul>
+<hr />
+<ul>
+<li>
+<p>第四个函数： gossip_robot()</p>
+<ul>
+<li>作用：如果是用户属于闲聊意图，从准备好的回复语料中随机抽取一条返回给用户，对话结束</li>
+</ul>
+<ul>
+<li>
+<p>代码：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">gossip_robot</span><span class="p">(</span><span class="n">intent</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span>
+                <span class="n">gossip_corpus</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">intent</span><span class="p">)</span>
+            <span class="p">)</span>
+</code></pre></div>
+</li>
+</ul>
+</li>
+</ul>
+<hr />
+<ul>
+<li>
+<p>第五个函数：medical_robot()</p>
+<ul>
+<li>作用：如果用户意图不属于闲聊，则会进行第二次医疗意图识别，并进行诊断回答</li>
+</ul>
+<ul>
+<li>
+<p>代码：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">medical_robot</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    如果确定是诊断意图则使用该方法进行诊断问答</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">semantic_slot</span> <span class="o">=</span> <span class="n">semantic_parser</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="n">answer</span> <span class="o">=</span> <span class="n">get_answer</span><span class="p">(</span><span class="n">semantic_slot</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">answer</span>
+</code></pre></div>
+</li>
+</ul>
+</li>
+</ul>
+<hr />
+<ul>
+<li>
+<p>第六个函数：semantic_parser(text)</p>
+<ul>
+<li>作用：对文本解析，填槽，并根据意图强度来确认回复策略</li>
+</ul>
+<ul>
+<li>
+<p>代码：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">semantic_parser</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    对文本进行解析</span>
+<span class="sd">    intent = {&quot;name&quot;:str,&quot;confidence&quot;:float}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+        <span class="c1"># 医疗意图识别</span>
+    <span class="n">intent_rst</span> <span class="o">=</span> <span class="n">intent_classifier</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="c1"># 槽位填充NER识别</span>
+    <span class="n">slot_rst</span> <span class="o">=</span> <span class="n">slot_recognizer</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">intent_rst</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="ow">or</span> <span class="n">slot_rst</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">slot_rst</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">intent_rst</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;其他&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">semantic_slot</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;unrecognized&quot;</span><span class="p">)</span>
+    <span class="n">slot_info</span> <span class="o">=</span> <span class="n">semantic_slot</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">intent_rst</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">))</span>
+    <span class="c1"># 填槽</span>
+    <span class="n">slots</span> <span class="o">=</span> <span class="n">slot_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;slot_list&quot;</span><span class="p">)</span>
+
+    <span class="n">slot_values</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">slot_rst</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="n">slots</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+            <span class="n">slot_values</span><span class="p">[</span><span class="n">slots</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">key</span>
+    <span class="n">slot_info</span><span class="p">[</span><span class="s2">&quot;slot_values&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">slot_values</span>
+
+    <span class="c1"># 根据意图强度来确认回复策略</span>
+    <span class="n">conf</span> <span class="o">=</span> <span class="n">intent_rst</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;confidence&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">conf</span> <span class="o">&gt;=</span> <span class="n">intent_threshold_config</span><span class="p">[</span><span class="s2">&quot;accept&quot;</span><span class="p">]:</span>
+        <span class="n">slot_info</span><span class="p">[</span><span class="s2">&quot;intent_strategy&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;accept&quot;</span>
+    <span class="k">elif</span> <span class="n">conf</span> <span class="o">&gt;=</span> <span class="n">intent_threshold_config</span><span class="p">[</span><span class="s2">&quot;deny&quot;</span><span class="p">]:</span>
+        <span class="n">slot_info</span><span class="p">[</span><span class="s2">&quot;intent_strategy&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;clarify&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">slot_info</span><span class="p">[</span><span class="s2">&quot;intent_strategy&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;deny&quot;</span>
+
+    <span class="k">return</span> <span class="n">slot_info</span>
+</code></pre></div>
+</li>
+</ul>
+</li>
+</ul>
+<hr />
+<ul>
+<li>
+<p>第七个函数：get_answer()</p>
+<ul>
+<li>作用：根据语义槽获取答案回复</li>
+</ul>
+<ul>
+<li>
+<p>代码：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_answer</span><span class="p">(</span><span class="n">slot_info</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    根据语义槽获取答案回复</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cql_template</span> <span class="o">=</span> <span class="n">slot_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;cql_template&quot;</span><span class="p">)</span>
+    <span class="n">reply_template</span> <span class="o">=</span> <span class="n">slot_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;reply_template&quot;</span><span class="p">)</span>
+    <span class="n">ask_template</span> <span class="o">=</span> <span class="n">slot_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ask_template&quot;</span><span class="p">)</span>
+    <span class="n">slot_values</span> <span class="o">=</span> <span class="n">slot_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;slot_values&quot;</span><span class="p">)</span>
+    <span class="n">strategy</span> <span class="o">=</span> <span class="n">slot_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;intent_strategy&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;11slot_info--&gt;</span><span class="si">{</span><span class="n">slot_info</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">slot_values</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">slot_info</span>
+
+    <span class="k">if</span> <span class="n">strategy</span> <span class="o">==</span> <span class="s2">&quot;accept&quot;</span><span class="p">:</span>
+        <span class="n">cql</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cql_template</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">cqlt</span> <span class="ow">in</span> <span class="n">cql_template</span><span class="p">:</span>
+                <span class="n">cql</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cqlt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">slot_values</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cql</span> <span class="o">=</span> <span class="n">cql_template</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">slot_values</span><span class="p">)</span>
+        <span class="n">answer</span> <span class="o">=</span> <span class="n">neo4j_searcher</span><span class="p">(</span><span class="n">cql</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">answer</span><span class="p">:</span>
+            <span class="n">slot_info</span><span class="p">[</span><span class="s2">&quot;replay_answer&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;唔~我装满知识的大脑此刻很贫瘠&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">pattern</span> <span class="o">=</span> <span class="n">reply_template</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">slot_values</span><span class="p">)</span>
+            <span class="n">slot_info</span><span class="p">[</span><span class="s2">&quot;replay_answer&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pattern</span> <span class="o">+</span> <span class="n">answer</span>
+    <span class="k">elif</span> <span class="n">strategy</span> <span class="o">==</span> <span class="s2">&quot;clarify&quot;</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;进入clarify&#39;</span><span class="p">)</span>
+        <span class="c1"># 澄清用户是否问该问题</span>
+        <span class="n">pattern</span> <span class="o">=</span> <span class="n">ask_template</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">slot_values</span><span class="p">)</span>
+        <span class="n">slot_info</span><span class="p">[</span><span class="s2">&quot;replay_answer&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pattern</span>
+        <span class="c1"># 得到肯定意图之后需要给用户回复的答案</span>
+        <span class="n">cql</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cql_template</span><span class="p">,</span><span class="nb">list</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">cqlt</span> <span class="ow">in</span> <span class="n">cql_template</span><span class="p">:</span>
+                <span class="n">cql</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cqlt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">slot_values</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cql</span> <span class="o">=</span> <span class="n">cql_template</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">slot_values</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;cql--》</span><span class="si">{</span><span class="n">cql</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">answer</span> <span class="o">=</span> <span class="n">neo4j_searcher</span><span class="p">(</span><span class="n">cql</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">answer</span><span class="p">:</span>
+            <span class="n">slot_info</span><span class="p">[</span><span class="s2">&quot;replay_answer&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;唔~我装满知识的大脑此刻很贫瘠&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">pattern</span> <span class="o">=</span> <span class="n">reply_template</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">slot_values</span><span class="p">)</span>
+            <span class="n">slot_info</span><span class="p">[</span><span class="s2">&quot;choice_answer&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pattern</span> <span class="o">+</span> <span class="n">answer</span>
+    <span class="k">elif</span> <span class="n">strategy</span> <span class="o">==</span> <span class="s2">&quot;deny&quot;</span><span class="p">:</span>
+        <span class="n">slot_info</span><span class="p">[</span><span class="s2">&quot;replay_answer&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">slot_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;deny_response&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">slot_info</span>
+</code></pre></div>
+</li>
+</ul>
+</li>
+</ul>
+<hr />
+<ul>
+<li>
+<p>第八个函数：neo4j_searcher()</p>
+<ul>
+<li>作用：查询Neo4j数据库，得到返回结果</li>
+</ul>
+<ul>
+<li>
+<p>代码：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">neo4j_searcher</span><span class="p">(</span><span class="n">cql_list</span><span class="p">):</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cql_list</span><span class="p">,</span><span class="nb">list</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">cql</span> <span class="ow">in</span> <span class="n">cql_list</span><span class="p">:</span>
+            <span class="n">rst</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">cql</span><span class="p">)</span><span class="o">.</span><span class="n">data</span><span class="p">()</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+                <span class="n">d</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="nb">list</span><span class="p">):</span>
+                    <span class="n">rst</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">rst</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+
+            <span class="n">data</span> <span class="o">=</span> <span class="s2">&quot;、&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">rst</span><span class="p">])</span>
+            <span class="n">result</span> <span class="o">+=</span> <span class="n">data</span><span class="o">+</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">cql_list</span><span class="p">)</span><span class="o">.</span><span class="n">data</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">result</span>
+        <span class="n">rst</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="n">d</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="nb">list</span><span class="p">):</span>
+                <span class="n">rst</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">rst</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="s2">&quot;、&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">rst</span><span class="p">])</span>
+        <span class="n">result</span> <span class="o">+=</span> <span class="n">data</span>
+
+    <span class="k">return</span> <span class="n">result</span>
+</code></pre></div>
+</li>
+</ul>
+</li>
+</ul>
+<hr />
+<h3 id="chat_app">chat_app模块<a class="headerlink" href="#chat_app" title="Permanent link">&para;</a></h3>
+<ul>
+<li>chat_app模块为主程序代码，在该脚本中实现了整个逻辑对话代码，并借助streamlit工具，实现web界面的问答聊天交互。</li>
+</ul>
+<ul>
+<li>
+<p>整个chat_app代码逻辑：</p>
+<div class="highlight"><pre><span></span><code>问答流程：
+1、用户输入文本
+2、对文本进行解析得到语义结构信息
+3、根据语义结构去查找知识，返回给用户
+
+对文本进行解析的流程：
+1、意图理解
+    闲聊意图：问好、离开、肯定、拒绝
+        问好、离开：需要有回复动作
+        肯定、拒绝：需要执行动作
+    诊断意图：
+        当意图置信度达到一定阈值时(&gt;=0.8)，可以查询该意图下的答案
+        当意图置信度较低时(0.4~0.8)，按最高置信度的意图查找答案，询问用户是否问的这个问题
+        当意图置信度更低时(&lt;0.4)，拒绝回答
+2、槽位填充
+    如果输入是一个诊断意图，那么就需要语义槽的填充，得到结构化语义
+</code></pre></div>
+</li>
+</ul>
+<ul>
+<li>
+<p>代码实现</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># -*- coding:utf-8 -*-</span>
+<span class="kn">import</span> <span class="nn">streamlit</span> <span class="k">as</span> <span class="nn">st</span>
+<span class="kn">from</span> <span class="nn">modules</span> <span class="kn">import</span> <span class="n">gossip_robot</span><span class="p">,</span> <span class="n">medical_robot</span><span class="p">,</span> <span class="n">classifier</span>
+<span class="kn">from</span> <span class="nn">utils.json_utils</span> <span class="kn">import</span> <span class="n">dump_user_dialogue_context</span><span class="p">,</span><span class="n">load_user_dialogue_context</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="n">st</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;欢迎访问小康医疗智能问答系统&quot;</span><span class="p">)</span>
+
+    <span class="c1"># 初始化会话状态，如果没有则创建</span>
+    <span class="k">if</span> <span class="s1">&#39;history&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="p">:</span>
+        <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="o">.</span><span class="n">history</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># 显示对话历史</span>
+    <span class="k">for</span> <span class="n">chat</span> <span class="ow">in</span> <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="o">.</span><span class="n">history</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">chat</span><span class="p">[</span><span class="s1">&#39;role&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;user&#39;</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">st</span><span class="o">.</span><span class="n">chat_message</span><span class="p">(</span><span class="s2">&quot;user&quot;</span><span class="p">):</span>
+                <span class="n">st</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="n">chat</span><span class="p">[</span><span class="s1">&#39;content&#39;</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">st</span><span class="o">.</span><span class="n">chat_message</span><span class="p">(</span><span class="s2">&quot;assistant&quot;</span><span class="p">):</span>
+                <span class="n">st</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="n">chat</span><span class="p">[</span><span class="s1">&#39;content&#39;</span><span class="p">])</span>
+
+    <span class="c1"># user_input接收用户的输入</span>
+    <span class="k">if</span> <span class="n">user_input</span> <span class="o">:=</span> <span class="n">st</span><span class="o">.</span><span class="n">chat_input</span><span class="p">(</span><span class="s2">&quot;Chat with 小康: &quot;</span><span class="p">):</span>
+        <span class="c1"># 在页面上显示用户的输入</span>
+        <span class="k">with</span> <span class="n">st</span><span class="o">.</span><span class="n">chat_message</span><span class="p">(</span><span class="s2">&quot;user&quot;</span><span class="p">):</span>
+            <span class="n">st</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="n">user_input</span><span class="p">)</span>
+
+        <span class="c1"># 判断用户输入是否为闲聊意图</span>
+        <span class="n">user_intent</span> <span class="o">=</span> <span class="n">classifier</span><span class="p">(</span><span class="n">user_input</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">user_intent</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;greet&quot;</span><span class="p">,</span> <span class="s2">&quot;goodbye&quot;</span><span class="p">,</span> <span class="s2">&quot;deny&quot;</span><span class="p">,</span> <span class="s2">&quot;isbot&quot;</span><span class="p">]:</span>
+            <span class="c1"># 闲聊意图时，直接随机返回设计好的答案，</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">gossip_robot</span><span class="p">(</span><span class="n">user_intent</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">user_intent</span> <span class="o">==</span> <span class="s2">&quot;accept&quot;</span><span class="p">:</span>
+            <span class="c1"># 澄清意图时，进行回复</span>
+            <span class="n">reply</span> <span class="o">=</span> <span class="n">load_user_dialogue_context</span><span class="p">()</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">reply</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;choice_answer&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># 为诊断意图时，返回图谱答案</span>
+            <span class="n">reply</span> <span class="o">=</span> <span class="n">medical_robot</span><span class="p">(</span><span class="n">user_input</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">reply</span><span class="p">[</span><span class="s2">&quot;slot_values&quot;</span><span class="p">]:</span>
+                <span class="n">dump_user_dialogue_context</span><span class="p">(</span><span class="n">reply</span><span class="p">)</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">reply</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;replay_answer&quot;</span><span class="p">)</span>
+        <span class="c1"># 将用户的输入加入历史</span>
+        <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="o">.</span><span class="n">history</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">user_input</span><span class="p">})</span>
+        <span class="c1"># 在页面上显示模型生成的回复</span>
+        <span class="k">with</span> <span class="n">st</span><span class="o">.</span><span class="n">chat_message</span><span class="p">(</span><span class="s2">&quot;assistant&quot;</span><span class="p">):</span>
+            <span class="n">st</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+
+        <span class="c1"># 将模型的输出加入到历史信息中</span>
+        <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="o">.</span><span class="n">history</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;assistant&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">response</span><span class="p">})</span>
+
+        <span class="c1"># 只保留十轮对话，这个可根据自己的情况设定</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="o">.</span><span class="n">history</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">20</span><span class="p">:</span>
+            <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="o">.</span><span class="n">history</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="o">-</span><span class="mi">20</span><span class="p">:]</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</code></pre></div>
+</li>
+</ul>
+<hr />
+<ul>
+<li>
+<p>澄清意图时，临时保存查询结果</p>
+<ul>
+<li>脚本：./NLP/MedicalKB/utils/json_utils.py</li>
+</ul>
+<ul>
+<li>
+<p>代码实现：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># -*- coding:utf-8 -*-</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">json</span>
+
+<span class="n">LOGS_DIR</span> <span class="o">=</span> <span class="s2">&quot;./logs&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">dump_user_dialogue_context</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">LOGS_DIR</span><span class="p">,</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">.json&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;user&quot;</span><span class="p">))</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> 
+                <span class="n">separators</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;, &#39;</span><span class="p">,</span> <span class="s1">&#39;: &#39;</span><span class="p">),</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">load_user_dialogue_context</span><span class="p">():</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">LOGS_DIR</span><span class="p">,</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">.json&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;user&quot;</span><span class="p">))</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;choice_answer&quot;</span><span class="p">:</span><span class="s2">&quot;hi，机器人小智很高心为您服务&quot;</span><span class="p">,</span> <span class="s2">&quot;slot_values&quot;</span><span class="p">:</span><span class="kc">None</span><span class="p">}</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</code></pre></div>
+</li>
+</ul>
+</li>
+</ul>
+<hr />
+<h2 id="_6">上线使用<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h3 id="_7">启动服务<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<ul>
+<li>启动意图识别模型服务和NER模型服务<ul>
+<li>启动命令在下面两个文件中<ul>
+<li>Intention_recognition.sh</li>
+<li>solt_ner.sh</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="_8">启动知识图谱服务<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<ul>
+<li>如果你构建好知识图谱后没有关闭服务，这一步可以跳过，要是关闭了，就重新启动</li>
+<li>启动命令<ul>
+<li>打开终端，输入：./neo4j start</li>
+</ul>
+</li>
+</ul>
+<h3 id="_9">启动主程序<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<ul>
+<li>主程序名称：chat_app.py</li>
+<li>终端运行命令<ul>
+<li>streamlit run chat_app.py</li>
+</ul>
+</li>
+</ul>
+<h3 id="_10">运行效果截图<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<div align=center><img src="./img/05.png" style="zoom:40%" ><img/></div>
+
+<h2 id="_11">小节总结<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<ul>
+<li>本章节主要讲解了基于医疗知识图谱实现整个问答系统的代码实现过程，初步搭建了能够应用的AI医疗聊天机器人。</li>
+</ul>
+<hr />
+<hr />
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+    <nav class="md-footer__inner md-grid" aria-label="页脚" >
+      
+        
+        <a href="03-%E5%8C%BB%E7%96%97KBQA%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84.html" class="md-footer__link md-footer__link--prev" aria-label="上一页: 7.3 医疗KBQA系统架构" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                上一页
+              </span>
+              7.3 医疗KBQA系统架构
+            </div>
+          </div>
+        </a>
+      
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.16e2a7d4.min.js", "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.config.lang": "ja", "search.config.pipeline": "trimmer, stemmer", "search.config.separator": "[\\s\\-\uff0c\u3002]+", "search.placeholder": "\u641c\u7d22", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version.title": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.5a2dcb6a.min.js"></script>
+      
+        <script src="../js/extra.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+      
+    
+    
+  </body>
+</html>

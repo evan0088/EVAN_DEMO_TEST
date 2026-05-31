@@ -1,0 +1,1079 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      <link rel="icon" href="../img/AI.jpg">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-8.5.10">
+    
+    
+      
+        <title>3.4 Veterbi算法介绍(扩展资料) - 红蜘蛛知识图谱项目V3.0</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.975780f9.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.2505c338.min.css">
+        
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="None" data-md-color-accent="None">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#viterbi" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href=".." title="红蜘蛛知识图谱项目V3.0" class="md-header__button md-logo" aria-label="红蜘蛛知识图谱项目V3.0" data-md-component="logo">
+      
+  <img src="../img/AI.jpg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            红蜘蛛知识图谱项目V3.0
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              3.4 Veterbi算法介绍(扩展资料)
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="红蜘蛛知识图谱项目V3.0" class="md-nav__button md-logo" aria-label="红蜘蛛知识图谱项目V3.0" data-md-component="logo">
+      
+  <img src="../img/AI.jpg" alt="logo">
+
+    </a>
+    红蜘蛛知识图谱项目V3.0
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_1" type="checkbox" id="__nav_1" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_1">
+          第一章:红蜘蛛项目简介
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="第一章:红蜘蛛项目简介" data-md-level="1">
+        <label class="md-nav__title" for="__nav_1">
+          <span class="md-nav__icon md-icon"></span>
+          第一章:红蜘蛛项目简介
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E4%B8%80%E7%AB%A0%EF%BC%9A%E9%A1%B9%E7%9B%AE%E8%83%8C%E6%99%AF/1.%E9%A1%B9%E7%9B%AE%E7%AE%80%E4%BB%8B.html" class="md-nav__link">
+        1.1 项目背景介绍
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E4%B8%80%E7%AB%A0%EF%BC%9A%E9%A1%B9%E7%9B%AE%E8%83%8C%E6%99%AF/2.%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E6%8A%80%E6%9C%AF%E6%A6%82%E6%8B%AC.html" class="md-nav__link">
+        1.2 知识图谱技术概括
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2">
+          第二章:项目工具介绍
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="第二章:项目工具介绍" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          第二章:项目工具介绍
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E4%BA%8C%E7%AB%A0%EF%BC%9A%E9%A1%B9%E7%9B%AE%E5%B7%A5%E5%85%B7/01-%E9%A1%B9%E7%9B%AE%E5%BA%94%E7%94%A8%E5%B7%A5%E5%85%B7.html" class="md-nav__link">
+        2.1 项目应用工具概览
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E4%BA%8C%E7%AB%A0%EF%BC%9A%E9%A1%B9%E7%9B%AE%E5%B7%A5%E5%85%B7/02-doccano%E6%95%B0%E6%8D%AE%E6%A0%87%E6%B3%A8%E5%B9%B3%E5%8F%B0.html" class="md-nav__link">
+        2.2 doccano数据标注平台
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E4%BA%8C%E7%AB%A0%EF%BC%9A%E9%A1%B9%E7%9B%AE%E5%B7%A5%E5%85%B7/03-%E7%9F%A5%E8%AF%86%E6%9F%A5%E8%AF%A2%E8%AF%AD%E8%A8%80.html" class="md-nav__link">
+        2.3 知识查询语言
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E4%BA%8C%E7%AB%A0%EF%BC%9A%E9%A1%B9%E7%9B%AE%E5%B7%A5%E5%85%B7/04-Neo4j%E5%9B%BE%E6%95%B0%E6%8D%AE%E5%BA%93.html" class="md-nav__link">
+        2.4 Neo4j图数据库
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3">
+          第三章:实体抽取
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="第三章:实体抽取" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          第三章:实体抽取
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="01-%E5%AE%9E%E4%BD%93%E8%AF%86%E5%88%AB%E5%9F%BA%E6%9C%AC%E7%9F%A5%E8%AF%86.html" class="md-nav__link">
+        3.1 实体识别基本知识
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="02-%E5%9F%BA%E4%BA%8E%E8%A7%84%E5%88%99%E5%AE%9E%E7%8E%B0NER.html" class="md-nav__link">
+        3.2 基于规则实现NER
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="03-%E5%9F%BA%E4%BA%8EBiLSTM%2BCRF%E6%A8%A1%E5%9E%8B%E5%AE%9E%E7%8E%B0NER.html" class="md-nav__link">
+        3.3 基于深度学习模型实现NER
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          3.4 Veterbi算法介绍(扩展资料)
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="04-Veterbi%E7%AE%97%E6%B3%95%E4%BB%8B%E7%BB%8D%28%E6%89%A9%E5%B1%95%E8%B5%84%E6%96%99%29.html" class="md-nav__link md-nav__link--active">
+        3.4 Veterbi算法介绍(扩展资料)
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#viterbi_1" class="md-nav__link">
+    Viterbi算法原理
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#viterbi-vs" class="md-nav__link">
+    Viterbi vs 前向算法
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4">
+          第四章:关系抽取
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="第四章:关系抽取" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          第四章:关系抽取
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E5%9B%9B%E7%AB%A0%EF%BC%9A%E5%85%B3%E7%B3%BB%E6%8A%BD%E5%8F%96/01-%E5%85%B3%E7%B3%BB%E6%8A%BD%E5%8F%96%E5%9F%BA%E6%9C%AC%E7%9F%A5%E8%AF%86.html" class="md-nav__link">
+        4.1 关系抽取基本知识
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E5%9B%9B%E7%AB%A0%EF%BC%9A%E5%85%B3%E7%B3%BB%E6%8A%BD%E5%8F%96/02-%E8%A7%84%E5%88%99%E6%96%B9%E6%B3%95%E5%AE%9E%E7%8E%B0%E5%85%B3%E7%B3%BB%E6%8A%BD%E5%8F%96.html" class="md-nav__link">
+        4.2 规则方法实现关系抽
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E5%9B%9B%E7%AB%A0%EF%BC%9A%E5%85%B3%E7%B3%BB%E6%8A%BD%E5%8F%96/03-Pipeline%E6%96%B9%E6%B3%95%E5%AE%9E%E7%8E%B0%E5%85%B3%E7%B3%BB%E6%8A%BD%E5%8F%96.html" class="md-nav__link">
+        4.3 Pipeline方法实现关系抽取
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E5%9B%9B%E7%AB%A0%EF%BC%9A%E5%85%B3%E7%B3%BB%E6%8A%BD%E5%8F%96/04-Joint%E6%96%B9%E6%B3%95%E5%AE%9E%E7%8E%B0%E5%85%B3%E7%B3%BB%E6%8A%BD%E5%8F%96.html" class="md-nav__link">
+        4.4 Joint方法实现关系抽取
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5">
+          第五章:知识融合
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="第五章:知识融合" data-md-level="1">
+        <label class="md-nav__title" for="__nav_5">
+          <span class="md-nav__icon md-icon"></span>
+          第五章:知识融合
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E4%BA%94%E7%AB%A0%EF%BC%9A%E7%9F%A5%E8%AF%86%E8%9E%8D%E5%90%88/01-%E7%9F%A5%E8%AF%86%E8%9E%8D%E5%90%88%E5%9F%BA%E6%9C%AC%E7%9F%A5%E8%AF%86.html" class="md-nav__link">
+        5.1 知识融合基本知识
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E4%BA%94%E7%AB%A0%EF%BC%9A%E7%9F%A5%E8%AF%86%E8%9E%8D%E5%90%88/02-%E5%AE%9E%E4%BD%93%E6%B6%88%E6%AD%A7%E4%BB%BB%E5%8A%A1.html" class="md-nav__link">
+        5.2 实体消歧任务
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6" type="checkbox" id="__nav_6" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_6">
+          第六章:图谱搭建
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="第六章:图谱搭建" data-md-level="1">
+        <label class="md-nav__title" for="__nav_6">
+          <span class="md-nav__icon md-icon"></span>
+          第六章:图谱搭建
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E5%85%AD%E7%AB%A0%EF%BC%9A%E5%9B%BE%E8%B0%B1%E6%90%AD%E5%BB%BA/01-Neo4j%E5%9B%BE%E6%95%B0%E6%8D%AE%E5%BA%93.html" class="md-nav__link">
+        6.1 Neo4j图数据库
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E5%85%AD%E7%AB%A0%EF%BC%9A%E5%9B%BE%E8%B0%B1%E6%90%AD%E5%BB%BA/02-%E5%8C%BB%E7%96%97%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E7%9A%84%E6%90%AD%E5%BB%BA.html" class="md-nav__link">
+        6.2 医疗知识图谱的搭建
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_7" type="checkbox" id="__nav_7" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_7">
+          第七章:图谱应用
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="第七章:图谱应用" data-md-level="1">
+        <label class="md-nav__title" for="__nav_7">
+          <span class="md-nav__icon md-icon"></span>
+          第七章:图谱应用
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E4%B8%83%E7%AB%A0%EF%BC%9A%E5%9B%BE%E8%B0%B1%E5%BA%94%E7%94%A8/01-%E9%97%AE%E7%AD%94%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86.html" class="md-nav__link">
+        7.1 问答系统基础知识
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E4%B8%83%E7%AB%A0%EF%BC%9A%E5%9B%BE%E8%B0%B1%E5%BA%94%E7%94%A8/02-%E9%97%AE%E7%AD%94%E7%B3%BB%E7%BB%9F%E5%85%B3%E9%94%AE%E6%8A%80%E6%9C%AF.html" class="md-nav__link">
+        7.2 问答系统关键技术
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E4%B8%83%E7%AB%A0%EF%BC%9A%E5%9B%BE%E8%B0%B1%E5%BA%94%E7%94%A8/03-%E5%8C%BB%E7%96%97KBQA%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84.html" class="md-nav__link">
+        7.3 医疗KBQA系统架构
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E4%B8%83%E7%AB%A0%EF%BC%9A%E5%9B%BE%E8%B0%B1%E5%BA%94%E7%94%A8/04-%E5%8C%BB%E7%96%97KBQA%E7%B3%BB%E7%BB%9F%E5%AE%9E%E7%8E%B0.html" class="md-nav__link">
+        7.4 医疗KBQA系统实现
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#viterbi_1" class="md-nav__link">
+    Viterbi算法原理
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#viterbi-vs" class="md-nav__link">
+    Viterbi vs 前向算法
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="viterbi">Viterbi算法介绍<a class="headerlink" href="#viterbi" title="Permanent link">&para;</a></h1>
+<h2 id="viterbi_1">Viterbi算法原理<a class="headerlink" href="#viterbi_1" title="Permanent link">&para;</a></h2>
+<ul>
+<li>如下图，假如你从S和E之间找一条最短的路径，除了遍历完所有路径，还有什么更好的方法？</li>
+</ul>
+<div align=center><img src="./img/4-2-1.png" style="zoom:55%" ><img/></div>
+
+<ul>
+<li>viterbi维特比算法解决的是篱笆型的图的最短路径问题，图的节点按列组织，每列的节点数量可以不一样，每一列的节点只能和相邻列的节点相连，不能跨列相连，节点之间有着不同的距离，距离的值就不在图上一一标注出来了，大家自行脑补.</li>
+</ul>
+<ul>
+<li>
+<p>viterbi维特比算法过程非常简单：</p>
+<ul>
+<li>为了找出S到E之间的最短路径，我们先从S开始从左到右一列一列地来看。</li>
+<li>首先起点是S，从S到A列的路径有三种可能：S-A1、S-A2、S-A3，如下图：</li>
+</ul>
+</li>
+</ul>
+<div align=center><img src="./img/4-2-2.png" style="zoom:55%" ><img/></div>
+
+<ul>
+<li>我们不能武断地说S-A1、S-A2、S-A3中的哪一段必定是全局最短路径中的一部分，目前为止任何一段都有可能是全局最短路径的备选项。</li>
+</ul>
+<ul>
+<li>我们继续往右看，到了B列。按B列的B1、B2、B3逐个分析。</li>
+</ul>
+<ul>
+<li>
+<p>先看B1：</p>
+<div align=center><img src="./img/4-2-3.png" style="zoom:55%" ><img/></div>
+
+</li>
+</ul>
+<ul>
+<li>如上图，经过B1的所有路径只有3条：<ul>
+<li>S-A1-B1</li>
+<li>S-A2-B1</li>
+<li>S-A3-B1</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>以上这三条路径，各节点距离加起来对比一下，我们就可以知道其中哪一条是最短的。假设S-A3-B1是最短的，那么我们就知道了经过B1的所有路径当中S-A3-B1是最短的，其它两条路径路径S-A1-B1和S-A2-B1都比S-A3-B1长，绝对不是目标答案，可以大胆地删掉了。删掉了不可能是答案的路径，就是viterbi算法（维特比算法）的重点，因为后面我们再也不用考虑这些被删掉的路径了。现在经过B1的所有路径只剩一条路径了，如下图：</li>
+</ul>
+<div align=center><img src="./img/4-2-4.png" style="zoom:55%" ><img/></div>
+
+<ul>
+<li>
+<p>接下来，我们继续看B2：</p>
+</li>
+</ul>
+<div align=center><img src="./img/4-2-5.png" style="zoom:55%" ><img/></div>
+
+<ul>
+<li>同理，如上图，经过B2的路径有3条：<ul>
+<li>S-A1-B2</li>
+<li>S-A2-B2</li>
+<li>S-A3-B2</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>
+<p>这三条路径中，各节点距离加起来对比一下，我们肯定也可以知道其中哪一条是最短的，假设S-A1-B2是最短的，那么我们就知道了经过B2的所有路径当中S-A1-B2是最短的，其它两条路径路径S-A2-B2和S-A3-B1也可以删掉了。经过B2所有路径只剩一条，如下图：</p>
+<div align=center><img src="./img/4-2-6.png" style="zoom:55%" ><img/></div>
+
+</li>
+</ul>
+<ul>
+<li>
+<p>接下来我们继续看B3：</p>
+<div align=center><img src="./img/4-2-7.png" style="zoom:55%" ><img/></div>
+
+</li>
+</ul>
+<ul>
+<li>同理，如上图，经过B3的路径也有3条：<ul>
+<li>S-A1-B3</li>
+<li>S-A2-B3</li>
+<li>S-A3-B3</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>
+<p>这三条路径中我们也肯定可以算出其中哪一条是最短的，假设S-A2-B3是最短的，那么我们就知道了经过B3的所有路径当中S-A2-B3是最短的，其它两条路径路径S-A1-B3和S-A3-B3也可以删掉了。经过B3的所有路径只剩一条，如下图：</p>
+<div align=center><img src="./img/4-2-8.png" style="zoom:55%" ><img/></div>
+
+</li>
+</ul>
+<ul>
+<li>现在对于B列的所有节点我们都过了一遍，B列的每个节点我们都删除了一些不可能是答案的路径，看看我们剩下哪些备选的最短路径，如下图：</li>
+</ul>
+<div align=center><img src="./img/4-2-9.png" style="zoom:40%" ><img/></div>
+
+<ul>
+<li>
+<p>上图是我们删掉了其它不可能是最短路径的情况，留下了三个有可能是最短的路径：S-A3-B1、S-A1-B2、S-A2-B3。现在我们将这三条备选的路径放在一起汇总到下图：</p>
+<div align=center><img src="./img/4-2-10.png" style="zoom:40%" ><img/></div>
+
+</li>
+</ul>
+<ul>
+<li>S-A3-B1、S-A1-B2、S-A2-B3都有可能是全局的最短路径的备选路径，我们还没有足够的信息判断哪一条一定是全局最短路径的<a href="https://zhida.zhihu.com/search?content_id=168799423&amp;content_type=Answer&amp;match_order=1&amp;q=%E5%AD%90%E8%B7%AF%E5%BE%84&amp;zhida_source=entity">子路径</a>。</li>
+</ul>
+<ul>
+<li>接下来讲到C列了，类似上面说的B列，我们从C1、C2、C3一个个节点分析。</li>
+</ul>
+<ul>
+<li>
+<p>经过C1节点的路径有:</p>
+<ul>
+<li>S-A3-B1-C1、S-A1-B2-C1、S-A2-B3-C1</li>
+</ul>
+</li>
+</ul>
+<div align=center><img src="./img/4-2-11.png" style="zoom:40%" ><img/></div>
+
+<ul>
+<li>
+<p>和B列的做法一样，从这三条路径中找到最短的那条（假定是S-A3-B1-C1），其它两条路径同样道理可以删掉了。那么经过C1的所有路径只剩一条，如下图：</p>
+<div align=center><img src="./img/4-2-12.png" style="zoom:40%" ><img/></div>
+
+</li>
+</ul>
+<ul>
+<li>
+<p>同理，我们可以找到经过C2和C3节点的最短路径，汇总一下：</p>
+<div align=center><img src="./img/4-2-13.png" style="zoom:40%" ><img/></div>
+
+</li>
+</ul>
+<ul>
+<li>到达C列时最终也只剩3条备选的最短路径，我们仍然没有足够信息断定哪条才是全局最短。最后，我们继续看<a href="https://zhida.zhihu.com/search?content_id=168799423&amp;content_type=Answer&amp;match_order=1&amp;q=E%E8%8A%82%E7%82%B9&amp;zhida_source=entity">E节点</a>，才能得出最后的结论。</li>
+</ul>
+<ul>
+<li>到E的路径也只有3种可能性：</li>
+</ul>
+<div align=center><img src="./img/4-2-14.png" style="zoom:40%" ><img/></div>
+
+<ul>
+<li>
+<p>E点已经是终点了，我们稍微对比一下这三条路径的总长度就能知道哪条是最短路径了。</p>
+<div align=center><img src="./img/4-2-15.png" style="zoom:40%" ><img/></div>
+
+</li>
+</ul>
+<ul>
+<li>在效率方面相对于粗暴地遍历所有路径，viterbi 维特比算法到达每一列的时候都会删除不符合最短路径要求的路径，大大降低<a href="https://zhida.zhihu.com/search?content_id=168799423&amp;content_type=Answer&amp;match_order=1&amp;q=%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6&amp;zhida_source=entity">时间复杂度</a>。</li>
+</ul>
+<hr />
+<h2 id="viterbi-vs">Viterbi vs 前向算法<a class="headerlink" href="#viterbi-vs" title="Permanent link">&para;</a></h2>
+<ol>
+<li>前向算法</li>
+</ol>
+<ul>
+<li><strong>目的</strong>：计算给定观测序列的出现概率。</li>
+<li><strong>过程</strong>：通过动态规划的方法，逐步计算每个时刻每个状态的概率，并将这些概率累加，以得到最终的观测序列概率。</li>
+<li><strong>特点</strong>：关注所有可能的状态路径，计算的是所有路径的总和。</li>
+</ul>
+<ol>
+<li>Viterbi算法</li>
+</ol>
+<ul>
+<li><strong>目的</strong>：寻找给定观测序列下最可能的状态序列。</li>
+<li><strong>过程</strong>：同样使用动态规划，但在每一步中只保留最优路径（即最大概率路径），而不是所有路径的总和。</li>
+<li><strong>特点</strong>：关注最优路径，计算的是最大值，而非总和。</li>
+</ul>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+    <nav class="md-footer__inner md-grid" aria-label="页脚" >
+      
+        
+        <a href="03-%E5%9F%BA%E4%BA%8EBiLSTM%2BCRF%E6%A8%A1%E5%9E%8B%E5%AE%9E%E7%8E%B0NER.html" class="md-footer__link md-footer__link--prev" aria-label="上一页: 3.3 基于深度学习模型实现NER" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                上一页
+              </span>
+              3.3 基于深度学习模型实现NER
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="../%E7%AC%AC%E5%9B%9B%E7%AB%A0%EF%BC%9A%E5%85%B3%E7%B3%BB%E6%8A%BD%E5%8F%96/01-%E5%85%B3%E7%B3%BB%E6%8A%BD%E5%8F%96%E5%9F%BA%E6%9C%AC%E7%9F%A5%E8%AF%86.html" class="md-footer__link md-footer__link--next" aria-label="下一页: 4.1 关系抽取基本知识" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                下一页
+              </span>
+              4.1 关系抽取基本知识
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.16e2a7d4.min.js", "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.config.lang": "ja", "search.config.pipeline": "trimmer, stemmer", "search.config.separator": "[\\s\\-\uff0c\u3002]+", "search.placeholder": "\u641c\u7d22", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version.title": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.5a2dcb6a.min.js"></script>
+      
+        <script src="../js/extra.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+      
+    
+    
+  </body>
+</html>

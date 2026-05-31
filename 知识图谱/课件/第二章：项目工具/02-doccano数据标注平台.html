@@ -1,0 +1,1303 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      <link rel="icon" href="../img/AI.jpg">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-8.5.10">
+    
+    
+      
+        <title>2.2 doccano数据标注平台 - 红蜘蛛知识图谱项目V3.0</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.975780f9.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.2505c338.min.css">
+        
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="None" data-md-color-accent="None">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#doccano" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href=".." title="红蜘蛛知识图谱项目V3.0" class="md-header__button md-logo" aria-label="红蜘蛛知识图谱项目V3.0" data-md-component="logo">
+      
+  <img src="../img/AI.jpg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            红蜘蛛知识图谱项目V3.0
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              2.2 doccano数据标注平台
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="红蜘蛛知识图谱项目V3.0" class="md-nav__button md-logo" aria-label="红蜘蛛知识图谱项目V3.0" data-md-component="logo">
+      
+  <img src="../img/AI.jpg" alt="logo">
+
+    </a>
+    红蜘蛛知识图谱项目V3.0
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_1" type="checkbox" id="__nav_1" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_1">
+          第一章:红蜘蛛项目简介
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="第一章:红蜘蛛项目简介" data-md-level="1">
+        <label class="md-nav__title" for="__nav_1">
+          <span class="md-nav__icon md-icon"></span>
+          第一章:红蜘蛛项目简介
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E4%B8%80%E7%AB%A0%EF%BC%9A%E9%A1%B9%E7%9B%AE%E8%83%8C%E6%99%AF/1.%E9%A1%B9%E7%9B%AE%E7%AE%80%E4%BB%8B.html" class="md-nav__link">
+        1.1 项目背景介绍
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E4%B8%80%E7%AB%A0%EF%BC%9A%E9%A1%B9%E7%9B%AE%E8%83%8C%E6%99%AF/2.%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E6%8A%80%E6%9C%AF%E6%A6%82%E6%8B%AC.html" class="md-nav__link">
+        1.2 知识图谱技术概括
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2">
+          第二章:项目工具介绍
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="第二章:项目工具介绍" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          第二章:项目工具介绍
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="01-%E9%A1%B9%E7%9B%AE%E5%BA%94%E7%94%A8%E5%B7%A5%E5%85%B7.html" class="md-nav__link">
+        2.1 项目应用工具概览
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          2.2 doccano数据标注平台
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="02-doccano%E6%95%B0%E6%8D%AE%E6%A0%87%E6%B3%A8%E5%B9%B3%E5%8F%B0.html" class="md-nav__link md-nav__link--active">
+        2.2 doccano数据标注平台
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    学习目标
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#doccano_1" class="md-nav__link">
+    Doccano平台介绍
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#doccano_2" class="md-nav__link">
+    一、doccano的安装
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#doccano_3" class="md-nav__link">
+    二、启动doccano
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#doccano_4" class="md-nav__link">
+    三、运行doccano与创建新的文本打标项目
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    四、添加语料库
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    五、添加标签
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    六、添加成员
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    七、添加标注指南
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    八、开始给文本打标
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    九、导出打标结果
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    本节小结
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="03-%E7%9F%A5%E8%AF%86%E6%9F%A5%E8%AF%A2%E8%AF%AD%E8%A8%80.html" class="md-nav__link">
+        2.3 知识查询语言
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="04-Neo4j%E5%9B%BE%E6%95%B0%E6%8D%AE%E5%BA%93.html" class="md-nav__link">
+        2.4 Neo4j图数据库
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3">
+          第三章:实体抽取
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="第三章:实体抽取" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          第三章:实体抽取
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E4%B8%89%E7%AB%A0%EF%BC%9A%E5%AE%9E%E4%BD%93%E6%8A%BD%E5%8F%96/01-%E5%AE%9E%E4%BD%93%E8%AF%86%E5%88%AB%E5%9F%BA%E6%9C%AC%E7%9F%A5%E8%AF%86.html" class="md-nav__link">
+        3.1 实体识别基本知识
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E4%B8%89%E7%AB%A0%EF%BC%9A%E5%AE%9E%E4%BD%93%E6%8A%BD%E5%8F%96/02-%E5%9F%BA%E4%BA%8E%E8%A7%84%E5%88%99%E5%AE%9E%E7%8E%B0NER.html" class="md-nav__link">
+        3.2 基于规则实现NER
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E4%B8%89%E7%AB%A0%EF%BC%9A%E5%AE%9E%E4%BD%93%E6%8A%BD%E5%8F%96/03-%E5%9F%BA%E4%BA%8EBiLSTM%2BCRF%E6%A8%A1%E5%9E%8B%E5%AE%9E%E7%8E%B0NER.html" class="md-nav__link">
+        3.3 基于深度学习模型实现NER
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E4%B8%89%E7%AB%A0%EF%BC%9A%E5%AE%9E%E4%BD%93%E6%8A%BD%E5%8F%96/04-Veterbi%E7%AE%97%E6%B3%95%E4%BB%8B%E7%BB%8D%28%E6%89%A9%E5%B1%95%E8%B5%84%E6%96%99%29.html" class="md-nav__link">
+        3.4 Veterbi算法介绍(扩展资料)
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4">
+          第四章:关系抽取
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="第四章:关系抽取" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          第四章:关系抽取
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E5%9B%9B%E7%AB%A0%EF%BC%9A%E5%85%B3%E7%B3%BB%E6%8A%BD%E5%8F%96/01-%E5%85%B3%E7%B3%BB%E6%8A%BD%E5%8F%96%E5%9F%BA%E6%9C%AC%E7%9F%A5%E8%AF%86.html" class="md-nav__link">
+        4.1 关系抽取基本知识
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E5%9B%9B%E7%AB%A0%EF%BC%9A%E5%85%B3%E7%B3%BB%E6%8A%BD%E5%8F%96/02-%E8%A7%84%E5%88%99%E6%96%B9%E6%B3%95%E5%AE%9E%E7%8E%B0%E5%85%B3%E7%B3%BB%E6%8A%BD%E5%8F%96.html" class="md-nav__link">
+        4.2 规则方法实现关系抽
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E5%9B%9B%E7%AB%A0%EF%BC%9A%E5%85%B3%E7%B3%BB%E6%8A%BD%E5%8F%96/03-Pipeline%E6%96%B9%E6%B3%95%E5%AE%9E%E7%8E%B0%E5%85%B3%E7%B3%BB%E6%8A%BD%E5%8F%96.html" class="md-nav__link">
+        4.3 Pipeline方法实现关系抽取
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E5%9B%9B%E7%AB%A0%EF%BC%9A%E5%85%B3%E7%B3%BB%E6%8A%BD%E5%8F%96/04-Joint%E6%96%B9%E6%B3%95%E5%AE%9E%E7%8E%B0%E5%85%B3%E7%B3%BB%E6%8A%BD%E5%8F%96.html" class="md-nav__link">
+        4.4 Joint方法实现关系抽取
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5">
+          第五章:知识融合
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="第五章:知识融合" data-md-level="1">
+        <label class="md-nav__title" for="__nav_5">
+          <span class="md-nav__icon md-icon"></span>
+          第五章:知识融合
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E4%BA%94%E7%AB%A0%EF%BC%9A%E7%9F%A5%E8%AF%86%E8%9E%8D%E5%90%88/01-%E7%9F%A5%E8%AF%86%E8%9E%8D%E5%90%88%E5%9F%BA%E6%9C%AC%E7%9F%A5%E8%AF%86.html" class="md-nav__link">
+        5.1 知识融合基本知识
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E4%BA%94%E7%AB%A0%EF%BC%9A%E7%9F%A5%E8%AF%86%E8%9E%8D%E5%90%88/02-%E5%AE%9E%E4%BD%93%E6%B6%88%E6%AD%A7%E4%BB%BB%E5%8A%A1.html" class="md-nav__link">
+        5.2 实体消歧任务
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6" type="checkbox" id="__nav_6" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_6">
+          第六章:图谱搭建
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="第六章:图谱搭建" data-md-level="1">
+        <label class="md-nav__title" for="__nav_6">
+          <span class="md-nav__icon md-icon"></span>
+          第六章:图谱搭建
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E5%85%AD%E7%AB%A0%EF%BC%9A%E5%9B%BE%E8%B0%B1%E6%90%AD%E5%BB%BA/01-Neo4j%E5%9B%BE%E6%95%B0%E6%8D%AE%E5%BA%93.html" class="md-nav__link">
+        6.1 Neo4j图数据库
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E5%85%AD%E7%AB%A0%EF%BC%9A%E5%9B%BE%E8%B0%B1%E6%90%AD%E5%BB%BA/02-%E5%8C%BB%E7%96%97%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E7%9A%84%E6%90%AD%E5%BB%BA.html" class="md-nav__link">
+        6.2 医疗知识图谱的搭建
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_7" type="checkbox" id="__nav_7" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_7">
+          第七章:图谱应用
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="第七章:图谱应用" data-md-level="1">
+        <label class="md-nav__title" for="__nav_7">
+          <span class="md-nav__icon md-icon"></span>
+          第七章:图谱应用
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E4%B8%83%E7%AB%A0%EF%BC%9A%E5%9B%BE%E8%B0%B1%E5%BA%94%E7%94%A8/01-%E9%97%AE%E7%AD%94%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86.html" class="md-nav__link">
+        7.1 问答系统基础知识
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E4%B8%83%E7%AB%A0%EF%BC%9A%E5%9B%BE%E8%B0%B1%E5%BA%94%E7%94%A8/02-%E9%97%AE%E7%AD%94%E7%B3%BB%E7%BB%9F%E5%85%B3%E9%94%AE%E6%8A%80%E6%9C%AF.html" class="md-nav__link">
+        7.2 问答系统关键技术
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E4%B8%83%E7%AB%A0%EF%BC%9A%E5%9B%BE%E8%B0%B1%E5%BA%94%E7%94%A8/03-%E5%8C%BB%E7%96%97KBQA%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84.html" class="md-nav__link">
+        7.3 医疗KBQA系统架构
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC%E4%B8%83%E7%AB%A0%EF%BC%9A%E5%9B%BE%E8%B0%B1%E5%BA%94%E7%94%A8/04-%E5%8C%BB%E7%96%97KBQA%E7%B3%BB%E7%BB%9F%E5%AE%9E%E7%8E%B0.html" class="md-nav__link">
+        7.4 医疗KBQA系统实现
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    学习目标
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#doccano_1" class="md-nav__link">
+    Doccano平台介绍
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#doccano_2" class="md-nav__link">
+    一、doccano的安装
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#doccano_3" class="md-nav__link">
+    二、启动doccano
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#doccano_4" class="md-nav__link">
+    三、运行doccano与创建新的文本打标项目
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    四、添加语料库
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    五、添加标签
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    六、添加成员
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    七、添加标注指南
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    八、开始给文本打标
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    九、导出打标结果
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    本节小结
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="doccano">数据标注平台doccano的安装及使用<a class="headerlink" href="#doccano" title="Permanent link">&para;</a></h1>
+<h2 id="_1">学习目标<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<ul>
+<li>掌握doccano的安装过程</li>
+<li>掌握doccano的使用方法</li>
+</ul>
+<hr />
+<div align=center><img src="../img/2-1-1.png" style="zoom:45%" ><img/></div>
+<h2 id="doccano_1">Doccano平台介绍<a class="headerlink" href="#doccano_1" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Doccano是documment anotation的缩写，是一个开源的文本标注工具，我们可以用它为NLP任务的语料库进行打标。它支持情感分析，命名实体识别，文本摘要等任务。</li>
+</ul>
+<ul>
+<li>它的操作非常便捷，在小型语料库上，只要数小时就能完成全部的打标工作。下面介绍一下如何安装、配置和使用doccano。</li>
+</ul>
+<h2 id="doccano_2">一、doccano的安装<a class="headerlink" href="#doccano_2" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p><strong>doccano的安装要在虚拟环境下进行！</strong></p>
+</blockquote>
+<ul>
+<li>进入你用到的虚拟环境中, 安装doccano</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="n">pip</span> <span class="n">install</span> <span class="n">doccano</span>
+</code></pre></div>
+<ul>
+<li>然后，在终端里输入</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1"># 初始化数据库</span>
+<span class="n">doccano</span> <span class="n">init</span>
+
+<span class="c1"># 创建一个super user。这里要把pass改成你需要的密码。当然，用户名也可以改成别的。</span>
+<span class="n">doccano</span> <span class="n">createuser</span> <span class="o">--</span><span class="n">username</span> <span class="n">admin</span> <span class="o">--</span><span class="n">password</span> <span class="mi">1234</span>
+</code></pre></div>
+<hr />
+<h2 id="doccano_3">二、启动doccano<a class="headerlink" href="#doccano_3" title="Permanent link">&para;</a></h2>
+<p>首先，在终端中运行下面的代码来启动WebServer</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 启动webserver</span>
+<span class="n">doccano</span> <span class="n">webserver</span> <span class="o">--</span><span class="n">port</span> <span class="mi">8000</span>
+</code></pre></div>
+<p>然后，打开**另一个**终端，运行下面的代码启动—任务队列:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 启动任务队列</span>
+<span class="n">doccano</span> <span class="n">task</span>
+</code></pre></div>
+<hr />
+<h2 id="doccano_4">三、运行doccano与创建新的文本打标项目<a class="headerlink" href="#doccano_4" title="Permanent link">&para;</a></h2>
+<ul>
+<li>首先，打开浏览器（最好是Chrome），在地址栏中输入http://127.0.0.1:8000/并回车。</li>
+</ul>
+<div align=center><img src="../img/2-2-1.png" style="zoom:45%" ><img/></div>
+
+<ul>
+<li>然后，我们点击中间的蓝色按钮“快速开始”。此时，我们会跳转到登陆的界面。这里，我们需要用之前创建的超级用户登陆。</li>
+</ul>
+<div align=center><img src="../img/2-2-2.png" style="zoom:45%" ><img/></div>
+
+<ul>
+<li>完成登陆后，我们会来到“项目”的界面。我们可以点击左上角的“创建”按钮来创建新的项目；也可以点击“删除”按钮来删除已经创建的项目。</li>
+<li>我们点击左上角的“创建”按钮，创建一个新的项目。</li>
+</ul>
+<div align=center><img src="../img/2-2-3.png" style="zoom:45%" ><img/></div>
+
+<ul>
+<li>对项目进行基本的说明，在填写完要求的信息后，点击创建，我们就创建了一个新的NLP标注项目。在创建完成后，会自动跳转到项目的主页。</li>
+</ul>
+<div align=center><img src="../img/2-2-4.png" style="zoom:45%" ><img/></div>
+
+<ul>
+<li>进入数据标注平台</li>
+</ul>
+<div align=center><img src="../img/2-2-5.png" style="zoom:45%" ><img/></div>
+
+<blockquote>
+<p>最左侧是一系列可以选择的页面。“主页”这个标签下面是doccano提供的一系列教程，其他的页面可以对项目进行设置。</p>
+<p>稍后，我们将在上图所示的界面中的完成文本打标项目的各项设置。我们会依次点击左侧的各个标签，依次进行设置。</p>
+</blockquote>
+<hr />
+<h2 id="_2">四、添加语料库<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<ul>
+<li>我们直接从“数据集”这个标签开始看。</li>
+<li>在“数据集”这个页面，我们可以将准备好的文本添加到项目中，为将来的打标做准备。</li>
+<li>我们首先点击左上角的“操作”→“导入数据集“。</li>
+</ul>
+<div align=center><img src="../img/2-2-6.png" style="zoom:45%" ><img/></div>
+
+<ul>
+<li>此时，我们会来到”上传数据”的界面。</li>
+</ul>
+<div align=center><img src="../img/2-2-7.png" style="zoom:45%" ><img/></div>
+
+<ul>
+<li>如上图所示，doccano总共支持4种格式的文本，他们的区别如下：</li>
+</ul>
+<ul>
+<li>Textfile：要求上传的文件为txt格式，并且在打标的时候，一整个txt文件在打标的时候显示为一页内容；</li>
+<li>Textline：要求上传的文件为txt格式，并且在打标的时候，该txt文件的一行文字会在打标的时候显示为一页内容；</li>
+<li>JSONL：是JSON Lines的简写，每行是一个有效的<a href="https://zhida.zhihu.com/search?q=JSON%E5%80%BC&amp;zhida_source=entity&amp;is_preview=1">JSON值</a>。</li>
+<li>CoNLL：是“中文依存语料库”，是根据句子的依存结构而建立的树库。其中，依存结构描述的是句子中词与词之间直接的句法关系。具体介绍看<a href="https://link.zhihu.com/?target=http%3A//www.hankcs.com/nlp/corpus/chinese-treebank.html">汉语树库</a>。</li>
+</ul>
+<blockquote>
+<p><em>注意：</em></p>
+<p>doccano官方推荐的文档编码格式为UTF-8。</p>
+<p>在使用JSONL格式的时候，文字数据本身要符合JSON格式的规范。</p>
+<p>数据集中不要包含空行。</p>
+</blockquote>
+<ul>
+<li>这里我们以Textline格式举例。点击“TextLine格式”。然后在跳转到的界面里，设置File Format和Encoding。然后点击下图中的“Drop files here…”来上传文件，最后，点击导入即可。</li>
+</ul>
+<div align=center><img src="../img/2-2-8.png" style="zoom:45%" ><img/></div>
+
+<ul>
+<li>
+<p>此时，再点击“数据集”的标签，我们就可以看到一条一条的文本已经被添加到项目中了。将来我们将对这些文本进行打标。</p>
+</li>
+</ul>
+<div align=center><img src="../img/2-2-9.png" style="zoom:45%" ><img/></div>
+
+<hr />
+<h2 id="_3">五、添加标签<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<ul>
+<li>在这一部分，我们讲解如何往项目中添加在打标时可选的标签。</li>
+</ul>
+<blockquote>
+<p>在NER任务中，我们可能会添加People、Location、Company等；在文本分类任务中，我们可能会添加Positive、Negative等标签作为打标时的可选标签。</p>
+<p><em>注意，这里只是添加将来可供选择的标签，是项目配置的过程，而不是进行文本标注。</em></p>
+</blockquote>
+<ul>
+<li>点击左侧的“标签”按钮，就来到了添加标签的界面。</li>
+</ul>
+<ul>
+<li>继续点击“操作”按钮，并在下拉菜单中点击“创建标签”按钮。</li>
+</ul>
+<div align=center><img src="../img/2-2-10.png" style="zoom:45%" ><img/></div>
+
+<ul>
+<li>
+<p>在弹出的“创建标签”窗口里面，在标签名一栏写上标签的名字，键值代表快捷键。例如在NER的例子中，可以写People、Location、Company等。例如，我们给People设置的快捷键是p。将来在打标的时候，右手用鼠标选中段落中的文字（例如“白居易”），左手在键盘按下快捷键p，就可以把被选中的文字打标成“People”。</p>
+</li>
+</ul>
+<div align=center><img src="../img/2-2-11.png" style="zoom:45%" ><img/></div>
+
+<ul>
+<li>
+<p>再往下，我们可以给标签自定义颜色。</p>
+</li>
+</ul>
+<ul>
+<li>全部设置好以后，点击右下角的“保存”按钮。</li>
+</ul>
+<ul>
+<li>此时，一个标签就添加完成了。我们以同样的方法添加其他所需要的标签。</li>
+</ul>
+<hr />
+<h2 id="_4">六、添加成员<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<ul>
+<li>在为机器学习的语料库打标的时候，由于语料库一般比较大，如果让一个人给所有的文本打标的话，那到地老天荒都完不成。因此，我们需要多个人协同完成语料库的打标工作。</li>
+</ul>
+<ul>
+<li>回忆一下，此时我们的项目还只有一个成员，也就是在初始配置doccano的时候创建的超级用户admin。因此，为了让其他人参与到打标项目中来，我们首先需要为其他成员创建账户。</li>
+<li>
+<p>我们打开网页http://127.0.0.1:8000/admin/，来到数据库的管理系统页面Django <a href="https://zhida.zhihu.com/search?q=administration&amp;zhida_source=entity&amp;is_preview=1">administration</a>，并用超级用户的账号密码登陆该管理系统。</p>
+<div align=center><img src="../img/2-2-12.png" style="zoom:35%" ><img/></div>
+</li>
+</ul>
+<ul>
+<li>此时，我们再返回项目的设置页面。点击左侧的“成员”标签，点击页面上的“添加”按钮，会弹出“添加成员”窗口。</li>
+</ul>
+<ul>
+<li>其中，在“用户搜索接口”的下拉菜单里面可以找到我们刚添加的用户“小明”。</li>
+</ul>
+<blockquote>
+<p>注意，在这里只能找到已经创建到的用户，而不能创建新的用户。如果要新建用户，必须要到前面Django administration界面。</p>
+</blockquote>
+<div align=center><img src="../img/2-2-13.png" style="zoom:35%" ><img/></div>
+
+<ul>
+<li>
+<p>同时，我们还可以设置不同的成员的角色，不同的角色对应着不同的权限。如下图，我们把小明设置为“标注员”。其他角色还有<a href="https://zhida.zhihu.com/search?q=%E9%A1%B9%E7%9B%AE%E7%AE%A1%E7%90%86%E5%91%98&amp;zhida_source=entity&amp;is_preview=1">项目管理员</a>和审查员。</p>
+<div align=center><img src="../img/2-2-14.png" style="zoom:35%" ><img/></div>
+
+</li>
+</ul>
+<hr />
+<h2 id="_5">七、添加标注指南<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<ul>
+<li>我们可以事前给标注员和审查员准备一些标注指南，便于项目成员理解我们标注的要求和注意点。</li>
+</ul>
+<blockquote>
+<p>例如，在判断文本正负面倾向的文本分类任务中，我们要具体说明判断正负面的标准，例如满足哪些要求，我们就可以认为一个本文是正面的。</p>
+<p>因为一万个读者眼里有一万个哈姆雷特，不同人对文本的理解和判断正负面的尺度是不一样的。我们只有把标准写具体、写明确了，让人不用动脑筋都能做出符合我们要求的判断，我们才能得到一个尺度统一的数据集。数据集上的打标尺度统一，是机器学习获得好的效果的前提。</p>
+</blockquote>
+<ul>
+<li>添加指南的界面如下图所示。
+ 
+<div align=center><img src="../img/2-2-15.png" style="zoom:35%" ><img/></div>
+</li>
+</ul>
+<hr />
+<h2 id="_6">八、开始给文本打标<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<ul>
+<li>准备工作忙活了老半天，终于可以进入正题了----给文本打标。</li>
+</ul>
+<blockquote>
+<p>需要注意的是，上面的前期设置里面并不是所有的都是必须的。在最精简的情况下，我们可以在仅添加了数据集与标签后，就开始给文本打标。</p>
+</blockquote>
+<ul>
+<li>这里，我们用标注员小明的账号登陆打标系统做演示。同样是打开http://127.0.0.1:8000/地址，输入小明的账号密码登陆。</li>
+</ul>
+<ul>
+<li>和之前不一样的是，由于小明的角色是“标注员”，因此他只有打标的权限，没有对项目进行各项设置的权限，所以在左侧列表没有管理员用户的各项设置项目。</li>
+</ul>
+<div align=center><img src="../img/2-2-16.png" style="zoom:35%" ><img/></div>
+
+<ul>
+<li>
+<p>这里我们直接点击左上角的“开始标注”进行打标。</p>
+</li>
+</ul>
+<ul>
+<li>以NER任务为例，在打标的界面下，我们选中句子中的实体，会自动弹出一个下拉菜单，我们可以从这个下拉菜单中选择相应的实体类型People，也可以直接在键盘上按下p键。
+这是添加标签之后的样子。
+ 
+<div align=center><img src="../img/2-2-17.png" style="zoom:35%" ><img/></div>
+</li>
+</ul>
+<hr />
+<h2 id="_7">九、导出打标结果<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<ul>
+<li>当我们要导出标注结果的时候，我们重新用管理员用户登陆，在“数据集”页面下，点击“操作”→“导出数据集”。</li>
+</ul>
+<div align=center><img src="../img/2-2-18.png" style="zoom:35%" ><img/></div>
+
+<ul>
+<li>在弹出的窗口中，根据我们的需要进行设置后，点击Export，即可导出标注结果。</li>
+</ul>
+<div align=center><img src="../img/2-2-19.png" style="zoom:35%" ><img/></div>
+
+<ul>
+<li>
+<p>保存好的文本是字典的格式。</p>
+</li>
+</ul>
+<ul>
+<li>
+<p>如下图所示，保存了句子的ID、句子原文、实体的在句子中的位置、实体的类型。</p>
+<div align=center><img src="../img/2-2-20.png" style="zoom:35%" ><img/></div>
+
+</li>
+</ul>
+<hr />
+<h2 id="_8">本节小结<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<ul>
+<li>本章节主要给大家介绍了数据标注工具doccano的详细使用教程，大家在未来工作中如果需要数据标注可以借助此平台来完成</li>
+</ul>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+    <nav class="md-footer__inner md-grid" aria-label="页脚" >
+      
+        
+        <a href="01-%E9%A1%B9%E7%9B%AE%E5%BA%94%E7%94%A8%E5%B7%A5%E5%85%B7.html" class="md-footer__link md-footer__link--prev" aria-label="上一页: 2.1 项目应用工具概览" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                上一页
+              </span>
+              2.1 项目应用工具概览
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="03-%E7%9F%A5%E8%AF%86%E6%9F%A5%E8%AF%A2%E8%AF%AD%E8%A8%80.html" class="md-footer__link md-footer__link--next" aria-label="下一页: 2.3 知识查询语言" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                下一页
+              </span>
+              2.3 知识查询语言
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.16e2a7d4.min.js", "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.config.lang": "ja", "search.config.pipeline": "trimmer, stemmer", "search.config.separator": "[\\s\\-\uff0c\u3002]+", "search.placeholder": "\u641c\u7d22", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version.title": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.5a2dcb6a.min.js"></script>
+      
+        <script src="../js/extra.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+      
+    
+    
+  </body>
+</html>
