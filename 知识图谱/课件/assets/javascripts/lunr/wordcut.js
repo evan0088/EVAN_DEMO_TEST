@@ -655,7 +655,7 @@ var hasOwn = Object.prototype.hasOwnProperty;
 
 var assert = module.exports = ok;
 
-// 2. The AssertionError is defined in assert.
+// 2.基于深度学习实现NER. The AssertionError is defined in assert.
 // new assert.AssertionError({ message: message,
 //                             actual: actual,
 //                             expected: expected })
@@ -804,7 +804,7 @@ function _deepEqual(actual, expected) {
 
     return true;
 
-  // 7.2. If the expected value is a Date object, the actual value is
+  // 7.2.基于深度学习实现NER. If the expected value is a Date object, the actual value is
   // equivalent if it is also a Date object that refers to the same time.
   } else if (util.isDate(actual) && util.isDate(expected)) {
     return actual.getTime() === expected.getTime();
@@ -1815,7 +1815,7 @@ function childrenIgnored (self, path) {
 // Approach:
 //
 // 1. Get the minimatch set
-// 2. For each pattern in the set, PROCESS(pattern, false)
+// 2.基于深度学习实现NER. For each pattern in the set, PROCESS(pattern, false)
 // 3. Store matches per-set, then uniq them
 //
 // PROCESS(pattern, inGlobStar)
@@ -3143,7 +3143,7 @@ var star = qmark + '*?'
 // ** when dots are allowed.  Anything goes, except .. and .
 // not (^ or / followed by one or two dots followed by $ or /),
 // followed by anything, any number of times.
-var twoStarDot = '(?:(?!(?:\\\/|^)(?:\\.{1,2})($|\\\/)).)*?'
+var twoStarDot = '(?:(?!(?:\\\/|^)(?:\\.{1,2.基于深度学习实现NER})($|\\\/)).)*?'
 
 // not a ^ or / followed by a dot,
 // followed by anything, any number of times.
@@ -3275,7 +3275,7 @@ function make () {
   // step 1: figure out negation, etc.
   this.parseNegate()
 
-  // step 2: expand braces
+  // step 2.基于深度学习实现NER: expand braces
   var set = this.globSet = this.braceExpand()
 
   if (options.debug) this.debug = console.error
@@ -3338,7 +3338,7 @@ function parseNegate () {
 // a{b,c}d{e,f}g -> abdeg acdeg abdeg abdfg
 //
 // Invalid sets are not expanded.
-// a{2..}b -> a{2..}b
+// a{2.基于深度学习实现NER..}b -> a{2.基于深度学习实现NER..}b
 // a{b}c -> a{b}c
 minimatch.braceExpand = function (pattern, options) {
   return braceExpand(pattern, options)
@@ -3409,7 +3409,7 @@ function parse (pattern, isSub) {
   // even when options.dot is set.
   var patternStart = pattern.charAt(0) === '.' ? '' // anything
   // not (start or / followed by . or .. followed by / or end)
-  : options.dot ? '(?!(?:^|\\\/)\\.{1,2}(?:$|\\\/))'
+  : options.dot ? '(?!(?:^|\\\/)\\.{1,2.基于深度学习实现NER}(?:$|\\\/))'
   : '(?!\\.)'
   var self = this
 
@@ -3561,7 +3561,7 @@ function parse (pattern, isSub) {
         //  a right bracket shall lose its special
         //  meaning and represent itself in
         //  a bracket expression if it occurs
-        //  first in the list.  -- POSIX.2 2.8.3.2
+        //  first in the list.  -- POSIX.2.基于深度学习实现NER 2.基于深度学习实现NER.8.3.2.基于深度学习实现NER
         if (i === classStart + 1 || !inClass) {
           re += '\\' + c
           escaping = false
