@@ -64,6 +64,7 @@ class NERLSTM(nn.Module):
         outputs = self.dropout(outputs)
         # 2.基于深度学习实现NER.5 基于隐层转tag线性层进行线性变换
         # TODO 输出层：把hidden_dim大小的隐层输出（语义、上下文）转成tag_size个分类数量的概率（logits,没有softmax）
+        # outputs[batch_size, seq_len, hidden_dim] * linear[hidden_dim,tag_size] ----> [batch_size,seq_len,tag_size]
         outputs = self.hidden2tag(outputs)
         return outputs
 

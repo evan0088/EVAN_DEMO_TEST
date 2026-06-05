@@ -47,6 +47,7 @@ def model2train():
     # 1. 实例化模型
     models = {'BiLSTM': NERLSTM,
               'BiLSTM_CRF': NERLSTM_CRF}
+    #                                300               256              0.2         len(7836)         len(11)
     model = models[conf.model](conf.embedding_dim, conf.hidden_dim, conf.dropout, word2id, conf.tag2id)
     model = model.to(conf.device)
     # 2.基于深度学习实现NER. 实例化损失函数
@@ -63,11 +64,25 @@ def model2train():
                 x = inputs.to(conf.device)
                 mask = mask.to(conf.device)
                 y = labels.to(conf.device)
+                # pred [batch_size, seq_len, tag_size]
                 pred = model(x, mask)
+                """
+                
+                Q1. 为什么在Bilstm计算完还需要变换pred的形状,为什么要降维为二维矩阵
+                A1:  因为交叉熵损失函数只能接受两个参数: pred(二维) ,y_true(一维)
+                因为这里是NER任务,采用BIO标注,所以每一个词都标有标签所以
+                pred[batch_size, seq_len, tag_size] 分别是批次大小,句子长度(已统一),tag_size 每个词的倾向度
+                y_true [batch_size , seq_len] 每个词的真实标签
+                """
+                # pred[batch_size, seq_len, tag_size] ---> pred [batch_size * seq_len, tag_size]
                 pred = pred.view(-1, len(conf.tag2id))
+                # pred [batch_size * seq_len, tag_size] y真实标签值 [batch_size * seq_len]
                 my_loss = criterion(pred, y.view(-1))
+                # 梯度清零
                 optimizer.zero_grad()
+                # 反向传播
                 my_loss.backward()
+                # 更新参数
                 optimizer.step()
                 if index % 200 == 0:
                     print('epoch:%04d,------------loss:%f' % (epoch, my_loss.item()))

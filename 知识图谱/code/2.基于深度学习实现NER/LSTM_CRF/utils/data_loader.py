@@ -64,7 +64,8 @@ def collate_fn(batch):
 def get_data():
     # :6200：切片操作是为了划分数据集， 总共大概7800条
     train_dataset = NerDataset(datas[:6200])
-    train_dataloader = DataLoader(dataset=train_dataset,
+    train_dataloader = DataLoader(
+                                  dataset=train_dataset,
                                   batch_size=conf.batch_size,
                                   collate_fn=collate_fn,
                                   drop_last=True,

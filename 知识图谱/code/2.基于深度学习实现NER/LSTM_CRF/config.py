@@ -22,14 +22,14 @@ class Config(object):
     def __init__(self):
         # 如果是windows或者linux电脑（使用GPU）
         # M1芯片及其以上的电脑（使用GPU）
-        self.device = 'mps'
-        # self.device = "cuda:0" if torch.cuda.is_available() else "cpu:0"
-        self.train_path = '/Users/itheima/Documents/黑马/讲课/就业班/知识图谱/广州3/学生端/02-代码/3.4基于深度学习实现NER/LSTM_CRF/data/train.txt'
-        self.vocab_path = '/Users/itheima/Documents/黑马/讲课/就业班/知识图谱/广州3/学生端/02-代码/3.4基于深度学习实现NER/LSTM_CRF/data/vocab.txt'
+        # self.device = 'mps'
+        self.device = "cuda:0" if torch.cuda.is_available() else "cpu:0"
+        self.train_path = r'D:\workspace\project\PYTHON\AI-Learning\知识图谱\code\2.基于深度学习实现NER\LSTM_CRF\data\train.txt'
+        self.vocab_path = r'D:\workspace\project\PYTHON\AI-Learning\知识图谱\code\2.基于深度学习实现NER\LSTM_CRF\data\vocab.txt'
         self.embedding_dim = 300
         self.epochs = 5
-        # self.batch_size = 8
-        self.batch_size = 64
+        self.batch_size = 8
+        # self.batch_size = 64
         self.hidden_dim = 256
 
         # lstm : e-3
@@ -37,9 +37,9 @@ class Config(object):
         # bert(全量微调)    : e-8
         self.lr = 2e-3  # crf的时候，lr可以小点，比如1e-3
         self.dropout = 0.2
-        # self.model = 'BiLSTM'
-        self.model = "BiLSTM_CRF"  # 可以只用"BiLSTM"
-        self.tag2id = json.load(open('/Users/itheima/Documents/黑马/讲课/就业班/知识图谱/广州3/学生端/02-代码/3.4基于深度学习实现NER/LSTM_CRF/data/tag2id.json'))
+        self.model = 'BiLSTM'
+        # self.model = "BiLSTM_CRF"  # 可以只用"BiLSTM"
+        self.tag2id = json.load(open(r'D:\workspace\project\PYTHON\AI-Learning\知识图谱\code\2.基于深度学习实现NER\LSTM_CRF\data\tag2id.json'))
 
 
 if __name__ == '__main__':
