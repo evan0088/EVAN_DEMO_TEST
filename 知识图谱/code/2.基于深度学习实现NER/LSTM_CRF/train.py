@@ -102,10 +102,13 @@ def model2train():
                 mask = mask.to(torch.bool).to(conf.device)
                 tags = labels.to(conf.device)
                 # CRF
+                # mean的意义是得到样本数量的平均值
                 loss = model.log_likelihood(x, tags, mask).mean()
                 optimizer.zero_grad()
                 loss.backward()
                 # CRF
+                # clip_grad_norm_ 梯度裁剪 ,因为CRF很容易出现量纲问题,会引起梯度爆炸
+                # clip_grad_norm_可以缓解梯度爆炸,但是缓解不了梯度消失
                 torch.nn.utils.clip_grad_norm_(parameters=model.parameters(), max_norm=10)
                 optimizer.step()
                 if index % 200 == 0:
