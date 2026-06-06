@@ -36,7 +36,7 @@ from tqdm import tqdm
 # classification_report可以导出字典格式，修改参数：output_dict=True，可以将字典在保存为csv格式输出
 from config import *
 import time
-from sklearn.metrics import precision_score, recall_score, f1_score, classification_report
+from sklearn.metrics import precision_score, recall_score, f1_score, classification_report,accuracy_score
 
 conf = Config()
 
@@ -86,10 +86,11 @@ def model2train():
                 optimizer.step()
                 if index % 200 == 0:
                     print('epoch:%04d,------------loss:%f' % (epoch, my_loss.item()))
-            precision, recall, f1, report = model2dev(dev_dataloader, model)
+            precision, recall, f1, report,accuracy = model2dev(dev_dataloader, model)
             if f1 > f1_score:
                 f1_score = f1
                 torch.save(model.state_dict(), 'save_model/bilstm_best.pth')
+                print(f"模型准确率为:{accuracy}")
                 print(report)
         end_time = time.time()
         print(f'训练总耗时：{end_time - start_time}')
@@ -113,10 +114,11 @@ def model2train():
                 optimizer.step()
                 if index % 200 == 0:
                     print('epoch:%04d,------------loss:%f' % (epoch, loss.item()))
-            precision, recall, f1, report = model2dev(dev_dataloader, model)
+            precision, recall, f1, report,accuracy = model2dev(dev_dataloader, model)
             if f1 > f1_score:
                 f1_score = f1
                 torch.save(model.state_dict(), 'save_model/bilstm_best.pth')
+                print(f"模型准确率为:{accuracy}")
                 print(report)
         end_time = time.time()
         print(f'训练总耗时：{end_time - start_time}')
@@ -171,27 +173,34 @@ def model2dev(dev_iter, model):
         for index, i in enumerate(val_y.cpu().tolist()):
             golds.extend(i[:leng[index]])
     """
-    TODO average的不同策略
+    TODO average的不同策略 — 多分类NER任务中的选择
     ``'binary'``:
         仅报告由 ``pos_label`` 指定的类别的结果。
         这仅适用于目标（``y_{true,pred}``）是二分类的情况。
     ``'micro'``:
         通过计算总真正例、假反例和假正例来全局计算指标。
+        ⚠️ 对于多分类NER：micro会把多分类当成二分类处理 — 它全局统计TP/FP/FN，不区分类别，
+        本质上等价于accuracy。由于NER中"O"标签占比极高（~80%+），micro分数会被O标签主导，
+        模型即使全部预测为O也能得到高micro-F1，完全掩盖对实体类别的识别能力。
+        → NER任务中应避免使用micro。
     ``'macro'``:
         计算每个标签的指标，并求其未加权的平均值。
-        这不会考虑标签不平衡。
+        ✅ NER首选：对每个类别分别计算再取平均，不受标签不平衡影响。
+        缺点：小类别（少数实体类型）的指标波动较大。
     ``'weighted'``:
         计算每个标签的指标，并找到其按支持度（每个标签的真实实例数）加权的平均值。
         这会调整 'macro' 以考虑标签不平衡；可能导致 F-score 不在精确度和召回率之间。
+        ⚠️ 实际上等价于micro（当每个样本只有一个标签时），同样会被O标签主导。
     ``'samples'``:
         计算每个实例的指标，并求其平均值（仅适用于多标签分类，且此处与 :func:`accuracy_score` 不同的情况）。
     """
+    accuracy=accuracy_score(golds, preds)
     precision = precision_score(golds, preds, average='macro')
     recall = recall_score(golds, preds, average='macro')
     f1 = f1_score(golds, preds, average='macro')
     report = classification_report(golds, preds)
 
-    return precision, recall, f1, report
+    return precision, recall, f1, report,accuracy
 
 
 if __name__ == '__main__':

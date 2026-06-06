@@ -37,7 +37,7 @@ class Config(object):
         # bert(全量微调)    : e-8
         self.lr = 2e-3  # crf的时候，lr可以小点，比如1e-3
         self.dropout = 0.2
-        self.model = 'BiLSTM'
+        self.model = 'BiLSTM_CRF'
         # self.model = "BiLSTM_CRF"  # 可以只用"BiLSTM"
         self.tag2id = json.load(open(r'D:\workspace\project\PYTHON\AI-Learning\知识图谱\code\2.基于深度学习实现NER\LSTM_CRF\data\tag2id.json'))
 
