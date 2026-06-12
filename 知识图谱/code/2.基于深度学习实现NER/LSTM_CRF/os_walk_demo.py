@@ -1,7 +1,7 @@
 import os
 
 if __name__ == '__main__':
-    path = '/狂野1-知识图谱/02-代码/3.4基于深度学习实现NER/LSTM_CRF/data_origin'
+    path = '/LSTM_CRF/data_origin'
 
     for root, dirs, files in os.walk(path):
         print("*" * 100)
