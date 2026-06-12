@@ -41,7 +41,7 @@ def model2train(model, train_iter, dev_iter, optimizer, conf):
     best_triple_f1 = 0
     for epoch in range(epochs):
         train_epoch(model, train_iter, dev_iter, optimizer, best_triple_f1, epoch)
-    torch.save(model.state_dict(), '/Users/itheima/Documents/黑马/讲课/就业班/知识图谱/广州3/学生端/02-代码/4基于joint实现关系抽取/Casrel_RE/save_model/last_model.pth')
+    torch.save(model.state_dict(), 'last_model.pth')
 
 
 def train_epoch(model, train_iter, dev_iter, optimizer, best_triple_f1, epoch):
@@ -56,7 +56,7 @@ def train_epoch(model, train_iter, dev_iter, optimizer, best_triple_f1, epoch):
 
         if step % 1500 == 0:
             torch.save(model.state_dict(),
-                       '/Users/itheima/Documents/黑马/讲课/就业班/知识图谱/广州3/学生端/02-代码/4基于joint实现关系抽取/Casrel_RE/save_model/epoch_%s_model_%s.pth' % (epoch, step))
+                       '/Casrel_RE/save_model/epoch_%s_model_%s.pth' % (epoch, step))
             results = model2dev(model, dev_iter)
             print(results[-1])
             if results[-2] > best_triple_f1:

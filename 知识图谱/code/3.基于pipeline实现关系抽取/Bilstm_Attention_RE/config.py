@@ -7,9 +7,9 @@ class Config(object):
         # self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         # self.device = 'mps'
         self.device = 'cpu'
-        self.train_data_path = "/Users/itheima/Documents/黑马/讲课/就业班/知识图谱/广州3/学生端/02-代码/3.基于pipeline实现关系抽取/Bilstm_Attention_RE/data/train.txt"
-        self.test_data_path = "/Users/itheima/Documents/黑马/讲课/就业班/知识图谱/广州3/学生端/02-代码/3.基于pipeline实现关系抽取/Bilstm_Attention_RE/data/test.txt"
-        self.rel_data_path = "/Users/itheima/Documents/黑马/讲课/就业班/知识图谱/广州3/学生端/02-代码/3.基于pipeline实现关系抽取/Bilstm_Attention_RE/data/relation2id.txt"
+        self.train_data_path = "/data/train.txt"
+        self.test_data_path = "/data/test.txt"
+        self.rel_data_path = "/data/relation2id.txt"
         self.embedding_dim = 128
         # 位置编码的维度
         self.pos_dim = 32
