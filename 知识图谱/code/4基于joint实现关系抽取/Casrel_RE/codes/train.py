@@ -24,8 +24,6 @@
         - 根据评估结果保存最优模型
     3.6 打印外部训练日志
 """
-from codes.model.casrel_model import *
-from codes.utils.process import *
 from codes.utils.data_loader import *
 from codes.config import *
 import pandas as pd
