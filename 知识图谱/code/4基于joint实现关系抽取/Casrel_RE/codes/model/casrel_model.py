@@ -70,6 +70,7 @@ class CasRel(nn.Module):
         '''
         sub = torch.matmul(sub_head2tail, encoded_text)  # 将主实体特征和编码后的文本进行融合
         sub_len = sub_len.unsqueeze(1)  # 主实体长度（扩维）
+        # 这里为什么要除以sub_len : 因为每个实体的长度不一致 ,如果不除以长度则长实体的向量和会远大于短实体
         sub = sub / sub_len  # 平均主实体信息
         encoded_text = encoded_text + sub  # 将处理后的实体特征和原始编码后的文本进行融合
         pred_obj_heads = torch.sigmoid(self.obj_heads_linear(encoded_text))

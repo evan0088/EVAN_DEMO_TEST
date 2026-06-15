@@ -14,15 +14,15 @@ import json
 class Config(object):
     def __init__(self):
         # 设置是否使用GPU来进行模型训练
-        # self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-        self.device = 'mps'
-        self.bert_path = "/Casrel_RE/bert-base-chinese"
+        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        # self.device = 'mps'
+        self.bert_path = r"D:\workspace\project\PYTHON\AI-Learning\知识图谱\code\4基于joint实现关系抽取\Casrel_RE\bert-base-chinese"
         self.num_rel = 18  # 关系的种类数
         self.batch_size = 8
-        self.train_data_path = "/Casrel_RE/data/train.json"
-        self.dev_data_path = "/Casrel_RE/data/dev.json"
-        self.test_data_path = "/Casrel_RE/data/test.json"
-        self.rel_dict_path = "/Casrel_RE/data/relation.json"
+        self.train_data_path = r"D:\workspace\project\PYTHON\AI-Learning\知识图谱\code\4基于joint实现关系抽取\Casrel_RE\data/train.json"
+        self.dev_data_path = r"D:\workspace\project\PYTHON\AI-Learning\知识图谱\code\4基于joint实现关系抽取\Casrel_RE\data/dev.json"
+        self.test_data_path = r"D:\workspace\project\PYTHON\AI-Learning\知识图谱\code\4基于joint实现关系抽取\Casrel_RE\data/test.json"
+        self.rel_dict_path = r"D:\workspace\project\PYTHON\AI-Learning\知识图谱\code\4基于joint实现关系抽取\Casrel_RE\data/relation.json"
         id2rel = json.load(open(self.rel_dict_path, encoding='utf8'))
         self.rel_vocab = Vocabulary(padding=None, unknown=None)
         # vocab更新自己的字典，输入为list列表

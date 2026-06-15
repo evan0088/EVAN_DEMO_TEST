@@ -187,6 +187,7 @@
 | **参数初始化** | [参数初始化](#parameter-init) | DL 核心 | 7 种初始化方式 + 选型指南 |
 | **模型优化** | [模型优化](#model-optimization) | DL 核心 | 优化器演进 + 学习率 + Dropout + BN |
 | 文本预处理 | [文本预处理](#text-preprocessing) | NLP 基础 | 分词/去停用词/向量化 |
+| **CBOW & Skip-gram** | [Word2Vec 详解](#word2vec-cbow-skipgram) | NLP 基础 | 上下文↔中心词 + 负采样 |
 | RNN/LSTM/GRU | [RNN 家族](#rnn-family) | NLP 序列模型 | 记忆细胞 + 门控机制 |
 | 注意力机制四种 | [注意力机制](#attention) | NLP 进阶 | 软/硬/加性/缩放点积 |
 | **Transformer 完整架构** | [Transformer](#transformer) | NLP 核心 | Encoder + Decoder + Mask |
@@ -218,6 +219,8 @@
 | 做一个 10 类新闻分类器 | [04-bert](#bert-section) |
 | 模型太大想压缩 | [06-model-compression](#compression-section) |
 | 想理解 Transformer 怎么工作 | [编解码链路](#encoder-decoder-link) |
+| 想理解 Word2Vec 怎么训练词向量 | [CBOW & Skip-gram](#word2vec-cbow-skipgram) |
+| 想搞清楚 CBOW 和 Skip-gram 的区别 | [CBOW vs Skip-gram](#word2vec-cbow-skipgram) |
 | 训练 loss 不下降怎么办 | [训练模板](#train-template) + [Autograd 报错](#autograd-errors) |
 | 模型收敛慢 / loss 一直是 NaN | [参数初始化](#parameter-init)（检查初始化方式） |
 | 不知道该用哪种初始化方法 | [参数初始化](#parameter-init)（选型指南） |
@@ -243,6 +246,7 @@
 | **BCE Loss** | 二元交叉熵 | [详情](#bce-loss) |
 | **BERT** | 双向编码 Transformer | [详情](#bert-section) |
 | **BiLSTM** | 双向 LSTM | [详情](#bilstm) |
+| **CBOW** | 连续词袋模型 | [详情](#word2vec-cbow-skipgram) |
 | **`backward()`** | 反向传播触发 | [详情](#backward) |
 | **BatchNorm** | 批量归一化 | [详情](#model-optimization) |
 | **`[CLS]`** | 句子分类标记 | [详情](#special-tokens) |
@@ -279,10 +283,12 @@
 | **RNN** | 循环神经网络 | [详情](#rnn) |
 | **Self-Attention** | 自注意力 | [详情](#encoder) |
 | **SGD** | 随机梯度下降 | [详情](#model-optimization) |
+| **Skip-gram** | 跳元模型 | [详情](#word2vec-cbow-skipgram) |
 | **Softmax** | 多分类输出层 | [详情](#softmax) |
 | **Teacher Forcing** | 教师强制（训练）| [详情](#encoder-decoder-link) |
 | **TF-IDF** | 词频-逆文档频率 | [详情](#tf-idf) |
 | **Transformer** | Transformer 架构 | [详情](#transformer) |
+| **Word2Vec** | 词到向量模型 | [详情](#word2vec-cbow-skipgram) |
 | **Xavier 初始化** | Glorot 初始化 | [详情](#parameter-init) |
 | **`zero_grad()`** | 梯度清零 | [详情](#zero-grad) |
 
@@ -1648,7 +1654,7 @@ print(bn.bias)    # β，初始全 0
 
 # NLP
 
-> 自然语言处理（Natural Language Processing）让计算机"看懂"和"会说"人话。本章按经典学习顺序：**预处理 → 词表示 → RNN 家族 → 注意力机制 → Transformer**，每一步都解决前一步的痛点。
+> 自然语言处理（Natural Language Processing）让计算机"看懂"和"会说"人话。本章按经典学习顺序：**预处理 → 词表示（One-Hot → Word2Vec [CBOW/Skip-gram] → Embedding）→ RNN 家族 → 注意力机制 → Transformer**，每一步都解决前一步的痛点。
 
 <a id="text-preprocessing"></a>
 ## 文本预处理流程
@@ -1670,6 +1676,287 @@ print(bn.bias)    # β，初始全 0
 | **Word2Vec** | 自定义(50-300) | 捕捉语义关系 | 静态嵌入，一词一义 | 词相似度、类比任务 |
 | **GloVe** | 自定义(50-300) | 全局统计信息 | 静态嵌入 | 通用词嵌入 |
 | **BERT Embedding** | 768/1024 | 上下文相关，动态 | 计算成本高 | 现代NLP任务 |
+
+<a id="word2vec-cbow-skipgram"></a>
+## Word2Vec 深入：CBOW 与 Skip-gram
+
+> Word2Vec (Mikolov et al., 2013) 是 NLP 历史上最具影响力的词向量模型。它用**浅层神经网络**把词映射到低维稠密向量，让语义相近的词在向量空间中距离也近。本节深入拆解它的两套训练架构——CBOW 和 Skip-gram。
+
+### 一、核心思想（一张图读懂两种架构）
+
+```
+         CBOW                                     Skip-gram
+    "用周围词 → 猜中间词"                      "用中间词 → 猜周围词"
+
+   输入: 前后各 2 个词                          输入: 1 个中心词
+   输出: 中间那个词                             输出: 周围多个词
+
+   ┌───────────────────────┐                ┌───────────────────────┐
+   │  w(t-2) w(t-1) w(t+1) w(t+2)  │        │            w(t)            │
+   │   ↓      ↓      ↓      ↓     │        │        ↓  ↓  ↓  ↓       │
+   │   └──────┴──────┴──────┘     │        │   w(t-2) w(t-1) w(t+1) w(t+2) │
+   │          ↓ 求和/平均          │        │   上下文词 = 被预测的目标        │
+   │        ┌──────┐              │        └───────────────────────┘
+   │        │  w(t) │   ← 预测目标  │
+   │        └──────┘              │
+   └───────────────────────┘
+
+    🌰 生活类比:                              🌰 生活类比:
+    "你前后的朋友都是什么人，                   "你是什么人，就招什么样的朋友"
+     你就是什么人"
+```
+
+> 💡 **一句话区别**：CBOW 是"**众人猜一人**"——周围词投票决定中心词；Skip-gram 是"**一人猜众人**"——中心词发散预测周围词。方向相反，用的网络结构和损失函数也不一样。
+
+### 二、CBOW（Continuous Bag of Words）— 用上下文预测中心词
+
+#### 2.1 训练过程（4 步）
+
+```
+输入句子: "我 爱 吃 四川 火锅"
+窗口大小 = 2（中心词左右各取 2 个词）
+
+Step 1: 取中心词 "吃"，上下文 = ["我", "爱", "四川", "火锅"]
+        上下文词       中心词
+        ["我","爱","四川","火锅"] → "吃"
+
+Step 2: 查 Embedding 表，把 4 个上下文词各自转成向量
+        v_我, v_爱, v_四川, v_火锅  各是 d 维向量
+
+Step 3: 对这 4 个向量求平均 → 得到 1 个上下文向量 h
+        h = (v_我 + v_爱 + v_四川 + v_火锅) / 4
+
+Step 4: 用 h 做 Softmax 分类，预测中心词是哪个
+        损失 = CrossEntropy(预测概率, 真实词"吃")
+        反向传播 → 更新 Embedding 表
+```
+
+> ⚡ **CBOW 的关键在于"平均"**：上下文词的顺序被忽略（bag-of-words），所有上下文词被一视同仁地求和平均。这就是名字里的 "Bag of Words" 来源。
+
+#### 2.2 代码骨架（PyTorch 手工实现 CBOW）
+
+```python
+import torch
+import torch.nn as nn
+
+class CBOW(nn.Module):
+    def __init__(self, vocab_size, embed_dim):
+        super().__init__()
+        self.embeddings = nn.Embedding(vocab_size, embed_dim)   # 输入词向量矩阵
+        self.linear = nn.Linear(embed_dim, vocab_size)          # 输出投影层
+
+    def forward(self, context_words):
+        # context_words: [batch, context_size] 上下文词的索引
+        embeds = self.embeddings(context_words)    # [batch, ctx, dim]
+        h = embeds.mean(dim=1)                     # ★ 关键：平均所有上下文词向量
+        out = self.linear(h)                       # [batch, vocab_size] 预测中心词
+        return out
+
+# 使用示例
+vocab_size, embed_dim = 10000, 100
+model = CBOW(vocab_size, embed_dim)
+
+# 输入：周围 4 个词的索引
+context = torch.tensor([[12, 45, 789, 54], [3, 67, 234, 89]])  # [2, 4]
+target  = torch.tensor([128, 456])                                # [2] 中心词索引
+
+logits = model(context)                      # [2, 10000]
+loss = nn.CrossEntropyLoss()(logits, target)
+loss.backward()
+```
+
+### 三、Skip-gram — 用中心词预测上下文
+
+#### 3.1 训练过程（4 步）
+
+```
+输入句子: "我 爱 吃 四川 火锅"
+窗口大小 = 2
+
+Step 1: 取中心词 "吃"，上下文目标 = ["我", "爱", "四川", "火锅"]
+        中心词           上下文词
+        "吃"  →  ["我", "爱", "四川", "火锅"]
+
+Step 2: 查 Embedding 表，把中心词转成向量
+        v_吃  是 d 维向量
+
+Step 3: 用 v_吃 预测每一个上下文词（4 次独立的 Softmax 分类）
+        P(我|吃), P(爱|吃), P(四川|吃), P(火锅|吃)
+
+Step 4: 损失 = 4 个预测的 CrossEntropy 之和
+        反向传播 → 更新 Embedding 表
+```
+
+> ⚡ **Skip-gram 的关键在于"一对多"**：一个中心词产生多个训练样本，每个训练样本是 `(中心词, 上下文词)` 对。相比 CBOW，Skip-gram 对每个中心词的利用更充分——每个上下文关系都单独学习。
+
+#### 3.2 代码骨架（PyTorch 手工实现 Skip-gram）
+
+```python
+class SkipGram(nn.Module):
+    def __init__(self, vocab_size, embed_dim):
+        super().__init__()
+        self.in_embeddings  = nn.Embedding(vocab_size, embed_dim)  # 中心词向量
+        self.out_embeddings = nn.Embedding(vocab_size, embed_dim)  # 上下文词向量
+
+    def forward(self, center_word):
+        # center_word: [batch] 中心词索引
+        embeds = self.in_embeddings(center_word)   # [batch, dim]
+        out = embeds @ self.out_embeddings.weight.T # [batch, vocab_size]
+        return out
+
+    def get_word_vectors(self):
+        # 最终词向量通常取 in_embeddings，或两个 Embedding 的平均
+        return self.in_embeddings.weight.data
+
+# 使用示例
+model = SkipGram(vocab_size, embed_dim)
+
+# 输入：中心词索引
+center = torch.tensor([128, 456])                 # [2]
+# 标签：上下文词索引（每个中心词对应一个上下文词）
+context_target = torch.tensor([12, 67])            # [2]
+
+logits = model(center)                            # [2, 10000]
+loss = nn.CrossEntropyLoss()(logits, context_target)
+loss.backward()
+```
+
+> 💡 **两个 Embedding 矩阵**：Skip-gram 的标准实现有**输入矩阵**（存中心词向量）和**输出矩阵**（存上下文词向量），最终词向量通常取输入矩阵，或取两者的平均。
+
+### 四、CBOW vs Skip-gram 对比总结
+
+| 对比维度 | CBOW | Skip-gram |
+|---------|------|-----------|
+| **任务方向** | 上下文 → 中心词 | 中心词 → 上下文 |
+| **训练速度** | ⚡ **快**（一次预测 1 个词） | 🐢 慢（一次预测 2k 个词，k=窗口大小） |
+| **对低频词的效果** | 一般（低频词容易被"平均掉"） | ✅ **好**（每个上下文对都单独训练） |
+| **对高频词的倾向** | 更强（频繁共现的词权重大） | 相对平衡 |
+| **适合的数据量** | 大数据集（追求速度） | 小数据集（追求质量） |
+| **向量质量** | 略低 | ✅ **更优**（尤其低频词向量） |
+| **训练样本数** | ≈ 语料中的词数 | ≈ 语料词数 × (2 × 窗口大小) |
+
+#### 选择建议
+
+```
+你的场景是什么？
+├─ 数据量巨大（GB 级）+ 追求训练速度  ──► CBOW
+├─ 数据量较小（MB 级）+ 追求词向量质量 ──► Skip-gram
+├─ 有很多低频词（专业术语、罕见词）    ──► Skip-gram
+└─ 不确定                             ──► Skip-gram（默认推荐）
+```
+
+> 🌰 **生活类比**：
+> - **CBOW** = 阅卷老师看全班平均分来猜某个学生的成绩——快，但模糊。
+> - **Skip-gram** = 班主任一个个找学生谈话了解情况——慢，但精准，连"偏科"（低频词特征）都能摸清楚。
+
+### 五、两大训练加速技术（面试重点）
+
+Word2Vec 如果直接做全词表 Softmax（V 类分类），每次前向和反向的复杂度是 O(V)，词汇表 V 通常几十万到几百万——**根本算不动**。以下两种技术把复杂度降到 O(log V) 或 O(k)。
+
+#### 5.1 层次 Softmax（Hierarchical Softmax）
+
+```
+核心思想: 把 V 分类 → 变成"二叉树猜路径"（log₂V 次二分类）
+
+              根节点
+             /      \
+           /          \
+        [路径编码]   [路径编码]
+       /    \         /    \
+     词1   词2      词3   词4
+    (001) (010)   (011) (100)
+
+原来: 一次从 V 个候选里选出 1 个   → 复杂度 O(V)
+现在: 沿着树走 log₂V 步，每步选左/右 → 复杂度 O(log V)
+```
+
+| 构造方式 | 说明 |
+|---------|------|
+| **哈夫曼树（Huffman Tree）** | Word2Vec 默认方式，高频词路径短（离根近），低频词路径长。高频词算得快，整体效率更高 |
+
+> 🌰 **生活类比**：全词表 Softmax 像"V 选 1"的单选题，层次 Softmax 像做 log₂V 道"左还是右"的判断题——题多了一道，但每道只做对/错判断，快很多。
+
+#### 5.2 负采样（Negative Sampling）
+
+```
+核心思想: 不跟所有 V 个词比，只跟"1 个正样本 + k 个负样本"比
+
+每一轮训练:
+  ┌─ 正样本（必须算）：真实的上下文词         → 1 个
+  └─ 负样本（采样子集）：从语料中随机抽的不相关词 → k 个（通常 5~20）
+
+损失变成: 对正样本说"相关性高"，对负样本说"相关性低"
+复杂度: O(V) → O(k)，k 通常 5~20
+```
+
+**负样本的采样不是均匀随机**——Word2Vec 用**频率的 3/4 次方**作为采样概率：
+
+```
+P(词) = count(词)^(3/4) / Σ count(词ᵢ)^(3/4)
+```
+
+| 采样方式 | 效果 |
+|---------|------|
+| 均匀采样 | 高频词容易被抽为负样本，但高频词通常是停用词（"的"、"是"），信息量低 |
+| **3/4 次方采样** | 适当提升低频词被抽中的概率，让训练更有信息量 |
+
+> 🌰 **生活类比**：
+> - **全词表 Softmax** = 相亲时把全国所有人都看一遍再决定跟谁
+> - **负采样** = 只跟相亲对象（正样本）+ 随机问 5 个路人"这人靠谱吗"（负样本），效率飙升
+
+#### 5.3 两种加速方式的选择
+
+| 技术 | 复杂度 | 适用场景 | 优点 |
+|------|--------|---------|------|
+| **层次 Softmax** | O(log V) | 低频词较多的语料 | 精确，不需手动设 k |
+| **负采样** | O(k) | 高频词较多的语料 | 实现简单，效果通常更好 |
+| **现代默认** | — | **负采样**（几乎成为标准） |
+
+### 六、Gensim 一行训练（实战速查）
+
+```python
+from gensim.models import Word2Vec
+
+# 1. 准备语料：每行为一个分好词的句子列表
+sentences = [['我', '爱', '吃', '四川', '火锅'],
+             ['机器', '学习', '很', '有趣'],
+             ['深度', '学习', '改变', '世界']]
+
+# 2. 训练 CBOW
+model_cbow = Word2Vec(sentences, vector_size=100, window=5, sg=0,  # sg=0 → CBOW
+                      min_count=1, workers=4, epochs=10)
+
+# 3. 训练 Skip-gram
+model_sg = Word2Vec(sentences, vector_size=100, window=5, sg=1,    # sg=1 → Skip-gram
+                    min_count=1, workers=4, epochs=10,
+                    hs=0, negative=5, ns_exponent=0.75)             # 负采样参数
+
+# 4. 查词向量 & 相似度
+vec_火锅 = model_sg.wv['火锅']                            # 获取词向量
+model_sg.wv.most_similar('火锅', topn=5)                  # 语义最相近的 5 个词
+model_sg.wv.most_similar(positive=['国王', '女'], negative=['男'])  # 经典类比: 国王-男+女 ≈ 女王
+
+# 5. 保存 & 加载
+model_sg.save('word2vec.model')
+model_sg.wv.save_word2vec_format('vectors.bin', binary=True)  # 只存向量，兼容其他工具
+```
+
+### 七、面试高频题
+
+1. **Q：CBOW 和 Skip-gram 的核心区别是什么？**
+   A：方向相反。CBOW 用上下文预测中心词（快，对高频词好），Skip-gram 用中心词预测上下文（慢但质量高，对低频词友好）。
+
+2. **Q：为什么 Skip-gram 对低频词效果更好？**
+   A：CBOW 对上下文词取平均，低频词的特征容易被淹没；Skip-gram 每个中心词-上下文对都独立训练，低频词的每个出现都被充分学习。
+
+3. **Q：为什么需要负采样？不采样直接用 Softmax 行不行？**
+   A：词汇表 V 通常几十万+，全 Softmax 每次 O(V) 计算量根本跑不动。负采样每次只算 1 + k 个词的 Softmax，复杂度 O(k)，k 通常 5~20。
+
+4. **Q：负采样中为什么用 3/4 次方而不是均匀采样？**
+   A：均匀采样会让高频停用词（"的"、"是"）反复被抽为负样本，但这些词的语义信息量低。3/4 次方压缩了高频词的采样概率，让低频词有更多机会被抽中，训练更有效。
+
+5. **Q：Word2Vec 得到的词向量是静态的还是动态的？**
+   A：**静态**。一个词只有一个固定向量，不管它出现在什么上下文里。比如 "苹果" 在 "吃苹果" 和 "买苹果手机" 中是同一个向量——这也是后来 BERT 等动态嵌入要解决的问题。
 
 <a id="rnn-family"></a>
 ## RNN 循环神经网络家族
@@ -3036,7 +3323,7 @@ gru_input = self.attn_combine(torch.cat([embed, context], dim=-1))
 
 ### NLP阶段
 1. ✅ 文本预处理（分词、去停用词、词性标注）
-2. ✅ 词表示方法（One-Hot、Word2Vec、Embedding）
+2. ✅ 词表示方法（One-Hot、Word2Vec [CBOW/Skip-gram]、Embedding）
 3. ✅ RNN家族（RNN、LSTM、GRU）的原理和实现
 4. ✅ 注意力机制（加性注意力、乘性注意力、缩放点积注意力）
 5. ✅ 实战项目（英译法机器翻译）

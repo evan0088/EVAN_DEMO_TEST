@@ -94,6 +94,7 @@ def collate_fn(data):
     # 循环遍历每个样本，将实体信息进行张量的转化
     for batch_index in range(batch_size):
         inner_input_ids = text['input_ids'][batch_index]  # 单个句子变成索引后
+        # inner_triples : spo三元组
         inner_triples = triple[batch_index]
         # 获取每个样本的：主实体长度、主实体开始和结束位置张量表示、客实体以及对应关系实现张量表示
         results = create_label(inner_triples, inner_input_ids, seq_len)

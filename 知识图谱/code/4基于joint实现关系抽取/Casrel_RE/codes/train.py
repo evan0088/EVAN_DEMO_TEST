@@ -54,7 +54,7 @@ def train_epoch(model, train_iter, dev_iter, optimizer, best_triple_f1, epoch):
 
         if step % 1500 == 0:
             torch.save(model.state_dict(),
-                       '/Casrel_RE/save_model/epoch_%s_model_%s.pth' % (epoch, step))
+                       r'D:\workspace\project\PYTHON\AI-Learning\知识图谱\code\4基于joint实现关系抽取\Casrel_RE\save_model\epoch_%s_model_%s.pth' % (epoch, step))
             results = model2dev(model, dev_iter)
             print(results[-1])
             if results[-2] > best_triple_f1:
