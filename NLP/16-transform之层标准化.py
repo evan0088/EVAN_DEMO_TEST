@@ -366,7 +366,8 @@ class SublayerConnection(nn.Module):
         self.size = size
         self.dropout_p = dropout_p
         # 定义norm层  对象名=类名(参数值)
-        self.norm = LayerNorm(self.size)
+        # self.norm = LayerNorm(self.size)
+        self.norm = nn.LayerNorm(self.size,eps=1e-6)
         # 定义dropout层
         self.dropout = nn.Dropout(self.dropout_p)
 
