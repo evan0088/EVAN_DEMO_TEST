@@ -1,0 +1,1764 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="02-%E6%A1%88%E4%BE%8B%EF%BC%9A%E6%97%85%E6%B8%B8%E8%A7%84%E5%88%92%E5%B0%8F%E7%B2%BE%E7%81%B5.html">
+      
+      
+        <link rel="next" href="04-%E6%A1%88%E4%BE%8B%EF%BC%9A%E6%99%BA%E8%83%BD%E9%9D%A2%E8%AF%95%E5%AE%98.html">
+      
+      <link rel="icon" href="../img/AI.jpg">
+      <meta name="generator" content="mkdocs-1.5.2, mkdocs-material-9.1.21">
+    
+    
+      
+        <title>5.6 智能助教 - 大模型技术开发与应用V6.0</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.eebd395e.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#ai" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href=".." title="大模型技术开发与应用V6.0" class="md-header__button md-logo" aria-label="大模型技术开发与应用V6.0" data-md-component="logo">
+      
+  <img src="../img/AI.jpg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            大模型技术开发与应用V6.0
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              5.6 智能助教
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="大模型技术开发与应用V6.0" class="md-nav__button md-logo" aria-label="大模型技术开发与应用V6.0" data-md-component="logo">
+      
+  <img src="../img/AI.jpg" alt="logo">
+
+    </a>
+    大模型技术开发与应用V6.0
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="0">
+          1:大模型背景简介
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_1">
+          <span class="md-nav__icon md-icon"></span>
+          1:大模型背景简介
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../01-%E5%A4%A7%E6%A8%A1%E5%9E%8B%E8%83%8C%E6%99%AF%E7%AE%80%E4%BB%8B/01-LLM%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86.html" class="md-nav__link">
+        1.1 LLM基础知识
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../01-%E5%A4%A7%E6%A8%A1%E5%9E%8B%E8%83%8C%E6%99%AF%E7%AE%80%E4%BB%8B/02-LLM%E4%B8%BB%E8%A6%81%E7%B1%BB%E5%88%AB%E6%9E%B6%E6%9E%84.html" class="md-nav__link">
+        1.2 LLM主要架构类别
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+          2:主流大模型介绍
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          2:主流大模型介绍
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02-%E4%B8%BB%E6%B5%81%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%BB%8B%E7%BB%8D/01-GPT%E7%B3%BB%E5%88%97%E6%A8%A1%E5%9E%8B.html" class="md-nav__link">
+        2.1 GPT系列模型
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02-%E4%B8%BB%E6%B5%81%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%BB%8B%E7%BB%8D/02-LLM%E4%B8%BB%E6%B5%81%E5%BC%80%E6%BA%90%E4%BB%A3%E8%A1%A8%E6%A8%A1%E5%9E%8B.html" class="md-nav__link">
+        2.2 LLM主流开源代表模型
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          3:大模型提示词工程实战
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          3:大模型提示词工程实战
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-%E5%A4%A7%E6%A8%A1%E5%9E%8B%E6%8F%90%E7%A4%BA%E8%AF%8D%E5%B7%A5%E7%A8%8B%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98/01-%E5%A4%A7%E6%A8%A1%E5%9E%8BPrompt%E5%B7%A5%E7%A8%8B%E6%8C%87%E5%8D%97.html" class="md-nav__link">
+        3.1 大模型Prompt工程指南
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-%E5%A4%A7%E6%A8%A1%E5%9E%8B%E6%8F%90%E7%A4%BA%E8%AF%8D%E5%B7%A5%E7%A8%8B%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98/02-%E9%87%91%E8%9E%8D%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81%E6%96%B9%E5%90%91%E8%AF%84%E4%BC%B0%E9%A1%B9%E7%9B%AE%E4%BB%8B%E7%BB%8D.html" class="md-nav__link">
+        3.2 金融行业动态方向评估项目介绍
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-%E5%A4%A7%E6%A8%A1%E5%9E%8B%E6%8F%90%E7%A4%BA%E8%AF%8D%E5%B7%A5%E7%A8%8B%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98/03-LLM%E5%AE%9E%E7%8E%B0%E9%87%91%E8%9E%8D%E6%96%87%E6%9C%AC%E5%88%86%E7%B1%BB.html" class="md-nav__link">
+        3.3 LLM实现金融文本分类
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-%E5%A4%A7%E6%A8%A1%E5%9E%8B%E6%8F%90%E7%A4%BA%E8%AF%8D%E5%B7%A5%E7%A8%8B%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98/04-LLM%E5%AE%9E%E7%8E%B0%E9%87%91%E8%9E%8D%E6%96%87%E6%9C%AC%E4%BF%A1%E6%81%AF%E6%8A%BD%E5%8F%96.html" class="md-nav__link">
+        3.4 LLM实现金融文本信息抽取
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-%E5%A4%A7%E6%A8%A1%E5%9E%8B%E6%8F%90%E7%A4%BA%E8%AF%8D%E5%B7%A5%E7%A8%8B%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98/05-LLM%E5%AE%9E%E7%8E%B0%E9%87%91%E8%9E%8D%E6%96%87%E6%9C%AC%E5%8C%B9%E9%85%8D.html" class="md-nav__link">
+        3.5 LLM实现金融文本匹配
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+          4:大模型RAG开发
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          4:大模型RAG开发
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04-%E5%9F%BA%E4%BA%8ELangChain%2BChatGLM%E5%AE%9E%E7%8E%B0%E6%9C%AC%E5%9C%B0%E7%9F%A5%E8%AF%86%E9%97%AE%E7%AD%94%E6%9C%BA%E5%99%A8%E4%BA%BA/01-%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%BA%94%E7%94%A8%E6%A1%86%E6%9E%B6LangChain%E8%AF%A6%E8%A7%A3.html" class="md-nav__link">
+        4.1 LangChain介绍
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04-%E5%9F%BA%E4%BA%8ELangChain%2BChatGLM%E5%AE%9E%E7%8E%B0%E6%9C%AC%E5%9C%B0%E7%9F%A5%E8%AF%86%E9%97%AE%E7%AD%94%E6%9C%BA%E5%99%A8%E4%BA%BA/02-LangChain%20%2B%20ChatGLM%20%E5%AE%9E%E7%8E%B0%E6%9C%AC%E5%9C%B0%E7%9F%A5%E8%AF%86%E5%BA%93%E9%97%AE%E7%AD%94.html" class="md-nav__link">
+        4.2 LangChain+ChatGLM-6B实现本地知识库问答
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+          5:大模型Agent开发(Coze)
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+        <label class="md-nav__title" for="__nav_5">
+          <span class="md-nav__icon md-icon"></span>
+          5:大模型Agent开发(Coze)
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05-%E5%A4%A7%E6%A8%A1%E5%9E%8BAgent%E5%BA%94%E7%94%A8/01-%E5%A4%A7%E6%A8%A1%E5%9E%8BFunction%20Call%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E5%85%B6%E5%BA%94%E7%94%A8.html" class="md-nav__link">
+        5.1 大模型functioncall的原理及其应用
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05-%E5%A4%A7%E6%A8%A1%E5%9E%8BAgent%E5%BA%94%E7%94%A8/03-Agent%E5%8E%9F%E7%90%86%E4%BB%8B%E7%BB%8D.html" class="md-nav__link">
+        5.2 Agent原理
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05-%E5%A4%A7%E6%A8%A1%E5%9E%8BAgent%E5%BA%94%E7%94%A8/02-GPTs%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E5%BA%94%E7%94%A8.html" class="md-nav__link">
+        5.3 GPTs及Coze应用
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="01-%E6%A1%88%E4%BE%8B%EF%BC%9A%E6%99%BA%E8%83%BD%E9%97%AE%E7%AD%94%E5%8A%A9%E6%89%8B.html" class="md-nav__link">
+        5.4 智能问答小助手
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="02-%E6%A1%88%E4%BE%8B%EF%BC%9A%E6%97%85%E6%B8%B8%E8%A7%84%E5%88%92%E5%B0%8F%E7%B2%BE%E7%81%B5.html" class="md-nav__link">
+        5.5 旅游规划小精灵
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          5.6 智能助教
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="03-%E6%A1%88%E4%BE%8B%EF%BC%9A%E6%99%BA%E8%83%BD%E5%8A%A9%E6%95%99.html" class="md-nav__link md-nav__link--active">
+        5.6 智能助教
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    1.智能体构建
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    2.讲义生成工作流
+  </a>
+  
+    <nav class="md-nav" aria-label="2.讲义生成工作流">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21" class="md-nav__link">
+    2.1 输入信息
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22" class="md-nav__link">
+    2.2 大纲生成
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23" class="md-nav__link">
+    2.3 大纲重写
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24" class="md-nav__link">
+    2.4 资料检索
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#25" class="md-nav__link">
+    2.5 讲义写作
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#26" class="md-nav__link">
+    2.6 讲义导出
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    3.作业批改
+  </a>
+  
+    <nav class="md-nav" aria-label="3.作业批改">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31" class="md-nav__link">
+    3.1 作业上传
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32" class="md-nav__link">
+    3.2 信息提取
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33" class="md-nav__link">
+    3.3 作业批改
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    4.智能体设置
+  </a>
+  
+    <nav class="md-nav" aria-label="4.智能体设置">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41" class="md-nav__link">
+    4.1 提示词设置
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42" class="md-nav__link">
+    4.2 工作流
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43" class="md-nav__link">
+    4.3 开场白设置
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5" class="md-nav__link">
+    5.智能体测试与发布
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="04-%E6%A1%88%E4%BE%8B%EF%BC%9A%E6%99%BA%E8%83%BD%E9%9D%A2%E8%AF%95%E5%AE%98.html" class="md-nav__link">
+        5.7 智能面试官
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="05-%E6%A1%88%E4%BE%8B%EF%BC%9A%E5%8F%A3%E8%AF%AD%E7%BB%83%E4%B9%A0%E4%B8%93%E5%AE%B6.html" class="md-nav__link">
+        5.8 口语练习专家
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+          6:大模型Agent开发(Dify)
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_6">
+          <span class="md-nav__icon md-icon"></span>
+          6:大模型Agent开发(Dify)
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../07-dify/01-Dify%E4%BB%8B%E7%BB%8D.html" class="md-nav__link">
+        6.1:Dify介绍
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../07-dify/02-%E6%A1%88%E4%BE%8B%EF%BC%9A%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%AF%AD%E6%96%99%E6%9E%84%E5%BB%BA.html" class="md-nav__link">
+        6.2:模型训练语料构建
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../07-dify/03-%E6%A1%88%E4%BE%8B%EF%BC%9Adify%E6%8E%A5%E5%85%A5%E7%9F%A5%E8%AF%86%E5%BA%93.html" class="md-nav__link">
+        6.3:Dify接入知识库
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../07-dify/04-%E6%A1%88%E4%BE%8B%EF%BC%9Adify%E6%8E%A5%E5%85%A5%E5%A4%96%E9%83%A8%E7%9F%A5%E8%AF%86%E5%BA%93ragflow.html" class="md-nav__link">
+        6.4:Dify接入外部知识库
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+          7:大模型Agent开发(CrewAI)
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_7">
+          <span class="md-nav__icon md-icon"></span>
+          7:大模型Agent开发(CrewAI)
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05-%E5%A4%A7%E6%A8%A1%E5%9E%8BAgent%E5%BA%94%E7%94%A8/04-Agent%E5%BA%94%E7%94%A8.html" class="md-nav__link">
+        7.1 Agent应用
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    1.智能体构建
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    2.讲义生成工作流
+  </a>
+  
+    <nav class="md-nav" aria-label="2.讲义生成工作流">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21" class="md-nav__link">
+    2.1 输入信息
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22" class="md-nav__link">
+    2.2 大纲生成
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23" class="md-nav__link">
+    2.3 大纲重写
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24" class="md-nav__link">
+    2.4 资料检索
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#25" class="md-nav__link">
+    2.5 讲义写作
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#26" class="md-nav__link">
+    2.6 讲义导出
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    3.作业批改
+  </a>
+  
+    <nav class="md-nav" aria-label="3.作业批改">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31" class="md-nav__link">
+    3.1 作业上传
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32" class="md-nav__link">
+    3.2 信息提取
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33" class="md-nav__link">
+    3.3 作业批改
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    4.智能体设置
+  </a>
+  
+    <nav class="md-nav" aria-label="4.智能体设置">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41" class="md-nav__link">
+    4.1 提示词设置
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42" class="md-nav__link">
+    4.2 工作流
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43" class="md-nav__link">
+    4.3 开场白设置
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5" class="md-nav__link">
+    5.智能体测试与发布
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="ai">AI智慧助教<a class="headerlink" href="#ai" title="Permanent link">&para;</a></h1>
+<p>大家可以通过链接：<a href="https://www.coze.cn/s/PPw_GEKGIus/">https://www.coze.cn/s/PPw_GEKGIus/</a> 访问：</p>
+<p><img src="assets/image-20250326095642648.png" alt="image-20250326095642648" style="zoom:33%;" /></p>
+<p>AI智慧助教是针对老师对学生提问的回答精准性不足，生成的内容、批改的质量不高，时常过于简略。智能助教作为教育行业的创新应用，具有广泛的潜在场景需求，其核心优势在于利用大模型能力，自动化、智能化和高效服务学生学习场景，减轻教师工作量，增加学生学习效率。重复性工作的生成提效，例如教案写作、备课准备、作业批改场景，智慧助教的流程如下所示：</p>
+<p><img alt="img" src="assets/4e9b0cc92f174e7b96a03a9832c0282etplv-goo7wpa0wc-image.png" /></p>
+<p>该智能体包含两个工作流，分别是：</p>
+<ul>
+<li>生成讲义的工作流</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th><strong>模块</strong></th>
+<th><strong>实现方式</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>生成大纲</td>
+<td>通过用户描述或输入的资料，收集相关信息，并生成大纲。如果用户对大纲不满意，支持重新生成大纲，直到大纲符合用户需求。 其中生成大纲由模型节点完成，重新生成大纲的步骤由循环节点完成。循环节点中会持续生成大纲，直到得到用户认可才会终止循环。用户提出的修改意见，也会通过分支直接输入到重试流程中。</td>
+</tr>
+<tr>
+<td>生成课件或教案内容</td>
+<td>调用插件在公开平台中搜索相关的资料，并结合资料和大纲，生成课件或教案内容。 其中，搜索资料和生成文章的功能均通过循环节点实现，生成文章时循环节点可以依次生成大纲中每个模块的具体段落，扩写效果比单个大模型节点更好。</td>
+</tr>
+<tr>
+<td>输出课件或教案的文件</td>
+<td>通过问答节点引导用户选择文章的保存格式，通过代码节点将文件内容格式化后，调用插件节点生成文件即可。</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>批改作业的工作流：</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th><strong>模块</strong></th>
+<th><strong>实现方式</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>读取作业内容</td>
+<td>支持用户上传文件或图片，工作流通过插件节点识别并读取用户输入的文件或图片，并通过消息节点展示给用户。将这些信息提供给大模型节点进行信息整理与汇总。 代码的节点的作用是为了兼容链接、图片读取失败的异常处理，并在异常时返回“读取错误”的信息。</td>
+</tr>
+<tr>
+<td>批改作业</td>
+<td>通过循环节点批改作业。循环节点中包含批改作业的模型节点及输出评语的消息节点。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="1">1.智能体构建<a class="headerlink" href="#1" title="Permanent link">&para;</a></h2>
+<p><img src="assets/image-20250325164100539.png" alt="image-20250325164100539" style="zoom:50%;" /></p>
+<h2 id="2">2.讲义生成工作流<a class="headerlink" href="#2" title="Permanent link">&para;</a></h2>
+<p>整个工作流如下所示：</p>
+<p><img alt="image-20250325173807378" src="assets/image-20250325173807378.png" /></p>
+<p>我们分成以下6部分进行说明：</p>
+<h3 id="21">2.1 输入信息<a class="headerlink" href="#21" title="Permanent link">&para;</a></h3>
+<p>该流程由三个节点构成。“判断是否有文件” 节点作为选择器，基于开始节点 的 “file” 输出内容，按特定操作符和逻辑关系判断条件以控制流程走向；“LinkReaderPlugin” 节点是数据获取工具，根据开始节点 的 “file” 作为 url 及配置参数获取网页、pdf 等内容，能输出错误信息或结构化数据；“兼容异常处理” 节点接收“LinkReaderPlugin” 的 “data” 数据，检查数据存在与否并分别进行封装返回或返回错误提示，实现数据的异常处理与格式化输出。</p>
+<p><img alt="image-20250326104425677" src="assets/image-20250326104425677.png" /></p>
+<ul>
+<li><strong>判断是否有文件</strong>：这是一个选择器类型的节点。它连接多个下游分支，通过设定的条件（来决定运行哪个下游分支。若设定条件成立，则仅运行对应的分支；若所有条件均不成立，则只运行 “否则” 分支，实现对流程走向的控制。</li>
+</ul>
+<p><img src="assets/image-20250326104603168.png" alt="image-20250326104603168" style="zoom: 50%;" /></p>
+<ul>
+<li><strong>LinkReaderPlugin</strong>：这是一个用于获取网页、pdf、抖音视频内容的工具节点。通过调用相关 API（具体由设置的 apiID、apiName、pluginID 等参数确定），根据传入的 url，来获取目标链接下的标题和内容等信息。如果在获取过程中出现错误，能够输出错误信息、错误码等内容，同时正常情况下会输出网页内容相关的数据（如 content、title 等）。</li>
+</ul>
+<p><img src="assets/image-20250326104649449.png" alt="image-20250326104649449" style="zoom:50%;" /></p>
+<ul>
+<li><strong>兼容异常处理</strong>：这是一个代码类型的节点。用于处理上一节点（LinkReaderPlugin）的输出数据。节点内的 Python 代码会对输入数据进行检查，若数据存在，则将其封装在返回对象的 “content” 字段中返回；若数据为空，则返回提示信息 “内容获取失败”。该节点的主要作用是对数据进行异常处理和格式化输出，确保后续流程获得的数据是符合预期格式或包含明确的错误提示 。</li>
+</ul>
+<p><img src="assets/image-20250326155000469.png" alt="image-20250326155000469" style="zoom:33%;" /></p>
+<p>代码的主要内容是：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 定义一个异步函数main，接收参数args，其类型为Args</span>
+<span class="c1"># 函数返回值的类型为Output</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="n">Args</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Output</span><span class="p">:</span>
+    <span class="c1"># 从传入的参数args中提取params字典中的&#39;data&#39;字段的值</span>
+    <span class="c1"># 并将其赋值给变量params</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span>
+    <span class="c1"># 检查params是否为真（即不为空）</span>
+    <span class="k">if</span> <span class="n">params</span><span class="p">:</span>
+        <span class="c1"># 如果params不为空，创建一个字典ret，其中&#39;content&#39;字段的值为params</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;content&#39;</span><span class="p">:</span> <span class="n">params</span><span class="p">}</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># 如果params为空，创建一个字典ret，其中&#39;content&#39;字段的值为提示信息&#39;内容获取失败&#39;</span>
+        <span class="n">ret</span><span class="o">=</span> <span class="p">{</span><span class="s1">&#39;content&#39;</span><span class="p">:</span><span class="s1">&#39;内容获取失败&#39;</span><span class="p">}</span>
+    <span class="c1"># 返回字典ret</span>
+    <span class="k">return</span> <span class="n">ret</span>
+</code></pre></div>
+<h3 id="22">2.2 大纲生成<a class="headerlink" href="#22" title="Permanent link">&para;</a></h3>
+<p>该部分包含四个节点：生成大纲节点调用模型生成课件或教案大纲，输出可读的 string 节点将大纲内容列表转为字符串，大纲是否满意节点向用户展示大纲并收集反馈，意图识别节点对反馈进行分析以判断用户对大纲的态度</p>
+<p><img alt="image-20250326155317494" src="assets/image-20250326155317494.png" /></p>
+<ul>
+<li><strong>生成大纲</strong>：该节点调用 “豆包・Function call 模型” 这一大语言模型。通过设置如温度为 1、topP 为 0.7、最大令牌数为 1024 等模型参数，依据系统提示词（要求作为课件 / 教案写作大师，根据提供的主题和内容，以 JSON 格式输出标题和内容大纲，且大纲内容以 markdown 结构输出，每个分段在数组字段中）来生成课件或教案的标题和内容大纲，输出 “title” 和 “content”。</li>
+</ul>
+<p><img src="assets/image-20250326160905159.png" alt="image-20250326160905159" style="zoom:33%;" /></p>
+<p>提示词是：</p>
+<div class="highlight"><pre><span></span><code>你是课件/教案写作大师。请根据用户提供的主题“{{topic}}”和内容“{{file}}”，用JSON格式输出标题{title}和内容大纲{content}。
+内容大纲{content}的内容需要以markdown结构输出，并且每个分段都要单独存在数组的其中一个字段中，例如：
+====示例开始====
+{
+&quot;content&quot;: [
+&quot;## 开场
+<span class="k">-</span><span class="w"> </span>引入主题：简述计算机在现代社会各领域的核心地位，引出计算机相关知识体系的重要性。
+<span class="k">-</span><span class="w"> </span>介绍重要性和必要性：强调全面掌握计算机知识对于教育、科研、产业发展等方面的紧迫性和现实需求。&quot;,
+&quot;## 一、计算机基础理论知识
+<span class="k">-</span><span class="w"> </span>计算机组成原理：阐述计算机硬件系统的各个组成部分及其工作原理。
+<span class="k">-</span><span class="w"> </span>数据结构与算法：分析常见数据结构（如数组、链表、树等）以及经典算法（排序算法、搜索算法等）的概念和应用场景。
+<span class="k">-</span><span class="w"> </span>编程语言基础：探讨主流编程语言（如 Python、Java、C++ 等）的基本语法和特点。&quot;,
+&quot;## 二、操作系统与软件
+<span class="k">-</span><span class="w"> </span>主流操作系统介绍：说明 Windows、Linux、macOS 等操作系统的特点、功能及应用场景。
+<span class="k">-</span><span class="w"> </span>系统软件与应用软件：分析系统软件（如驱动程序、编译器等）和应用软件（办公软件、图像处理软件等）的区别与联系。&quot;,
+&quot;## 三、计算机网络技术
+<span class="k">-</span><span class="w"> </span>网络架构与拓扑结构：讲解计算机网络的层次结构（如 OSI 模型、TCP/IP 模型）以及不同拓扑结构（总线型、星型、环型等）的特点。
+<span class="k">-</span><span class="w"> </span>网络通信协议：探讨常见网络协议（如 HTTP、FTP、TCP、UDP 等）的工作原理和应用。
+<span class="k">-</span><span class="w"> </span>网络安全基础：介绍网络安全的重要性以及常见的网络安全威胁（如黑客攻击、病毒感染等）和防范措施。&quot;,
+&quot;## 四、数据库管理系统
+<span class="k">-</span><span class="w"> </span>数据库基本概念：阐述数据库、数据表、字段、记录等基本概念。
+<span class="k">-</span><span class="w"> </span>关系型数据库与非关系型数据库：分析两者的特点、适用场景以及常见的数据库管理系统（如 MySQL、Oracle、MongoDB 等）。
+<span class="k">-</span><span class="w"> </span>数据库设计与操作：讲解数据库设计的步骤和方法，以及如何使用 SQL 语句进行数据的增删改查操作。&quot;,
+&quot;## 五、人工智能与机器学习基础
+<span class="k">-</span><span class="w"> </span>人工智能概述：介绍人工智能的发展历程、主要研究领域（如自然语言处理、计算机视觉等）和应用场景。
+<span class="k">-</span><span class="w"> </span>机器学习算法：探讨常见的机器学习算法（如监督学习、无监督学习、深度学习等）的原理和应用。
+<span class="k">-</span><span class="w"> </span>人工智能框架：分析主流人工智能框架（如 TensorFlow、PyTorch 等）的特点和使用方法。&quot;,
+&quot;## 六、计算机在各行业的应用
+<span class="k">-</span><span class="w"> </span>金融领域：阐述计算机在银行系统、证券交易、风险管理等方面的应用。
+<span class="k">-</span><span class="w"> </span>医疗领域：分析计算机在医疗影像诊断、电子病历管理、远程医疗等方面的作用。
+<span class="k">-</span><span class="w"> </span>教育领域：介绍计算机在在线教育平台、智能教学工具等方面的应用。&quot;,
+&quot;## 七、计算机技术的发展趋势
+<span class="k">-</span><span class="w"> </span>新兴技术展望：探讨未来计算机技术的发展方向，如量子计算、物联网、区块链等技术的潜在影响。
+<span class="k">-</span><span class="w"> </span>对社会和行业的影响：分析计算机技术发展对社会结构、就业市场、产业变革等方面的影响和挑战。&quot;,
+&quot;## 结束语
+<span class="k">-</span><span class="w"> </span>重要性的再次强调：总结计算机知识体系在现代社会中的重要意义。
+<span class="k">-</span><span class="w"> </span>鼓励学习与创新：激励学生积极学习和探索计算机领域的新知识、新技术，培养创新思维和实践能力。&quot;
+],
+&quot;title&quot;: &quot;计算机相关知识体系概述&quot;
+}
+====示例结束====
+
+<span class="gu">## 限制</span>
+<span class="k">1.</span> 大纲的正文需要包含中文序列号，如“一、”“二、”“三、”等
+</code></pre></div>
+<ul>
+<li><strong>输出可读的 string</strong>：此代码类型节点接收来自节点 生成大纲 输出的 “content” 列表数据。代码先检查输入的 “content” 是否为数组，若是则将数组中的字符串元素用换行符连接成一个单独的字符串，最后将这个连接后的字符串以 “output” 为键封装在一个对象中返回，实现将列表数据转换为单个可读字符串的功能。</li>
+</ul>
+<p><img src="assets/image-20250326161804038.png" alt="image-20250326161804038" style="zoom:33%;" /></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 异步函数，函数名为main，接受参数args，类型为Args，返回值类型为Output</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="n">Args</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Output</span><span class="p">:</span>
+    <span class="c1"># 从传入的参数args的params字典中获取键为&#39;content&#39;的值，赋值给input变量</span>
+    <span class="c1"># 这里预期&#39;content&#39;对应的值是一个字符串列表</span>
+    <span class="nb">input</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;content&#39;</span><span class="p">]</span>
+    <span class="c1"># 初始化一个空字符串ret，用于存储最终转换后的字符串</span>
+    <span class="n">ret</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+    <span class="c1"># 判断input是否有值（不为空）</span>
+    <span class="k">if</span> <span class="nb">input</span><span class="p">:</span>
+        <span class="c1"># 遍历input列表中的每个字符串元素</span>
+        <span class="k">for</span> <span class="nb">str</span> <span class="ow">in</span> <span class="nb">input</span><span class="p">:</span>
+            <span class="c1"># 将当前字符串元素str连接到ret后面，并添加一个换行符&#39;\n&#39;</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="n">ret</span> <span class="o">+</span> <span class="nb">str</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># 如果input为空，则将ret赋值为&#39;内容为空&#39;</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="s1">&#39;内容为空&#39;</span>
+    <span class="c1"># 返回最终转换后的字符串ret</span>
+    <span class="k">return</span> <span class="n">ret</span>
+</code></pre></div>
+<ul>
+<li><strong>大纲是否满意</strong>：这是一个问答类型节点，支持中间向用户提问，可进行预置选项提问和开放式问题提问。它接收来自生成大纲节点 输出的 “title” 以及来自上一节点 输出的 “output” 作为输入参数，向用户展示生成的大纲主题和内容，并询问用户是否满意，若不满意欢迎提出修改意见。该节点限制提问次数为 3 次，获取用户本轮对话输入内容并输出为 “USER_RESPONSE”。</li>
+</ul>
+<p><img src="assets/image-20250326161920991.png" alt="image-20250326161920991" style="zoom:33%;" /></p>
+<ul>
+<li><strong>意图识别</strong>：该节点用于对用户输入内容进行意图识别。接收来自上一 输出的 “USER_RESPONSE” 作为输入参数，调用 “豆包・工具调用” 模型，根据设置的模型参数，将用户输入与预设的意图选项 “是，满意” 和 “不满意” 进行匹配，输出意图分类 ID（classificationId）和意图匹配的原因（reason），以此判断用户对大纲的满意情况。</li>
+</ul>
+<p><img src="assets/image-20250326161959759.png" alt="image-20250326161959759" style="zoom:33%;" /></p>
+<h3 id="23">2.3 大纲重写<a class="headerlink" href="#23" title="Permanent link">&para;</a></h3>
+<p>当用户不满意上一章节生成的大纲，则进入看流程对大纲进行重写，重写大纲节点设定 10 次无限循环，提供变量给后续节点；是否对重写结果满意节点展示重写内容并收集用户反馈；终止循环节点可中断循环；判断对结果是否满意节点识别用户反馈意图；文章重写节点依用户意见和给定信息调用模型改写大纲；设置变量节点重置循环变量值；转换 string 节点处理字符串列表为单个字符串；大纲重写中节点非流式输出重写状态提示。</p>
+<p><img src="assets/image-20250326162331496.png" alt="image-20250326162331496" style="zoom:50%;" /></p>
+<p>以下是对每个节点作用的依次介绍： </p>
+<ul>
+<li><strong>重写大纲</strong>：这是一个循环类型的节点，设定循环次数为10次，循环类型为无限循环。它接收来自节点意图识别输出的“USER_RESPONSE”作为“query”变量，来自节点生成大纲输出的“title”作为“title”变量，以及来自节点生成大纲输出的“content”列表作为“content”变量。在每次循环中，这些变量被传递到相关后续节点，实现按设定逻辑重复执行一系列任务，并输出更新后的“title”和“content”。 </li>
+</ul>
+<p><img src="assets/image-20250326163955154.png" alt="image-20250326163955154" style="zoom:50%;" /></p>
+<ul>
+<li><strong>大纲重写中</strong>：这是一个输出类型的节点，支持中间过程的消息输出，有流式和非流式两种方式。当前设置为非流式输出，输出固定的提示信息“✏️ 大纲重写中...”，用于在流程执行过程中向用户或相关系统展示当前处于大纲重写的状态信息。</li>
+</ul>
+<p><img src="assets/image-20250326164025292.png" alt="image-20250326164025292" style="zoom:50%;" /></p>
+<ul>
+<li><strong>文章重写</strong>：此节点调用“豆包·Function call模型”，接收来自节点重写节点输出的“title”、“content”以及“query”作为输入参数。依据系统提示词（要求作为课件/教案改写大师，根据用户提供的主题、内容、改写意见，以JSON格式输出改写后的标题和内容大纲，且大纲内容以markdown结构输出，每个分段在数组字段中）来生成改写后的课件或教案的标题和内容大纲，输出“title”和“content”。 </li>
+</ul>
+<p><img src="assets/image-20250326164110177.png" alt="image-20250326164110177" style="zoom:50%;" /></p>
+<p>提示词：</p>
+<div class="highlight"><pre><span></span><code>是课件/教案改写大师。请根据用户提供的主题、内容、改写意见，用JSON格式输出改写后的标题{title}和内容大纲{content}。
+<span class="gu">改写意见：{{query}}</span>
+<span class="gu">-----</span>
+主题：{{title}}
+<span class="gu">原文内容：{{content}}</span>
+<span class="gu">-----</span>
+内容大纲{content}的内容需要以markdown结构输出，并且每个分段都要单独存在数组的其中一个字段中，例如：
+{
+&quot;content&quot;: [
+&quot;## 开场
+<span class="k">-</span><span class="w"> </span>引入主题：简述计算机在现代社会各领域的核心地位，引出计算机相关知识体系的重要性。
+<span class="k">-</span><span class="w"> </span>介绍重要性和必要性：强调全面掌握计算机知识对于教育、科研、产业发展等方面的紧迫性和现实需求。&quot;,
+&quot;## 一、计算机基础理论知识
+<span class="k">-</span><span class="w"> </span>计算机组成原理：阐述计算机硬件系统的各个组成部分及其工作原理。
+<span class="k">-</span><span class="w"> </span>数据结构与算法：分析常见数据结构（如数组、链表、树等）以及经典算法（排序算法、搜索算法等）的概念和应用场景。
+<span class="k">-</span><span class="w"> </span>编程语言基础：探讨主流编程语言（如 Python、Java、C++ 等）的基本语法和特点。&quot;,
+&quot;## 二、操作系统与软件
+<span class="k">-</span><span class="w"> </span>主流操作系统介绍：说明 Windows、Linux、macOS 等操作系统的特点、功能及应用场景。
+<span class="k">-</span><span class="w"> </span>系统软件与应用软件：分析系统软件（如驱动程序、编译器等）和应用软件（办公软件、图像处理软件等）的区别与联系。&quot;,
+&quot;## 三、计算机网络技术
+<span class="k">-</span><span class="w"> </span>网络架构与拓扑结构：讲解计算机网络的层次结构（如 OSI 模型、TCP/IP 模型）以及不同拓扑结构（总线型、星型、环型等）的特点。
+<span class="k">-</span><span class="w"> </span>网络通信协议：探讨常见网络协议（如 HTTP、FTP、TCP、UDP 等）的工作原理和应用。
+<span class="k">-</span><span class="w"> </span>网络安全基础：介绍网络安全的重要性以及常见的网络安全威胁（如黑客攻击、病毒感染等）和防范措施。&quot;,
+&quot;## 四、数据库管理系统
+<span class="k">-</span><span class="w"> </span>数据库基本概念：阐述数据库、数据表、字段、记录等基本概念。
+<span class="k">-</span><span class="w"> </span>关系型数据库与非关系型数据库：分析两者的特点、适用场景以及常见的数据库管理系统（如 MySQL、Oracle、MongoDB 等）。
+<span class="k">-</span><span class="w"> </span>数据库设计与操作：讲解数据库设计的步骤和方法，以及如何使用 SQL 语句进行数据的增删改查操作。&quot;,
+&quot;## 五、人工智能与机器学习基础
+<span class="k">-</span><span class="w"> </span>人工智能概述：介绍人工智能的发展历程、主要研究领域（如自然语言处理、计算机视觉等）和应用场景。
+<span class="k">-</span><span class="w"> </span>机器学习算法：探讨常见的机器学习算法（如监督学习、无监督学习、深度学习等）的原理和应用。
+<span class="k">-</span><span class="w"> </span>人工智能框架：分析主流人工智能框架（如 TensorFlow、PyTorch 等）的特点和使用方法。&quot;,
+&quot;## 六、计算机在各行业的应用
+<span class="k">-</span><span class="w"> </span>金融领域：阐述计算机在银行系统、证券交易、风险管理等方面的应用。
+<span class="k">-</span><span class="w"> </span>医疗领域：分析计算机在医疗影像诊断、电子病历管理、远程医疗等方面的作用。
+<span class="k">-</span><span class="w"> </span>教育领域：介绍计算机在在线教育平台、智能教学工具等方面的应用。&quot;,
+&quot;## 七、计算机技术的发展趋势
+<span class="k">-</span><span class="w"> </span>新兴技术展望：探讨未来计算机技术的发展方向，如量子计算、物联网、区块链等技术的潜在影响。
+<span class="k">-</span><span class="w"> </span>对社会和行业的影响：分析计算机技术发展对社会结构、就业市场、产业变革等方面的影响和挑战。&quot;,
+&quot;## 结束语
+<span class="k">-</span><span class="w"> </span>重要性的再次强调：总结计算机知识体系在现代社会中的重要意义。
+<span class="k">-</span><span class="w"> </span>鼓励学习与创新：激励学生积极学习和探索计算机领域的新知识、新技术，培养创新思维和实践能力。&quot;
+],
+&quot;title&quot;: &quot;计算机相关知识体系概述&quot;
+}
+</code></pre></div>
+<ul>
+<li><strong>转换string</strong>：这是一个代码类型的节点，接收来自节点文章重写输出的“content”列表数据作为输入参数。通过运行节点内的Python代码，将输入的字符串列表连接成一个字符串，元素间添加换行符，若列表为空则返回“内容为空”的提示信息，最后输出处理后的字符串“output”。</li>
+</ul>
+<p><img src="assets/image-20250326164211014.png" alt="image-20250326164211014" style="zoom:50%;" /></p>
+<ul>
+<li><strong>是否对重写结果满意</strong>：这是一个问答类型的节点，调用“豆包·Function call模型”。它接收来自节点文章重写输出的“title”和来自节点1转换为string输出的“output”作为输入参数，向用户展示重写后的大纲主题和内容，询问用户对重写结果是否满意，若不满意欢迎用户提出修改意见。该节点限制提问次数为3次，并输出用户本轮对话输入内容“USER_RESPONSE”。 </li>
+</ul>
+<p><img src="assets/image-20250326164247236.png" alt="image-20250326164247236" style="zoom:50%;" /></p>
+<ul>
+<li></li>
+<li>
+<p><strong>判断对结果是否满意</strong>：这是一个意图识别类型的节点，调用“豆包·工具调用”模型。它接收来自节点170162输出的“USER_RESPONSE”作为输入参数，将用户输入的内容与预设的意图选项“是，满意”和“不满意”进行匹配，输出意图分类ID（classificationId）和意图匹配的原因（reason），以此判断用户对大纲重写结果的态度。 </p>
+</li>
+</ul>
+<p><img src="assets/image-20250326164327525.png" alt="image-20250326164327525" style="zoom:50%;" /></p>
+<ul>
+<li><strong>设置变量</strong>：该节点用于重置循环变量的值，它将来自节点<code>重写大纲</code>输出的“title”、“content”和来自节点<code>是否对重写结果满意</code>输出的“USER_RESPONSE”分别进行处理，使这些变量在下次循环中使用重置后的值，确保循环过程中变量的更新和一致性。 </li>
+</ul>
+<p><img src="assets/image-20250326164603099.png" alt="image-20250326164603099" style="zoom:50%;" /></p>
+<ul>
+<li><strong>终止循环</strong>：该节点用于在特定情况下立即终止当前所在的循环，使流程跳出循环体，结束循环相关的操作。</li>
+</ul>
+<p><img src="assets/image-20250326164808471.png" alt="image-20250326164808471" style="zoom:50%;" /></p>
+<h3 id="24">2.4 资料检索<a class="headerlink" href="#24" title="Permanent link">&para;</a></h3>
+<p><img alt="image-20250326164916123" src="assets/image-20250326164916123.png" /></p>
+<p>以下是对每个节点作用、输入和输出的介绍： </p>
+<ul>
+<li><strong>变量聚合</strong>：对多个分支的输出进行聚合处理的节点。输入是来自节点重写大纲输出的“content”和来自节点生成大纲输出的“content”，合并到“Group1”组中。输出为一个包含合并后数据的字符串列表“Group1” ，实现对不同分支输出数据的聚合。 </li>
+</ul>
+<p><img src="assets/image-20250326165754880.png" alt="image-20250326165754880" style="zoom:50%;" /></p>
+<ul>
+<li><strong>开始检索参考资料</strong>：输出类型节点，非流式输出。无输入参数，输出固定的提示信息“🔍 查找资料中...”，用于在流程中展示当前处于查找资料的状态。 </li>
+</ul>
+<p><img src="assets/image-20250326170139761.png" alt="image-20250326170139761" style="zoom:50%;" /></p>
+<ul>
+<li><strong>查找资料</strong>：循环类型节点，循环次数为10次，循环类型为数组循环。输入是来自节点变量聚合输出的“Group1”字符串列表，作为“input”变量。输出包括来自节点异常检测输出的“content”、来自节点url输出web输出的“output”作为“links”、来自节点异常检测输出的“title”作为“title_link”、自身输出的“index1”作为“index2”、来自节点图片url输出的“output”作为“image”。主要作用是按设定逻辑重复执行一系列任务，为后续节点提供相关数据。 </li>
+</ul>
+<p><img src="assets/image-20250326170203008.png" alt="image-20250326170203008" style="zoom:50%;" /></p>
+<ul>
+<li><strong>生成搜索词</strong>：调用“豆包·Function call模型”的大模型节点。输入为来自节点查找资料输出的“input”字符串。输出为一个字符串“output”，其作用是根据输入内容拆分出一个搜索词。 </li>
+</ul>
+<p><img src="assets/image-20250326170753448.png" alt="image-20250326170753448" style="zoom:50%;" /></p>
+<div class="highlight"><pre><span></span><code>你是搜索引擎专家，请根据{{input}}拆分出1个搜索词，并用string类型输出。
+仅输出一个搜索词，不要输出其他无关内容。
+</code></pre></div>
+<ul>
+<li><strong>搜索词拼接</strong>：文本处理类型节点。输入是来自节点生成搜索词输出的“output”字符串作为“String1”。输出为一个字符串“output”，通过将输入字符串与固定字符串“ filetype:pdf”拼接，处理字符串格式。</li>
+</ul>
+<p><img src="assets/image-20250326170825915.png" alt="image-20250326170825915" style="zoom:50%;" /></p>
+<ul>
+<li><strong>搜索</strong>：必应搜索引擎相关的节点。输入包括设置的api相关参数，以及来自节点搜索词拼接输出的“output”作为搜索“query”，并设置了搜索结果数量“count”为1。输出包括“log_id”、“msg”、“response_for_model”、“code”、“data”（包含搜索结果的相关信息如网页信息、图片信息等），用于根据输入的搜索词进行必应搜索并返回搜索结果相关数据。 </li>
+</ul>
+<p><img src="assets/image-20250326170910500.png" alt="image-20250326170910500" style="zoom:50%;" /></p>
+<ul>
+<li><strong>图片搜索</strong>：必应图片搜索相关节点。输入设置了api相关参数，以及来自节点生成搜索词输出的“output”作为搜索“query”。输出包括“log_id”、“msg”、“code”、“data”（包含图片搜索结果的相关信息如图片的大小、链接等），用于根据输入的搜索词进行必应图片搜索并返回结果数据。 </li>
+</ul>
+<p><img src="assets/image-20250326171448220.png" alt="image-20250326171448220" style="zoom:50%;" /></p>
+<ul>
+<li><strong>图片url输出</strong>：文本处理类型节点。输入是来自节点图片搜索输出的“data.value.contentUrl”作为“String1”。输出为一个字符串“output”，将图片相关的url进行格式处理后输出。</li>
+</ul>
+<p><img src="assets/image-20250326171520779.png" alt="image-20250326171520779" style="zoom:50%;" /></p>
+<ul>
+<li><strong>链接读取</strong>：用于获取网页、pdf等内容的节点。输入设置了api相关参数，以及来自节点搜索输出的“data.webPages.value.url”作为“url”。输出包括“err_msg”、“error_code”、“message”、“pdf_content”、“code”、“data”（包含网页内容的“content”和“title”）、“errorBody”，作用是根据输入的url获取对应链接的内容信息。</li>
+</ul>
+<p><img src="assets/image-20250326171557619.png" alt="image-20250326171557619" style="zoom:50%;" /></p>
+<ul>
+<li><strong>url输出_web</strong>：文本处理类型节点。输入是来自节点搜索输出的“data.webPages.value.url”作为“String1”。输出为一个字符串“output”，将输入的url进行格式处理后输出。</li>
+</ul>
+<p><img src="assets/image-20250326171624815.png" alt="image-20250326171624815" style="zoom:50%;" /></p>
+<ul>
+<li><strong>int转string</strong>：文本处理类型节点。输入是来自节点查找资料输出的“index”整数。输出为一个字符串“output”，将输入的整数转换为字符串格式。</li>
+</ul>
+<p><img src="assets/image-20250326171707036.png" alt="image-20250326171707036" style="zoom:50%;" /></p>
+<ul>
+<li><strong>统计循环次数</strong>：设置变量类型节点。输入是来自节点查找资料输出的“index1”和来自节点166254输出的“output”，用于比较并重置循环变量。无实际输出内容，主要作用是重置循环变量的值，以便下次循环使用新值。 </li>
+</ul>
+<p><img src="assets/image-20250326171745540.png" alt="image-20250326171745540" style="zoom:50%;" /></p>
+<ul>
+<li><strong>异常检测</strong>：代码类型节点。输入是来自节点链接读取输出的“data”（包含“content”和“title”字段的对象）作为“input”。输出包括“content”和“title”字符串，通过代码对输入数据进行检查和处理，若数据存在则提取“content”和“title”返回，若不存在则返回默认提示信息。</li>
+</ul>
+<p><img src="assets/image-20250326171802910.png" alt="image-20250326171802910" style="zoom:50%;" /></p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="n">Args</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Output</span><span class="p">:</span>
+    <span class="nb">input</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">]</span>
+    <span class="c1"># 构建输出对象</span>
+    <span class="k">if</span> <span class="nb">input</span><span class="p">:</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;content&#39;</span><span class="p">:</span><span class="nb">input</span><span class="p">[</span><span class="s1">&#39;content&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="nb">input</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">]</span>
+        <span class="p">}</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;content&#39;</span><span class="p">:</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;内容获取失败&#39;</span>
+        <span class="p">}</span>
+    <span class="k">return</span> <span class="n">ret</span>
+</code></pre></div>
+<ul>
+<li><strong>检索完毕</strong>：输出类型节点，非流式输出。输入是来自节点查找资料输出的“index2”作为“output”变量。输出为包含提示信息“✅ 共检索到{{output}}篇资料，开始写作...”的字符串，根据输入的检索次数信息展示检索完成的提示。</li>
+</ul>
+<p><img src="assets/image-20250326171819853.png" alt="image-20250326171819853" style="zoom:50%;" /></p>
+<h3 id="25">2.5 讲义写作<a class="headerlink" href="#25" title="Permanent link">&para;</a></h3>
+<p>该过程通过 “讲义写作” 节点进行 10 次的数组循环，输入大纲、参考资料标题、链接、内容及图片等列表数据，处理后为 “生成完整讲义” 节点提供数据，此节点调用 “豆包・Function call 模型”，依据输入信息和设定提示词生成 markdown 格式的讲义内容，最后 “消息” 节点以流式输出的方式将生成的讲义内容实时展示给用户。</p>
+<p><img src="assets/image-20250326172025615.png" alt="image-20250326172025615" style="zoom:50%;" /></p>
+<p>接下来介绍每个节点的做哟个：</p>
+<ul>
+<li><strong>讲义写作</strong>：这是一个循环类型的节点，循环次数设定为 10 次，循环类型为数组循环。输入包括来自节点生成大纲 输出的 “content” 字符串列表作为 “input”，来自节点 查找资料 输出的 “title_link” 字符串列表作为 “reference_title”，来自节点 查找资料 输出的 “links” 字符串列表作为 “reference_link”，来自节点 查找资料输出的 “content” 字符串列表作为 “reference_content”，来自节点 查找资料输出的 “image” 字符串列表作为 “image”。这些输入为循环过程提供了所需的数据。输出是来自节点 生成完整讲义 输出的 “content” 字符串列表作为 “output”。其作用是按照设定的循环逻辑，重复执行一系列任务，为后续生成完整讲义提供数据流转的基础。</li>
+</ul>
+<p><img src="assets/image-20250326172851047.png" alt="image-20250326172851047" style="zoom:50%;" /></p>
+<ul>
+<li><strong>生成完整讲义</strong>：调用 “豆包・Function call 模型” 的大模型节点。接收来自节点 讲义写作 输出的 “input”、 “reference_title”、“reference_link”、“reference_content”、“image” 分别作为相应的输入参数，同时还接收来自节点 生成大纲输出的 “title” 作为 “title” 参数，以及来自节点 161002 输出的 “index”（在当前配置中未明确其来源设置，推测是循环相关的索引变量）作为 “index” 参数。另外，还设置了大模型的相关参数，如温度、topP、响应格式、最大令牌数等，以及系统提示词，要求作为教案、课件写作专家教师，根据提供的主题、大纲、参考资料信息、参考图，完成详细写作并以 markdown 格式输出。输出一个字符串 “content”，即生成的完整讲义内容。该节点的主要作用是利用大语言模型，根据输入的各种信息，生成具体的讲义内容。</li>
+</ul>
+<p><img src="assets/image-20250326172926488.png" alt="image-20250326172926488" style="zoom:50%;" /></p>
+<p>提示词：</p>
+<div class="highlight"><pre><span></span><code>你是教案、课件写作专家教师，你精通语文和历史科目。请根据用户提供的主题、大纲、参考资料信息、参考图，完成这一部分的详细写作，并用markdown的格式输出。
+主题：{{title}}
+大纲：{{input}}
+参考资料：
+<span class="k">-</span><span class="w"> </span>参考资料标题：{{reference_title}}
+<span class="k">-</span><span class="w"> </span>参考资料链接：{{reference_link}}
+<span class="k">-</span><span class="w"> </span>参考资料内容：{{reference_content}}
+当前参考资料是第几篇：{{index}}
+参考图：{{imageurl}}
+
+===输出案例参考===
+<span class="gh"># 段落标题</span>
+<span class="gu">## 小标题1</span>
+正文1
+<span class="gu">## 小标题2</span>
+正文2
+
+<span class="gu">## 参考资料</span>
+[{{index}}] [<span class="nt">参考资料标题</span>](<span class="na">参考资料链接</span>)
+
+<span class="gu">## 参考图</span>
+![<span class="nt">image</span>](<span class="na">{{imageurl}}</span>)
+
+<span class="gu">## 讨论与反馈</span>
+<span class="k">1.</span> 思考题1：...&lt;br&gt;
+<span class="k">2.</span> 思考题2：...&lt;br&gt;
+<span class="k">3.</span> 思考题3：...&lt;br&gt;
+===输出案例结束===
+
+<span class="gu">## 限制</span>
+<span class="k">1.</span> 不要输出其他无关内容。
+<span class="k">2.</span> 参考资料部分的index需要={{index}}
+<span class="k">3.</span> 必须输出参考图
+</code></pre></div>
+<ul>
+<li><strong>消息</strong>：输出类型的节点，支持流式输出。输入是来自节点生成完整讲义输出的 “content” 字符串作为 “output” 参数。将输入的 “content” 内容按照流式输出的方式展示，输出内容为 “{{output}}”，即实际展示的是生成的完整讲义内容。此节点的作用是在流程中实时输出生成的讲义内容，让用户可以看到中间结果。</li>
+</ul>
+<p><img src="assets/image-20250326172941503.png" alt="image-20250326172941503" style="zoom:50%;" /></p>
+<h3 id="26">2.6 讲义导出<a class="headerlink" href="#26" title="Permanent link">&para;</a></h3>
+<p>讲义到处首先通过问答节点询问用户是否将讲义输出为 PPT、DOCX 或不需要。若选 PPT，经代码节点整理内容格式后显示 “PPT 生成中”，再调用 API 创建 PPT；若选 DOCX，类似地经代码处理后显示 “DOCX 生成中”，调用 API 创建 DOCX；若选不需要，则直接显示服务结束，最后无论何种选择，流程结束时都提示服务已结束。</p>
+<p><img alt="image-20250326173227349" src="assets/image-20250326173227349.png" /></p>
+<ul>
+<li><strong>讲义是否输出</strong>：该节点是一个问答类型的节点，通过向用户提问“🌟文章写作完毕！请问你是否需要将内容输出为PPT或者DOCX？”，并提供“PPT”、“DOCX”、“不需要”三个选项，以获取用户对于讲义输出格式的需求，为后续流程的分支走向提供依据。</li>
+</ul>
+<p><img src="assets/image-20250326173823999.png" alt="image-20250326173823999" style="zoom:50%;" /></p>
+<ul>
+<li><strong>输出文件内容样式PPT</strong>：作为代码类型节点，它的作用是接收来自其他节点的讲义内容（content）和标题（title），通过编写的代码对这些输入数据进行处理，将标题和内容整合为特定格式，构建出适合生成PPT的内容，为后续创建PPT的操作提供格式化的数据。</li>
+</ul>
+<p><img src="assets/image-20250326173848742.png" alt="image-20250326173848742" style="zoom:50%;" /></p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="n">Args</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Output</span><span class="p">:</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;content&#39;</span><span class="p">]</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">]</span>
+    <span class="c1"># 构建输出对象</span>
+    <span class="n">ret</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+    <span class="k">if</span> <span class="n">title</span><span class="p">:</span>
+        <span class="n">ret</span>  <span class="o">=</span> <span class="n">title</span>
+    <span class="k">if</span> <span class="n">content</span><span class="p">:</span>
+        <span class="k">for</span> <span class="nb">str</span> <span class="ow">in</span> <span class="n">content</span><span class="p">:</span>
+            <span class="n">ret</span><span class="o">=</span><span class="n">ret</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">+</span> <span class="nb">str</span> 
+    <span class="k">return</span> <span class="n">ret</span>
+</code></pre></div>
+<ul>
+<li><strong>输出文件内容样式DOCX</strong>：同样是代码类型节点，与输出PPT内容样式的节点功能类似，接收讲义内容和标题，经过代码处理，将数据整理成适合生成DOCX文件的格式，为创建DOCX文件准备好所需的格式化内容。</li>
+</ul>
+<p><img src="assets/image-20250326173927508.png" alt="image-20250326173927508" style="zoom:50%;" /></p>
+<ul>
+<li><strong>PPT生成中</strong>：这是一个输出类型的节点，主要功能是向用户展示当前系统正在进行PPT生成的状态信息，即“🪄 PPT生成中...”，让用户了解操作的进度。 </li>
+</ul>
+<p><img src="assets/image-20250326173948824.png" alt="image-20250326173948824" style="zoom:50%;" /></p>
+<ul>
+<li><strong>DOCX生成中</strong>：属于输出类型节点，用于向用户显示当前正在进行DOCX文件生成的状态，展示“✍️ DOCX生成中...”的信息，以便用户知晓操作的进展情况。</li>
+</ul>
+<p><img src="assets/image-20250326174004283.png" alt="image-20250326174004283" style="zoom:50%;" /></p>
+<ul>
+<li><strong>创建PPT</strong>：此为调用API的节点，依据输入的markdown格式的PPT内容（输入文件内容样式PPT：formatted_markdown）和PPT标题（生成大纲title），调用相关API，执行生成PPT的操作，并返回生成结果的相关信息，如状态码、生成PPT的url等，实现PPT文件的实际创建。</li>
+</ul>
+<p><img src="assets/image-20250326174023461.png" alt="image-20250326174023461" style="zoom:50%;" /></p>
+<ul>
+<li><strong>创建Docx</strong>：该节点调用API，按照输入的文档格式（固定为docx）、markdown格式的文档内容（formatted_markdown）和文档标题（title），调用相应API来生成DOCX格式的文档，并反馈生成结果的各类信息，完成DOCX文件的创建工作。</li>
+</ul>
+<p><img src="assets/image-20250326174138408.png" alt="image-20250326174138408" style="zoom:50%;" /></p>
+<ul>
+<li><strong>服务结束</strong>：输出类型节点，用于在整个操作流程结束时，向用户输出“本次服务已结束，欢迎继续使用其他服务！”的提示信息，告知用户当前服务已经完成。 </li>
+</ul>
+<p><img src="assets/image-20250326174238481.png" alt="image-20250326174238481" style="zoom:50%;" /></p>
+<h2 id="3">3.作业批改<a class="headerlink" href="#3" title="Permanent link">&para;</a></h2>
+<p>作业批改的工作流如下所示：</p>
+<p><img alt="image-20250326174509437" src="assets/image-20250326174509437.png" /></p>
+<p>下面我们对其进行说明：</p>
+<h3 id="31">3.1 作业上传<a class="headerlink" href="#31" title="Permanent link">&para;</a></h3>
+<p>用户可以以文本/文件或图像上传作业，若是文件，利用文件读取节点读取 html、xml、doc 等多种格式文档内容；若是图片，则使用图片识别节点将图片转换为文字，实现对不同类型上传内容的针对性处理。</p>
+<p><img alt="image-20250326182634832" src="assets/image-20250326182634832.png" /></p>
+<p>根据提供的信息，依次说明每个节点的作用如下：</p>
+<ul>
+<li><strong>开始节点</strong>：用户可通过文本/文件/图片上传作业进行批改。</li>
+</ul>
+<p><img src="assets/image-20250326183216438.png" alt="image-20250326183216438" style="zoom:50%;" /></p>
+<ul>
+<li><strong>是否是文件选择器节点</strong>：该节点用于判断是否上传的是文件。它连接多个下游分支，若设定的条件（判断上传的是否为文件）成立则仅运行对应的分支（此处对应的下游分支为文件读取操作），若均不成立则只运行 “否则” 分支（图中未显示 “否则” 分支的具体情况）。</li>
+</ul>
+<p><img src="assets/image-20250326183041247.png" alt="image-20250326183041247" style="zoom:50%;" /></p>
+<ul>
+<li><strong>是否是图片选择器节点</strong>：该节点用于判断是否上传的是图片。同样连接多个下游分支，若设定的条件（判断上传的是否为图片）成立则仅运行对应的分支（此处对应的下游分支为图片识别操作），若均不成立则只运行 “否则” 分支（图中未显示 “否则” 分支的具体情况）。</li>
+</ul>
+<p><img src="assets/image-20250326183232275.png" alt="image-20250326183232275" style="zoom:50%;" /></p>
+<ul>
+<li><strong>read节点</strong>：该节点是一个 API 调用节点，用于读取文档内容。目前支持 html、xml、doc、docx、txt、pdf、csv、xlsx 格式。输入参数中指定了 apiID、apiName、pluginID、pluginName 等信息，并且设置了输入参数 “url” 为引用上传的文件（从 开始节点输出中获取文件信息）。</li>
+</ul>
+<p><img src="assets/image-20250326183313827.png" alt="image-20250326183313827" style="zoom:50%;" /></p>
+<ul>
+<li><strong>图片识别节点</strong>：该节点是一个 API 调用节点，用于将图片转换为文字（OCR 功能）。输入参数中指定了 apiID、apiName、pluginID、pluginName 等信息，并且设置了输入参数 “url” 为引用上传的图片（从开始节点输出中获取图片信息）。其输出包括 code、data（包含识别结果的结构化数据）、log_id、msg 等信息。</li>
+</ul>
+<p><img src="assets/image-20250326183418733.png" alt="image-20250326183418733" style="zoom:50%;" /></p>
+<h3 id="32">3.2 信息提取<a class="headerlink" href="#32" title="Permanent link">&para;</a></h3>
+<p>信息提取过程首先利用两个代码节点对读取或识别结果进行兼容报错处理并提取内容，再经两个输出节点反馈读取信息，最后大模型节点依据处理后的内容，按要求整理信息并以 JSON 格式输出问题和答案数组。</p>
+<p><img alt="image-20250326183451470" src="assets/image-20250326183451470.png" /></p>
+<p>接下来，我们详细介绍下每个节点的作用：</p>
+<ul>
+<li><strong>链接报错兼容，并取字</strong>：接收文件读取节点输出的文件内容数据，对数据进行处理。若数据存在且为字符串类型，则提取内容的前 20 个字符作为简短内容输出，同时输出完整内容；若数据不满足条件，则返回 “内容获取失败” 的提示信息。</li>
+</ul>
+<p><img src="assets/image-20250326184150202.png" alt="image-20250326184150202" style="zoom:50%;" /></p>
+<p>具体代码实现如下：</p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="n">Args</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Output</span><span class="p">:</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span>
+    <span class="n">ret</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;content_short&#39;</span><span class="p">:</span> <span class="s1">&#39;内容获取失败&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;content_all&#39;</span><span class="p">:</span> <span class="s1">&#39;内容获取失败&#39;</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="n">params</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">params</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;content_short&#39;</span><span class="p">:</span> <span class="n">params</span><span class="p">[:</span><span class="mi">20</span><span class="p">],</span>
+        <span class="s1">&#39;content_all&#39;</span><span class="p">:</span> <span class="n">params</span>
+        <span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">ret</span>
+</code></pre></div>
+<ul>
+<li><strong>图片兼容报错，并取字</strong>：接收图片识别节点输出的图片识别后的数据，对数据进行处理。若数据存在且包含识别结果，则提取识别结果中的文本内容，将前 20 个字符作为简短内容输出，同时输出完整的文本内容；若数据不满足条件，则返回 “内容获取失败” 的提示信息。</li>
+</ul>
+<p><img src="assets/image-20250326184239704.png" alt="image-20250326184239704" style="zoom:50%;" /></p>
+<p>具体代码实现如下：</p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="n">Args</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Output</span><span class="p">:</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span>
+    <span class="n">ret</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;content_short&#39;</span><span class="p">:</span> <span class="s1">&#39;内容获取失败&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;content_all&#39;</span><span class="p">:</span> <span class="s1">&#39;内容获取失败&#39;</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="n">params</span> <span class="ow">and</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;results&#39;</span><span class="p">]:</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;results&#39;</span><span class="p">]:</span>
+            <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;words&#39;</span><span class="p">]:</span>
+                <span class="n">text</span> <span class="o">=</span> <span class="n">text</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">word</span><span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">]</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;content_short&#39;</span><span class="p">:</span> <span class="n">text</span><span class="p">[:</span><span class="mi">20</span><span class="p">],</span>
+            <span class="s1">&#39;content_all&#39;</span><span class="p">:</span> <span class="n">text</span>  
+        <span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">ret</span>
+</code></pre></div>
+<ul>
+<li><strong>反馈读取到的信息 - 链接</strong>：以流式输出的方式，将从文件读取节点处理后获取的文件内容的简短部分（前 20 个字符）输出，提示用户链接已读取以及内容的大概情况。</li>
+</ul>
+<p><img src="assets/image-20250326184327619.png" alt="image-20250326184327619" style="zoom:50%;" /></p>
+<ul>
+<li><strong>反馈读取到的信息 - 图片</strong>：以流式输出的方式，将从图片识别节点处理后获取的图片内容的简短部分（前 20 个字符）输出，提示用户图片已读取以及内容的大概情况。</li>
+</ul>
+<p><img src="assets/image-20250326184343521.png" alt="image-20250326184343521" style="zoom:50%;" /></p>
+<ul>
+<li><strong>大模型节点</strong>：调用大语言模型（豆包・Function call 模型），根据设定的参数（如模型类型、生成多样性、温度、topP 等）和提示词，结合用户上传的图片内容（图片代码节点）、文件内容（文件代码节点）、文本内容（开始节点），生成回复内容，并以 JSON 格式输出题目问题数组和用户回答数组，要求不丢失用户上传信息且两者数组个数一致。‘</li>
+</ul>
+<p><img src="assets/image-20250326184408353.png" alt="image-20250326184408353" style="zoom:50%;" /></p>
+<p>系统提示词：</p>
+<div class="highlight"><pre><span></span><code>你是信息整理专家，请整理信息，用JSON输出{question}和{user_anwser}.
+
+用户上传的内容：
+{{image}}
+{{file}}
+{{text}}
+
+<span class="gu">## 限制</span>
+<span class="k">-</span><span class="w"> </span>不得丢失任何用户上传的信息。
+<span class="k">-</span><span class="w"> </span>{question}和{user_anwser}的数组个数需要一致。
+</code></pre></div>
+<h3 id="33">3.3 作业批改<a class="headerlink" href="#33" title="Permanent link">&para;</a></h3>
+<p>作业批改过程中先输出提示开始批改作业，接着循环节点取大模型整理的问题和答案数组，循环将单题及答案传入内容批改大模型节点。该节点模拟计算机科学老师按审题、逻辑等多维度评估，给出评分和理由，最后输出节点展示每次循环的批改结果。</p>
+<p><img alt="image-20250326184519560" src="assets/image-20250326184519560.png" /></p>
+<p>下面我们详细介绍每个节点则作用</p>
+<ul>
+<li><strong>开始批改作业</strong>：输出节点，以非流式输出的方式，输出固定文本 “✍️ 开始批改作业....”，用于提示即将开始进行作业批改的流程。</li>
+</ul>
+<p><img src="assets/image-20250326185104668.png" alt="image-20250326185104668" style="zoom:50%;" /></p>
+<ul>
+<li><strong>循环节点</strong>：设定循环次数为 10 次，循环类型为数组循环。从大模型节点（之前处理用户上传内容后输出问题和答案数组的节点）获取题目数组（questions）和用户答案数组（user_answers）作为输入参数。在每次循环中，将当前循环对应的题目和用户答案传递给嵌套的大模型节点（内容批改）进行处理，并收集该大模型节点输出的批改结果（review），最终输出批改结果数组。</li>
+</ul>
+<p><img src="assets/image-20250326185121601.png" alt="image-20250326185121601" style="zoom:50%;" /></p>
+<ul>
+<li><strong>大模型节点（内容批改）</strong>：调用豆包・Function call 模型，根据输入的单个题目（来自循环节点传递）和单个用户答案（来自循环节点传递），按照设定的角色（资深且专业的计算机科学老师）、技能描述（包括审题确认、逻辑结构分析、多角度思考评估、客观性与平衡性考量等方面）进行作业批改。根据各项评估结果给出评分，并详细阐述评分原因，以特定格式（包含题目、分数、原因）输出批改结果。</li>
+</ul>
+<p><img src="assets/image-20250326185150422.png" alt="image-20250326185150422" style="zoom:50%;" /></p>
+<p>提示词</p>
+<div class="highlight"><pre><span></span><code>角色设定
+你是一位资深且专业的计算机科学老师，在计算机科学领域知识储备深厚，尤其擅长主观题的批改工作。你性格严谨细致，对待批改作业认真负责，始终秉持着公平公正的态度。在教学风格上，你耐心且善于引导，总能从学生的回答中挖掘闪光点并给予恰当评价。
+技能描述
+审题确认
+仔细研读用户提交的作业内容，明确题目所提出的核心问题，判断作业回答是否围绕该核心问题展开，有无出现偏离主题的情况。若回答偏离主题，需在评分原因中明确指出。
+逻辑结构分析
+对作业回答的整体逻辑和结构进行剖析。查看回答是否具备清晰的条理，是否采用了合理的结构，例如总分总结构。若采用总分总结构，开头是否简要且准确地陈述了观点；中间论述部分是否具体、有条理地对观点进行论证；结尾是否对观点进行了有效总结。如果逻辑结构存在问题，如条理混乱、缺乏连贯性等，在评分原因中详细说明。
+多角度思考评估
+依据题目性质和要求，判断回答是否从多个角度进行了分析。如果题目允许从不同角度（如政治、经济、文化、社会等多方面，此处在计算机科学领域可类比为算法设计、数据结构、应用场景等多方面）展开分析，检查作业是否充分体现了这种多角度思考的能力，展现出对相关知识全面的理解。若未能从多角度思考，在评分原因中说明。
+客观性与平衡性考量
+针对作业中对相关知识内容的分析，审查是否保持了客观、公正的态度。尤其在涉及一些存在争议性的知识点时，查看回答是否提及了不同的观点，并且是否清晰地表明了自己的立场并给出合理理由。若存在片面或主观倾向明显的问题，在评分原因中指出。
+评分与原因阐述
+根据上述各项评估结果，按照评分标准给出相应的评分。在评分原因中，详细阐述每个评估维度的得分依据，让用户清楚了解作业的优点和不足。
+
+<span class="gu">## 题目：{{question}}</span>
+<span class="gu">## 用户回答：{{user_answer}}</span>
+
+<span class="gu">## 输出示例</span>
+📖 题目：....
+🌟 分数：n/10
+✍️ 原因：
+1. 
+2. 
+3. 
+4. 
+5. 
+</code></pre></div>
+<ul>
+<li><strong>消息</strong>：输出节点，以流式输出的方式，接收来自大模型节点（内容批改）输出的批改结果（review），并将其作为内容进行输出展示，让用户能够看到作业的批改情况。</li>
+</ul>
+<p><img src="assets/image-20250326185206458.png" alt="image-20250326185206458" style="zoom:50%;" /></p>
+<ul>
+<li><strong>结束</strong>：工作流结束，完成作业批改</li>
+</ul>
+<p><img src="assets/image-20250326185220377.png" alt="image-20250326185220377" style="zoom:50%;" /></p>
+<h2 id="4">4.智能体设置<a class="headerlink" href="#4" title="Permanent link">&para;</a></h2>
+<h3 id="41">4.1 提示词设置<a class="headerlink" href="#41" title="Permanent link">&para;</a></h3>
+<p>根据当前智能体的作用，设置相关提示词：</p>
+<p><img src="assets/image-20250326185240603.png" alt="image-20250326185240603" style="zoom:50%;" /></p>
+<h3 id="42">4.2 工作流<a class="headerlink" href="#42" title="Permanent link">&para;</a></h3>
+<p>添加构建好的讲义生成和作业批改的工作流：</p>
+<p><img src="assets/image-20250326185254461.png" alt="image-20250326185254461" style="zoom:50%;" /></p>
+<h3 id="43">4.3 开场白设置<a class="headerlink" href="#43" title="Permanent link">&para;</a></h3>
+<p>设置开场白文案和预置问题：</p>
+<p><img src="assets/image-20250326185330870.png" alt="image-20250326185330870" style="zoom:50%;" /></p>
+<h2 id="5">5.智能体测试与发布<a class="headerlink" href="#5" title="Permanent link">&para;</a></h2>
+<p>完成后，就可以测试智能体效果并发布。</p>
+<p>在右侧调试区域，输入问题进行测试。</p>
+<p>作业批改：</p>
+<p><img src="assets/image-20250326185401839.png" alt="image-20250326185401839" style="zoom:50%;" /></p>
+<p><img src="assets/image-20250326185416251.png" alt="image-20250326185416251" style="zoom:50%;" /></p>
+<p><img src="assets/image-20250326185441187.png" alt="image-20250326185441187" style="zoom:50%;" /></p>
+<p>讲义课件：</p>
+<p><img src="assets/image-20250326185502560.png" alt="image-20250326185502560" style="zoom:50%;" /></p>
+<p><img src="assets/image-20250326185527582.png" alt="image-20250326185527582" style="zoom:50%;" /></p>
+<p>完成测试后可单击**发布**，将智能体发布到你需要的任何渠道中使用。</p>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.74e28a9f.min.js", "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.220ee61c.min.js"></script>
+      
+        
+          <script src="../js/extra.js"></script>
+        
+      
+        
+          <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+        
+      
+    
+  </body>
+</html>

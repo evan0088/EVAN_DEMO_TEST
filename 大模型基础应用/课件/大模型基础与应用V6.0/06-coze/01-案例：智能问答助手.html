@@ -1,0 +1,1338 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../05-%E5%A4%A7%E6%A8%A1%E5%9E%8BAgent%E5%BA%94%E7%94%A8/02-GPTs%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E5%BA%94%E7%94%A8.html">
+      
+      
+        <link rel="next" href="02-%E6%A1%88%E4%BE%8B%EF%BC%9A%E6%97%85%E6%B8%B8%E8%A7%84%E5%88%92%E5%B0%8F%E7%B2%BE%E7%81%B5.html">
+      
+      <link rel="icon" href="../img/AI.jpg">
+      <meta name="generator" content="mkdocs-1.5.2, mkdocs-material-9.1.21">
+    
+    
+      
+        <title>5.4 智能问答小助手 - 大模型技术开发与应用V6.0</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.eebd395e.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#_1" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href=".." title="大模型技术开发与应用V6.0" class="md-header__button md-logo" aria-label="大模型技术开发与应用V6.0" data-md-component="logo">
+      
+  <img src="../img/AI.jpg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            大模型技术开发与应用V6.0
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              5.4 智能问答小助手
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="大模型技术开发与应用V6.0" class="md-nav__button md-logo" aria-label="大模型技术开发与应用V6.0" data-md-component="logo">
+      
+  <img src="../img/AI.jpg" alt="logo">
+
+    </a>
+    大模型技术开发与应用V6.0
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="0">
+          1:大模型背景简介
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_1">
+          <span class="md-nav__icon md-icon"></span>
+          1:大模型背景简介
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../01-%E5%A4%A7%E6%A8%A1%E5%9E%8B%E8%83%8C%E6%99%AF%E7%AE%80%E4%BB%8B/01-LLM%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86.html" class="md-nav__link">
+        1.1 LLM基础知识
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../01-%E5%A4%A7%E6%A8%A1%E5%9E%8B%E8%83%8C%E6%99%AF%E7%AE%80%E4%BB%8B/02-LLM%E4%B8%BB%E8%A6%81%E7%B1%BB%E5%88%AB%E6%9E%B6%E6%9E%84.html" class="md-nav__link">
+        1.2 LLM主要架构类别
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+          2:主流大模型介绍
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          2:主流大模型介绍
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02-%E4%B8%BB%E6%B5%81%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%BB%8B%E7%BB%8D/01-GPT%E7%B3%BB%E5%88%97%E6%A8%A1%E5%9E%8B.html" class="md-nav__link">
+        2.1 GPT系列模型
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02-%E4%B8%BB%E6%B5%81%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%BB%8B%E7%BB%8D/02-LLM%E4%B8%BB%E6%B5%81%E5%BC%80%E6%BA%90%E4%BB%A3%E8%A1%A8%E6%A8%A1%E5%9E%8B.html" class="md-nav__link">
+        2.2 LLM主流开源代表模型
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          3:大模型提示词工程实战
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          3:大模型提示词工程实战
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-%E5%A4%A7%E6%A8%A1%E5%9E%8B%E6%8F%90%E7%A4%BA%E8%AF%8D%E5%B7%A5%E7%A8%8B%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98/01-%E5%A4%A7%E6%A8%A1%E5%9E%8BPrompt%E5%B7%A5%E7%A8%8B%E6%8C%87%E5%8D%97.html" class="md-nav__link">
+        3.1 大模型Prompt工程指南
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-%E5%A4%A7%E6%A8%A1%E5%9E%8B%E6%8F%90%E7%A4%BA%E8%AF%8D%E5%B7%A5%E7%A8%8B%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98/02-%E9%87%91%E8%9E%8D%E8%A1%8C%E4%B8%9A%E5%8A%A8%E6%80%81%E6%96%B9%E5%90%91%E8%AF%84%E4%BC%B0%E9%A1%B9%E7%9B%AE%E4%BB%8B%E7%BB%8D.html" class="md-nav__link">
+        3.2 金融行业动态方向评估项目介绍
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-%E5%A4%A7%E6%A8%A1%E5%9E%8B%E6%8F%90%E7%A4%BA%E8%AF%8D%E5%B7%A5%E7%A8%8B%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98/03-LLM%E5%AE%9E%E7%8E%B0%E9%87%91%E8%9E%8D%E6%96%87%E6%9C%AC%E5%88%86%E7%B1%BB.html" class="md-nav__link">
+        3.3 LLM实现金融文本分类
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-%E5%A4%A7%E6%A8%A1%E5%9E%8B%E6%8F%90%E7%A4%BA%E8%AF%8D%E5%B7%A5%E7%A8%8B%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98/04-LLM%E5%AE%9E%E7%8E%B0%E9%87%91%E8%9E%8D%E6%96%87%E6%9C%AC%E4%BF%A1%E6%81%AF%E6%8A%BD%E5%8F%96.html" class="md-nav__link">
+        3.4 LLM实现金融文本信息抽取
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-%E5%A4%A7%E6%A8%A1%E5%9E%8B%E6%8F%90%E7%A4%BA%E8%AF%8D%E5%B7%A5%E7%A8%8B%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98/05-LLM%E5%AE%9E%E7%8E%B0%E9%87%91%E8%9E%8D%E6%96%87%E6%9C%AC%E5%8C%B9%E9%85%8D.html" class="md-nav__link">
+        3.5 LLM实现金融文本匹配
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+          4:大模型RAG开发
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          4:大模型RAG开发
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04-%E5%9F%BA%E4%BA%8ELangChain%2BChatGLM%E5%AE%9E%E7%8E%B0%E6%9C%AC%E5%9C%B0%E7%9F%A5%E8%AF%86%E9%97%AE%E7%AD%94%E6%9C%BA%E5%99%A8%E4%BA%BA/01-%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%BA%94%E7%94%A8%E6%A1%86%E6%9E%B6LangChain%E8%AF%A6%E8%A7%A3.html" class="md-nav__link">
+        4.1 LangChain介绍
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04-%E5%9F%BA%E4%BA%8ELangChain%2BChatGLM%E5%AE%9E%E7%8E%B0%E6%9C%AC%E5%9C%B0%E7%9F%A5%E8%AF%86%E9%97%AE%E7%AD%94%E6%9C%BA%E5%99%A8%E4%BA%BA/02-LangChain%20%2B%20ChatGLM%20%E5%AE%9E%E7%8E%B0%E6%9C%AC%E5%9C%B0%E7%9F%A5%E8%AF%86%E5%BA%93%E9%97%AE%E7%AD%94.html" class="md-nav__link">
+        4.2 LangChain+ChatGLM-6B实现本地知识库问答
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+          5:大模型Agent开发(Coze)
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+        <label class="md-nav__title" for="__nav_5">
+          <span class="md-nav__icon md-icon"></span>
+          5:大模型Agent开发(Coze)
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05-%E5%A4%A7%E6%A8%A1%E5%9E%8BAgent%E5%BA%94%E7%94%A8/01-%E5%A4%A7%E6%A8%A1%E5%9E%8BFunction%20Call%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E5%85%B6%E5%BA%94%E7%94%A8.html" class="md-nav__link">
+        5.1 大模型functioncall的原理及其应用
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05-%E5%A4%A7%E6%A8%A1%E5%9E%8BAgent%E5%BA%94%E7%94%A8/03-Agent%E5%8E%9F%E7%90%86%E4%BB%8B%E7%BB%8D.html" class="md-nav__link">
+        5.2 Agent原理
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05-%E5%A4%A7%E6%A8%A1%E5%9E%8BAgent%E5%BA%94%E7%94%A8/02-GPTs%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E5%BA%94%E7%94%A8.html" class="md-nav__link">
+        5.3 GPTs及Coze应用
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          5.4 智能问答小助手
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="01-%E6%A1%88%E4%BE%8B%EF%BC%9A%E6%99%BA%E8%83%BD%E9%97%AE%E7%AD%94%E5%8A%A9%E6%89%8B.html" class="md-nav__link md-nav__link--active">
+        5.4 智能问答小助手
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    1.工作流设计
+  </a>
+  
+    <nav class="md-nav" aria-label="1.工作流设计">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11" class="md-nav__link">
+    1.1 简单构建
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12" class="md-nav__link">
+    1.2 判断节点
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#13" class="md-nav__link">
+    1.3 知识库检索
+  </a>
+  
+    <nav class="md-nav" aria-label="1.3 知识库检索">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a" class="md-nav__link">
+    A.创建知识库
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b" class="md-nav__link">
+    B.知识库导入
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#c" class="md-nav__link">
+    C.知识库检索节点
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#14" class="md-nav__link">
+    1.4 判断知识库输出
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#15" class="md-nav__link">
+    1.5 问答模式
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#16" class="md-nav__link">
+    1.6 引导回答模式
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#16_1" class="md-nav__link">
+    1.6 工作流发布
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    2.智能体设置
+  </a>
+  
+    <nav class="md-nav" aria-label="2.智能体设置">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21" class="md-nav__link">
+    2.1 提示词设置
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22" class="md-nav__link">
+    2.2 工作流
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23" class="md-nav__link">
+    2.3 开场白设置
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    3.智能体测试与发布
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="02-%E6%A1%88%E4%BE%8B%EF%BC%9A%E6%97%85%E6%B8%B8%E8%A7%84%E5%88%92%E5%B0%8F%E7%B2%BE%E7%81%B5.html" class="md-nav__link">
+        5.5 旅游规划小精灵
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="03-%E6%A1%88%E4%BE%8B%EF%BC%9A%E6%99%BA%E8%83%BD%E5%8A%A9%E6%95%99.html" class="md-nav__link">
+        5.6 智能助教
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="04-%E6%A1%88%E4%BE%8B%EF%BC%9A%E6%99%BA%E8%83%BD%E9%9D%A2%E8%AF%95%E5%AE%98.html" class="md-nav__link">
+        5.7 智能面试官
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="05-%E6%A1%88%E4%BE%8B%EF%BC%9A%E5%8F%A3%E8%AF%AD%E7%BB%83%E4%B9%A0%E4%B8%93%E5%AE%B6.html" class="md-nav__link">
+        5.8 口语练习专家
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+          6:大模型Agent开发(Dify)
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_6">
+          <span class="md-nav__icon md-icon"></span>
+          6:大模型Agent开发(Dify)
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../07-dify/01-Dify%E4%BB%8B%E7%BB%8D.html" class="md-nav__link">
+        6.1:Dify介绍
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../07-dify/02-%E6%A1%88%E4%BE%8B%EF%BC%9A%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E8%AF%AD%E6%96%99%E6%9E%84%E5%BB%BA.html" class="md-nav__link">
+        6.2:模型训练语料构建
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../07-dify/03-%E6%A1%88%E4%BE%8B%EF%BC%9Adify%E6%8E%A5%E5%85%A5%E7%9F%A5%E8%AF%86%E5%BA%93.html" class="md-nav__link">
+        6.3:Dify接入知识库
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../07-dify/04-%E6%A1%88%E4%BE%8B%EF%BC%9Adify%E6%8E%A5%E5%85%A5%E5%A4%96%E9%83%A8%E7%9F%A5%E8%AF%86%E5%BA%93ragflow.html" class="md-nav__link">
+        6.4:Dify接入外部知识库
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+          7:大模型Agent开发(CrewAI)
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_7">
+          <span class="md-nav__icon md-icon"></span>
+          7:大模型Agent开发(CrewAI)
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05-%E5%A4%A7%E6%A8%A1%E5%9E%8BAgent%E5%BA%94%E7%94%A8/04-Agent%E5%BA%94%E7%94%A8.html" class="md-nav__link">
+        7.1 Agent应用
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    1.工作流设计
+  </a>
+  
+    <nav class="md-nav" aria-label="1.工作流设计">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11" class="md-nav__link">
+    1.1 简单构建
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12" class="md-nav__link">
+    1.2 判断节点
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#13" class="md-nav__link">
+    1.3 知识库检索
+  </a>
+  
+    <nav class="md-nav" aria-label="1.3 知识库检索">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a" class="md-nav__link">
+    A.创建知识库
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b" class="md-nav__link">
+    B.知识库导入
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#c" class="md-nav__link">
+    C.知识库检索节点
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#14" class="md-nav__link">
+    1.4 判断知识库输出
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#15" class="md-nav__link">
+    1.5 问答模式
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#16" class="md-nav__link">
+    1.6 引导回答模式
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#16_1" class="md-nav__link">
+    1.6 工作流发布
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    2.智能体设置
+  </a>
+  
+    <nav class="md-nav" aria-label="2.智能体设置">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21" class="md-nav__link">
+    2.1 提示词设置
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22" class="md-nav__link">
+    2.2 工作流
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23" class="md-nav__link">
+    2.3 开场白设置
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    3.智能体测试与发布
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="_1">智能问答小助手<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
+<p>大家可以通过链接：<a href="https://www.coze.cn/s/zomzIsRb0hs/">https://www.coze.cn/s/zomzIsRb0hs/</a> 访问：</p>
+<p><img src="assets/image-20250326095450923.png" alt="image-20250326095450923" style="zoom:33%;" /></p>
+<p>智能问答小助手智能体主要功能是根据用户输入，结合不同数据源（如文件、图像），通过大语言模型和插件进行问题解析、答案生成，并对用户回答进行引导和判断，具体如下：</p>
+<ol>
+<li><strong>数据输入与检查</strong>：接收用户输入，包括文本、文件链接（doc）和图像链接（image）。通过 “判断是否上传文件” 和 “判断是否上传图片” 节点，分别检查是否有文件和图片上传。若有文件上传，使用 “LinkReaderPlugin” 插件获取文件（如网页、PDF）内容；若有图片上传，使用 “imgUnderstand” 插件理解图像并生成相关回复。</li>
+<li><strong>问题解析</strong>：利用 “获取问题” 节点，调用大语言模型（豆包・工具调用），结合用户输入文本、文件内容（若有）和图像回复（若有），解析出用户的问题（query）和答案（answer），并以 JSON 格式输出。</li>
+<li><strong>知识库检索</strong>：将解析出的问题（query）输入 “知识库检索” 节点，在指定的知识数据集中检索最匹配的信息，并以列表形式返回。</li>
+<li><strong>答案处理</strong>：通过 “判断知识库输出” 节点，检查知识库检索结果。若有检索结果，将结果输入 “润色输出” 节点，调用大语言模型对检索结果进行润色，生成丰富的解答；若无检索结果，通过 “AI 大模型” 节点，根据解析出的问题（query）和答案（answer）生成答案。最后，通过 “回答整合” 节点，将 “润色输出” 和 “AI 大模型” 节点生成的答案进行整合。</li>
+<li><strong>用户交互</strong>：向用户提问 “你希望我如何帮助你？”，提供 “引导我独立解决” 和 “直接给我答案” 两个选项。根据用户选择，进入循环流程。</li>
+<li><strong>循环引导与判断</strong>：在循环中，首先通过 “生成引导” 节点，调用大语言模型生成引导问题，结合用户之前的回答，引导用户得出问题的完整回答。然后通过 “引导问答” 节点向用户展示引导问题，接收用户回答。接着，利用 “答案是否正确” 节点，调用大语言模型判断用户回答是否正确，返回判断结果（1 表示正确，2 表示错误，3 表示用户想直接知道答案）。根据判断结果，若回答正确，输出 “恭喜你回答正确”；若回答错误，终止循环；若用户想直接知道答案（未在当前分支明确体现），可能有相应处理路径。每次循环结束前，通过 “设置变量” 节点，更新循环变量（引导问题和用户回答），为下一次循环提供新的初始条件。</li>
+</ol>
+<p><img src="assets/image-20250325153313756.png" alt="image-20250325153313756" style="zoom:50%;" /></p>
+<h2 id="1">1.工作流设计<a class="headerlink" href="#1" title="Permanent link">&para;</a></h2>
+<h3 id="11">1.1 简单构建<a class="headerlink" href="#11" title="Permanent link">&para;</a></h3>
+<p>直接输入问题使用，使用大模型进行回答。</p>
+<p><img alt="image-20250325131041934" src="assets/image-20250325131041934.png" /></p>
+<ul>
+<li><strong>开始节点</strong>：工作流的起始节点，用于设定启动工作流需要的输入信息。</li>
+</ul>
+<p><img src="assets/image-20250325133423918.png" alt="image-20250325133423918" style="zoom:50%;" /></p>
+<ul>
+<li>**大模型节点：**直接生成问题答案</li>
+</ul>
+<p><img src="assets/image-20250325133517881.png" alt="image-20250325133517881" style="zoom:50%;" /></p>
+<div class="highlight"><pre><span></span><code>你是一位专业的问题解析专家，具备敏锐的洞察力和精准的分析能力。在从多种数据源（如文档 {{doc}}、图像 {{image}}、文本 {{text}}）解析问题和答案方面经验丰富。性格沉稳细致，对待工作一丝不苟，确保解析的准确性。沟通风格简洁明了，能够清晰地将解析结果呈现出来。
+解析出用户的问题{query}和答案{answer},用JSON格式输出。
+注意，query一定有值，answer可能没值，如果answer没值，该字段输出空即可。
+</code></pre></div>
+<ul>
+<li><strong>结束节点</strong>：是工作流的最终节点，用于返回工作流运行后的结果。结束节点支持两种返回方式，即返回变量和返回文本。</li>
+</ul>
+<p><img src="assets/image-20250325133438977.png" alt="image-20250325133438977" style="zoom:50%;" /></p>
+<h3 id="12">1.2 判断节点<a class="headerlink" href="#12" title="Permanent link">&para;</a></h3>
+<p>添加新的节点判断是否上传文件和图片,整个工具流如下所示：</p>
+<p><img alt="image-20250325132405778" src="assets/image-20250325132405778.png" /></p>
+<ul>
+<li><strong>判断是否上传文件</strong>：检查用户输入中是否包含文档（doc）信息，通过判断文档信息是否存在（使用运算符判断其是否为空或有值），将流程导向不同分支。若存在文档信息，则进入处理文档的分支；若不存在，则进入其他分支（当前设置为直接进入 “获取问题” 节点）。这一步骤是为了根据用户是否上传文件来决定后续的处理方式。</li>
+</ul>
+<p><img src="assets/image-20250325131847042.png" alt="image-20250325131847042" style="zoom:50%;" /></p>
+<ul>
+<li><strong>LinkReaderPlugin（链接读取插件）</strong>：当用户上传了文档（即 “判断是否上传文件” 节点判断为存在文档信息）时，该节点被触发。它接收用户输入的文档链接（url）作为参数，调用链接读取插件，从链接中获取文档内容（如 pdf 内容）、标题等信息。如果是 PDF 文件，会提取出 PDF 的内容并输出。此节点的作用是获取文档的具体内容，为后续解析问题和答案提供数据来源。</li>
+</ul>
+<p><img src="assets/image-20250325132127097.png" alt="image-20250325132127097" style="zoom:33%;" /></p>
+<ul>
+<li><strong>判断是否上传图片</strong>：检查用户输入中是否包含图像（image）信息，通过判断图像信息是否存在（使用运算符判断其是否为空或有值），将流程导向不同分支。若存在图像信息，则进入处理图像的分支；若不存在，则进入其他分支（当前设置为直接进入 “获取问题” 节点）。这一步骤是为了根据用户是否上传图片来决定后续的处理方式。</li>
+</ul>
+<p><img src="assets/image-20250325132153864.png" alt="image-20250325132153864" style="zoom:33%;" /></p>
+<ul>
+<li><strong>imgUnderstand（图片理解插件）</strong>：当用户上传了图片（即 “判断是否上传图片” 节点判断为存在图像信息）时，该节点被触发。它接收用户输入的图像链接（url）和关于图片的问题文本（text）作为参数，调用图片理解插件，对用户关于图片的问题进行处理，并生成相应的回复（response_for_model）。此节点的作用是理解用户关于图片的问题，并从图片中获取相关信息来生成回答，为后续解析问题和答案提供与图片相关的数据。</li>
+</ul>
+<p><img src="assets/image-20250325132257332.png" alt="image-20250325132257332" style="zoom:33%;" /></p>
+<ul>
+<li><strong>获取问题</strong>：该节点是整个流程的核心处理节点。它接收用户输入的文本（text）、从文档中获取的内容（doc）以及从图片理解插件生成的回复（image）作为输入参数。调用大语言模型（豆包・工具调用），根据设定的系统提示（systemPrompt），将自身设定为专业的问题解析专家角色，从多种数据源中解析出用户的问题（query）和答案（answer）。如果答案不存在，则输出空值。最终以 JSON 格式输出解析得到的问题和答案。该节点整合了不同数据源的信息，通过模型分析和处理，实现了对用户问题和答案的提取与整理。</li>
+</ul>
+<p><img src="assets/image-20250325132331560.png" alt="image-20250325132331560" style="zoom:33%;" /></p>
+<h3 id="13">1.3 知识库检索<a class="headerlink" href="#13" title="Permanent link">&para;</a></h3>
+<p>添加知识库检索节点</p>
+<p><img src="assets/image-20250325135205793.png" alt="image-20250325135205793" style="zoom:50%;" /></p>
+<h4 id="a">A.<strong>创建知识库</strong><a class="headerlink" href="#a" title="Permanent link">&para;</a></h4>
+<p><img src="assets/image-20250325134112745.png" alt="image-20250325134112745" style="zoom:33%;" /></p>
+<h4 id="b">B.<strong>知识库导入</strong><a class="headerlink" href="#b" title="Permanent link">&para;</a></h4>
+<ul>
+<li>上传知识库文档</li>
+</ul>
+<p><img src="assets/image-20250325134413025.png" alt="image-20250325134413025" style="zoom: 33%;" /></p>
+<ul>
+<li>设置文档解析策略</li>
+</ul>
+<p><img src="assets/image-20250325134542760.png" alt="image-20250325134542760" style="zoom:33%;" /></p>
+<ul>
+<li>结果预览</li>
+</ul>
+<p><img src="assets/image-20250325134638497.png" alt="image-20250325134638497" style="zoom:33%;" /></p>
+<ul>
+<li>数据处理完成即可在文件流中使用</li>
+</ul>
+<p><img src="assets/image-20250325134734991.png" alt="image-20250325134734991" style="zoom:33%;" /></p>
+<p>完成以上处理即可在工作流中使用数据库。</p>
+<h4 id="c">C.知识库检索节点<a class="headerlink" href="#c" title="Permanent link">&para;</a></h4>
+<p>接收 “获取问题” 节点输出的问题（quary）作为输入参数。在指定的知识数据集中，根据输入的问题召回最匹配的信息，并以列表形式返回。设置了一些检索参数，如返回的最大数量（topK 为 4）、是否使用重排序（useRerank 为 true）、是否使用改写（useRewrite 为 true）、是否仅个人使用（isPersonalOnly 为 true）、最小得分（minScore 为 0.5）以及检索策略（strategy 为 1）。该节点的作用是从知识库中检索与问题相关的信息，为后续可能的回答提供知识支持 。</p>
+<p><img src="assets/image-20250325135335141.png" alt="image-20250325135335141" style="zoom:33%;" /></p>
+<p>当我们提问大模型是什么时，运行结果如下所示：</p>
+<p><img src="assets/image-20250325135320170.png" alt="image-20250325135320170" style="zoom:33%;" /></p>
+<h3 id="14">1.4 判断知识库输出<a class="headerlink" href="#14" title="Permanent link">&para;</a></h3>
+<p>根据知识库的输出生成结果</p>
+<p><img alt="image-20250325141549188" src="assets/image-20250325141549188.png" /></p>
+<ul>
+<li><strong>判断知识库输出</strong>：检查 “知识库检索” 节点输出的信息列表（outputList）是否存在内容（使用运算符判断列表是否为空或有值），根据判断结果将流程导向不同分支。若存在内容，则进入 “润色输出” 分支；若不存在内容，则进入 “AI 大模型” 分支。此节点用于决定后续是对知识库检索到的信息进行润色处理，还是直接通过 AI 大模型生成答案。</li>
+</ul>
+<p><img src="assets/image-20250325141646070.png" alt="image-20250325141646070" style="zoom:33%;" /></p>
+<ul>
+<li><strong>润色输出</strong>：当 “判断知识库输出” 节点判断为知识库检索结果存在内容时，该节点被执行。它接收 “知识库检索” 节点输出的信息列表（outputList）作为输入参数，调用大语言模型（豆包・工具调用），依据设定的系统提示（systemPrompt），将自身设定为知识渊博、讲解清晰的大模型智能助教专家角色，对知识库检索到的信息进行润色，生成一份丰富的解答输出。该节点的作用是对知识库检索到的信息进行优化处理，使其更适合作为最终的回答。</li>
+</ul>
+<p><img src="assets/image-20250325141711341.png" alt="image-20250325141711341" style="zoom:33%;" /></p>
+<div class="highlight"><pre><span></span><code>你是一位知识渊博、讲解清晰的大模型智能助教专家，能够用通俗易懂且专业的语言，向不同受众介绍大模型相关知识。请依据“{{input[0]}}”的结果，润色一份非常丰富的解答输出。
+</code></pre></div>
+<ul>
+<li><strong>AI 大模型</strong>：当 “判断知识库输出” 节点判断为知识库检索结果不存在内容时，该节点被触发。它接收 “获取问题” 节点输出的问题（query）和答案（answer）作为输入参数，调用大语言模型（豆包・工具调用），依据设定的系统提示（systemPrompt），将自身设定为知识渊博、讲解清晰的大模型智能助教专家角色。若答案（answer）不为空，则根据其内容生成答案；若为空，则直接生成问题（query）的答案。该节点的作用是在知识库未检索到相关信息时，直接通过大语言模型生成问题的答案。</li>
+</ul>
+<p><img src="assets/image-20250325141735205.png" alt="image-20250325141735205" style="zoom:33%;" /></p>
+<div class="highlight"><pre><span></span><code>你是一位知识渊博、讲解清晰的大模型智能助教专家，能够用通俗易懂且专业的语言，向不同受众介绍大模型相关知识。请生成{{input}}的答案
+</code></pre></div>
+<ul>
+<li><strong>回答整合</strong>：接收 “润色输出” 节点输出的内容（若有）和 “AI 大模型” 节点输出的内容（若有）作为输入参数，通过设定的方法（这里是 concat，即拼接），将两个输出内容进行整合，生成最终的回答输出。该节点的作用是将不同来源生成的回答内容进行合并，形成一个完整的回答提供给用户。</li>
+</ul>
+<p><img src="assets/image-20250325141754818.png" alt="image-20250325141754818" style="zoom:33%;" /></p>
+<h3 id="15">1.5 问答模式<a class="headerlink" href="#15" title="Permanent link">&para;</a></h3>
+<p>为了增加了交互的灵活性和用户的参与度，添加问答节点，该节点的作用是与用户进行交互，根据用户的选择进一步决定后续的帮助方式。</p>
+<p><img src="assets/image-20250325143324683.png" alt="image-20250325143324683" style="zoom:33%;" /></p>
+<p>该节点向用户展示问题 “你希望我如何帮助你？” 以及两个预置选项 “引导我独立解决” 和 “直接给我答案”，实现与用户的交互。用户进行选择后，该节点会输出用户所选选项的 ID（optionId）和选项内容（optionContent），为后续的流程提供用户的选择信息，以便系统根据用户的选择进一步处理，进入不同的流程分支。</p>
+<p><img src="assets/image-20250325143435901.png" alt="image-20250325143435901" style="zoom:33%;" /></p>
+<ul>
+<li><strong>optionId</strong>：用于输出用户所选选项的唯一标识，类型为字符串，该参数为非必填（required: false）。</li>
+<li><strong>optionContent</strong>：用于输出用户所选选项的具体内容，类型为字符串，该参数也为非必填（required: false）。</li>
+</ul>
+<h3 id="16">1.6 引导回答模式<a class="headerlink" href="#16" title="Permanent link">&para;</a></h3>
+<p>引导回答的模式如下所示：</p>
+<p><img src="assets/image-20250325150805947.png" alt="image-20250325150805947" style="zoom:33%;" /></p>
+<p>为实现相关功能，我们需要实现一个循环体：</p>
+<p><img src="assets/image-20250325151001393.png" alt="image-20250325151001393" style="zoom:50%;" /></p>
+<ul>
+<li><strong>循环</strong>：该节点是整个循环流程的控制中心。它设置了循环类型为 “infinite”（无限循环），但同时设定了循环次数为 10 次。定义了两个变量参数，分别是 “question”（初始值为 “您的问题是关于大模型的吗？”）和 “uesr_answer”（初始值为 “用户尚未回答”）。其作用是按照设定的次数，重复执行循环内部的一系列任务，并管理循环变量的值，为每次循环提供初始条件和变量状态。</li>
+</ul>
+<p><img src="assets/image-20250325151143284.png" alt="image-20250325151143284" style="zoom:33%;" /></p>
+<ul>
+<li><strong>生成引导</strong>：此节点调用大语言模型（豆包・工具调用）。接收循环节点传递的 “question” 变量，以及其他相关节点传递的 “answer”（来自回答整合节点的输出）、“query”（来自获取问题节点的输出）和 “user_answer”（来自循环节点的 “uesr_answer” 变量）作为输入参数。根据设定的系统提示，将自身设定为擅长引导的专家角色，结合用户上一轮的回答，生成新的引导问题，目的是通过循循善诱的方式让用户做出回答，且生成的引导问题不与之前的重合，并倾向让用户做出完整回答、不跑题。该节点的输出将作为下一次循环中引导问答节点的输入问题。</li>
+</ul>
+<p><img src="assets/image-20250325151204481.png" alt="image-20250325151204481" style="zoom:50%;" /></p>
+<div class="highlight"><pre><span></span><code>你是擅长引导问的专家，请生成引导问题，通过循循善诱的方式让用户做出回答。
+你的目标是结合用户上一轮的回答，引导用户得出这个问题的完整回答。
+
+最初的问题：{{query}}
+这个问题的解析：{{answer}}
+上一轮的引导问：{{input}}
+用户上一轮的回答：{{user_answer}}
+
+注意，你生成的引导问题，不要与之前的引导问重合。
+你要倾向让用户做出完整的回答，不要跑题。
+</code></pre></div>
+<ul>
+<li><strong>引导问答</strong>：向用户展示由 “生成引导” 节点生成的引导问题（通过 “{{query}}” 占位符获取问题内容）。支持中间向用户提问问题，回答类型设置为 “text”（文本回答），选项类型为 “static”（静态），但选项内容为空（可能意味着是开放式问题）。用户进行回答后，该节点会输出用户本轮对话的输入内容（USER_RESPONSE），为后续节点判断用户回答的正确性提供依据。</li>
+</ul>
+<p><img src="assets/image-20250325151225282.png" alt="image-20250325151225282" style="zoom:33%;" /></p>
+<ul>
+<li><strong>答案是否正确</strong>：调用大语言模型（豆包・工具调用）。接收 “引导问答” 节点输出的用户回答（input，即 USER_RESPONSE）和 “回答整合” 节点输出的标准答案（answer）作为输入参数。根据设定的系统提示，将自身设定为决策专家角色，判断用户的回答是否为正确答案。按照三种可能的回复情况（用户回答正确、用户回答错误、用户表示想直接知道答案），仅输出对应的数字 “1、2、3”，不输出其他无关内容，为后续的流程分支提供判断依据。</li>
+</ul>
+<p><img src="assets/image-20250325151248352.png" alt="image-20250325151248352" style="zoom:50%;" /></p>
+<div class="highlight"><pre><span></span><code>你是决策专家，你需要判断用户的回答是否为正确答案，并返回{is_right}变量对应的int值。
+标准答案：{{answer}}
+用户回答：{{input}}
+
+3种用户可能的回复情况：
+1: 用户的回答是正确答案
+2: 用户的回答不是正确答案
+3: 用户不知道如何回答，表示想直接知道答案
+
+注意，仅输出数字“1、2、3”，不要输出其他无关内容
+</code></pre></div>
+<ul>
+<li><strong>选择器</strong>：根据 “答案是否正确” 节点输出的判断结果（is_right 变量的值）进行条件判断。设置了两个分支条件，分别判断 is_right 的值是否等于 1（用户回答正确）和是否等于 2（用户回答错误）。根据判断结果将流程导向不同的分支，若用户回答正确，导向 “消息” 节点；若用户回答错误，导向 “终止循环” 节点；若用户表示想直接知道答案（未在当前分支条件中明确体现，可能在其他逻辑中处理），可能有相应的处理路径。该节点起到流程决策的作用，根据用户回答的正确性决定后续流程走向。</li>
+</ul>
+<p><img src="assets/image-20250325151307181.png" alt="image-20250325151307181" style="zoom:50%;" /></p>
+<ul>
+<li><strong>设置变量</strong>：在每次循环结束前（当用户回答正确或其他需要更新变量的情况时），该节点被触发。它接收循环节点传递的 “question” 变量（来自上一次循环的引导问题）和 “uesr_answer” 变量（来自用户在引导问答节点的回答），以及 “生成引导” 节点输出的新引导问题（作为更新后的 “question”）和 “引导问答” 节点输出的用户回答（作为更新后的 “uesr_answer”）。通过这些输入，重置循环变量的值，使得下次循环使用更新后的变量值，为下一次循环提供新的初始条件。</li>
+</ul>
+<p><img src="assets/image-20250325151349836.png" alt="image-20250325151349836" style="zoom:50%;" /></p>
+<ul>
+<li><strong>消息</strong>：当 “选择器” 节点判断用户回答正确时，将流程导向此节点。该节点输出固定的消息内容 “恭喜你回答正确”，用于向用户反馈回答正确的信息，是整个流程中对用户正确回答的一种反馈机制。</li>
+</ul>
+<p><img src="assets/image-20250325151405484.png" alt="image-20250325151405484" style="zoom:33%;" /></p>
+<ul>
+<li><strong>终止循环</strong>：当 “选择器” 节点判断用户回答错误时，将流程导向此节点。该节点的作用是立即终止当前所在的循环，跳出循环体，结束循环流程。</li>
+</ul>
+<p><img src="assets/image-20250325151429260.png" alt="image-20250325151429260" style="zoom:50%;" /></p>
+<h3 id="16_1">1.6 工作流发布<a class="headerlink" href="#16_1" title="Permanent link">&para;</a></h3>
+<p>试运行成功后，单击 “发布” 按钮，即可将工作流发布到 Coze 的工作流商店中。此后，在个人空间即可看到创建的工作流，并添加到智能体中使用。</p>
+<p><img src="assets/image-20250325151555792.png" alt="image-20250325151555792" style="zoom:33%;" /></p>
+<h2 id="2">2.智能体设置<a class="headerlink" href="#2" title="Permanent link">&para;</a></h2>
+<h3 id="21">2.1 提示词设置<a class="headerlink" href="#21" title="Permanent link">&para;</a></h3>
+<p>根据当前智能体的作用，设置相关提示词：</p>
+<p><img src="assets/image-20250325152352670.png" alt="image-20250325152352670" style="zoom:33%;" /></p>
+<h3 id="22">2.2 工作流<a class="headerlink" href="#22" title="Permanent link">&para;</a></h3>
+<p>添加构建好的大模型知识问答的工作流：</p>
+<p><img src="assets/image-20250325152452266.png" alt="image-20250325152452266" style="zoom:50%;" /></p>
+<h3 id="23">2.3 开场白设置<a class="headerlink" href="#23" title="Permanent link">&para;</a></h3>
+<p>设置开场白文案和预置问题：</p>
+<p><img src="assets/image-20250325152701155.png" alt="image-20250325152701155" style="zoom:50%;" /></p>
+<h2 id="3">3.智能体测试与发布<a class="headerlink" href="#3" title="Permanent link">&para;</a></h2>
+<p>完成后，就可以测试智能体效果并发布。</p>
+<p>在右侧调试区域，输入问题进行测试。</p>
+<p><img src="assets/image-20250325152810035.png" alt="image-20250325152810035" style="zoom:50%;" /></p>
+<p>完成测试后可单击**发布**，将智能体发布到你需要的任何渠道中使用。</p>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.74e28a9f.min.js", "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.220ee61c.min.js"></script>
+      
+        
+          <script src="../js/extra.js"></script>
+        
+      
+        
+          <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+        
+      
+    
+  </body>
+</html>
