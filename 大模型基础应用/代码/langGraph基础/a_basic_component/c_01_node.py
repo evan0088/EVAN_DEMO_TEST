@@ -1,3 +1,4 @@
+from langchain.agents import create_agent
 from langgraph.graph import StateGraph,START,  END
 from typing_extensions import TypedDict
 
@@ -25,11 +26,11 @@ from langchain_ollama import ChatOllama
 llm = ChatOllama(model="qwen2.5:7b", temperature=0.6)
 
 def configLLM(state):
-    agent = create_react_agent(
+    agent = create_agent(
         model=llm,
         #这里说明可以使用的工具
         tools=[get_weather],
-        prompt="You are a helpful assistant"
+        system_prompt="You are a helpful assistant"
     )
     #调用大模型
     result = agent.invoke(

@@ -1,19 +1,34 @@
+import os
+
+from langchain_core.tools import tool
+from langchain_openai import ChatOpenAI
 from langgraph.graph import StateGraph, START,END
 from langchain_ollama import ChatOllama
 from typing_extensions import TypedDict
 from typing import Annotated
 from langgraph.graph.message import add_messages
-from langgraph.prebuilt import create_react_agent
+from langchain.agents import create_agent
+
+from deepseek_connection import deepseek_client
+
 
 #第一步：初始化模型和工具
 def getID():
     """explain your identity"""
     return f"我是凯瑞汽车的档案管理助手"
 
-llm = create_react_agent(
-    model = ChatOllama(model="qwen2.5:7b"),
+# model=ChatOpenAI(
+#         model="deepseek-v4-flash",              # 模型名
+#         api_key = str(os.environ["DEEPSEEK_API_KEY"]),
+#         base_url="https://api.deepseek.com", # 换成任意兼容接口
+#     )
+
+model=ChatOllama(model="qwen2.5:7b")
+
+llm = create_agent(
+    model =model,
     tools=[getID],
-    prompt="You are a helpful assistant"
+    system_prompt="You are a helpful assistant"
 )
 
 def chatbot(state):
