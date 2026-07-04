@@ -68,8 +68,8 @@ def multiRound(graph,config):
 
 if __name__ == "__main__":
     graph = buildGraph()
-    singleRound(graph)
+    # singleRound(graph)
 
-    #graphWithMemory = buildGraphWithMemory()
-    #config = {"configurable": {"thread_id": "1"}}
-    #multiRound(graphWithMemory,config)
+    graphWithMemory = buildGraphWithMemory()
+    config = {"configurable": {"thread_id": "1"}}
+    multiRound(graphWithMemory,config)
