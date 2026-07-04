@@ -3,7 +3,8 @@ from typing_extensions import TypedDict
 from typing import Annotated
 from langgraph.types import interrupt,Command
 from langgraph.checkpoint.memory import InMemorySaver
-from courseCode import showGraph
+
+import showGraph
 
 
 #合并温度值的方式，取其大者
@@ -148,6 +149,7 @@ def buildGraph6():
     # 添加边
     addSugurSubGraphBuilder.add_edge(START,"询问是否加糖1")
     addSugurSubGraphBuilder.add_conditional_edges("询问是否加糖1", 是否加糖分支, {"是": "加糖", "否": END})
+    addSugurSubGraphBuilder.add_edge("加糖", END)
     # 编译图，需要带有记忆
     addSugurSubGraph = addSugurSubGraphBuilder.compile(checkpointer=checkpointer)
 

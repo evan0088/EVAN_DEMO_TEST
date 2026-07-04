@@ -2,6 +2,9 @@ from langgraph.graph import StateGraph, START,END
 from langchain_ollama import ChatOllama
 from typing_extensions import TypedDict
 
+import showGraph
+
+
 class State(TypedDict):
     topic:str
     outline:str
@@ -59,8 +62,6 @@ def buildGraph():
 
 if __name__ == "__main__":
     graph = buildGraph()
-
-    from courseCode import showGraph
 
     showGraph.showGraphInCode(graph, "graph.jpg")
 
