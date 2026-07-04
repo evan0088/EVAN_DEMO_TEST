@@ -4,6 +4,10 @@ from typing_extensions import TypedDict
 from typing import Annotated
 import random
 
+from deepseek_connection import deepseek_client
+import showGraph
+
+
 def updateReceiveDate(left,right):
     return max(left,right)
 
@@ -13,7 +17,7 @@ class State(TypedDict):
     receiveDate:Annotated[int,updateReceiveDate]
     returnMessage:str
 
-llm = ChatOllama(model="qwen2.5:7b")
+llm = deepseek_client()
 
 def getSendData(state):
     sendData = random.randint(1,25)
@@ -50,7 +54,6 @@ def buildGraph():
 if __name__ == "__main__":
     graph = buildGraph()
 
-    from courseCode import showGraph
 
     showGraph.showGraphInCode(graph, "graph.jpg")
 

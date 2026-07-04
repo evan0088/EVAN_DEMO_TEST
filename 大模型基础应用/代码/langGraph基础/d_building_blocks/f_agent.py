@@ -22,7 +22,7 @@ def getAvailableHotel(queryDate,location):
 toolList = [getTrainSchedule,getAvailableHotel]
 
 agent = create_react_agent(
-            model=ChatOllama(model="qwen3:8b"),
+            model=ChatOllama(model="qwen3.5:9b"),
             tools=toolList,
             prompt=""
         )

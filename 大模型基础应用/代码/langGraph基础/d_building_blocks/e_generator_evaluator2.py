@@ -3,6 +3,10 @@ from langchain_ollama import ChatOllama
 from typing_extensions import TypedDict
 import json
 
+import showGraph
+from deepseek_connection import deepseek_client
+
+
 class State(TypedDict):
     topic:str
     article:str
@@ -10,8 +14,8 @@ class State(TypedDict):
     qualified:str
     count:int
 
-
-llm = ChatOllama(model="qwen2.5:7b")
+# llm = ChatOllama(model="qwen2.5:7b")
+llm =deepseek_client()
 
 def generate(state):
     if state.get("feedback"):
@@ -76,7 +80,6 @@ def buildGraph():
 if __name__ == "__main__":
     graph = buildGraph()
 
-    from courseCode import showGraph
 
     showGraph.showGraphInCode(graph, "graph.jpg")
 
