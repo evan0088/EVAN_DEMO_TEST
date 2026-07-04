@@ -23,6 +23,10 @@ def updateProduct(left,right):
         return "温水"
     else:
         return "凉水"
+    if right :
+        return right
+    else:
+        return left
 
 #合并咖啡固体的方式，优先取工序靠后的产物
 def updateSolid(left,right):
@@ -151,7 +155,7 @@ def buildGraph6():
     addSugurSubGraphBuilder.add_conditional_edges("询问是否加糖1", 是否加糖分支, {"是": "加糖", "否": END})
     addSugurSubGraphBuilder.add_edge("加糖", END)
     # 编译图，需要带有记忆
-    addSugurSubGraph = addSugurSubGraphBuilder.compile(checkpointer=checkpointer)
+    addSugurSubGraph = addSugurSubGraphBuilder.compile()
 
     #总图
     # 初始化图

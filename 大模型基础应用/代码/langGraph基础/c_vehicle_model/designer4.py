@@ -4,7 +4,11 @@ from langgraph.graph import StateGraph, START
 from typing_extensions import TypedDict
 from typing import Annotated
 import operator
+
+import showGraph
 from a_gather_infomation import getInfomation
+from deepseek_connection import deepseek_client
+
 
 def updateReceiveDate(left, right):
     if len(left)>0:
@@ -39,32 +43,33 @@ class State(TypedDict):
 
     design:Annotated[str,updateReceiveDate]
 
-class CustomModel(Runnable):
-    def __init__(self, model_endpoint: str, api_key: str):
-        self.endpoint = model_endpoint
-        self.api_key = api_key
-
-    def invoke(self, prompt: str, modelName:str="deepseek-ai/DeepSeek-V3",maxTokens:int=3000,tempreture=0.6,config: Optional[Dict] = None) -> Dict:
-        """调用自定义模型API"""
-        import requests
-
-        headers = {"Authorization": f"Bearer {self.api_key}",
-                   "Content-Type": "application/json"}
-        payload = {
-            "model":modelName,
-            "messages": [{"role": "user", "content": prompt}],
-            "temperature":tempreture,
-            "max_tokens": maxTokens
-        }
-
-        response = requests.post(self.endpoint, json=payload, headers=headers)
-        response.raise_for_status()
-        return response.json()['choices'][0]['message']['content']
-
-llm = CustomModel(
-        model_endpoint="https://api.siliconflow.cn/v1/chat/completions",
-        api_key="sk-szevaazcpwllljvxlyddutjsjzeexsptgtkfmqesswqoldvq"
-    )
+# class CustomModel(Runnable):
+#     def __init__(self, model_endpoint: str, api_key: str):
+#         self.endpoint = model_endpoint
+#         self.api_key = api_key
+#
+#     def invoke(self, prompt: str, modelName:str="deepseek-ai/DeepSeek-V4-pro",maxTokens:int=3000,tempreture=0.6,config: Optional[Dict] = None) -> Dict:
+#         """调用自定义模型API"""
+#         import requests
+#
+#         headers = {"Authorization": f"Bearer {self.api_key}",
+#                    "Content-Type": "application/json"}
+#         payload = {
+#             "model":modelName,
+#             "messages": [{"role": "user", "content": prompt}],
+#             "temperature":tempreture,
+#             "max_tokens": maxTokens
+#         }
+#
+#         response = requests.post(self.endpoint, json=payload, headers=headers)
+#         response.raise_for_status()
+#         return response.json()['choices'][0]['message']['content']
+#
+# llm = CustomModel(
+#         model_endpoint="https://api.siliconflow.cn/v1/chat/completions",
+#         api_key="sk-szevaazcpwllljvxlyddutjsjzeexsptgtkfmqesswqoldvq"
+#     )
+llm= deepseek_client()
 
 def generateBasicSettings(state):
     prompt = """你是凯瑞汽车旗下维多利亚品牌的车型设计师，维多利亚品牌主要面向年轻的女性客户，根据【竞品资料】和【女性汽车市场发展趋势】，结合你自己的思考，为维多利亚品牌设计一款新车型，规划这个新车型、技术方案和定价策略。300字以内。
@@ -74,7 +79,7 @@ def generateBasicSettings(state):
 
     【女性汽车市场发展趋势】
     """ + state["femaleMarketTrend"]
-    result = llm.invoke(prompt)
+    result = llm.invoke(prompt).content
     #print("基本设定：" + result)
     state["basicSettings"] = result
     return state
@@ -89,7 +94,7 @@ def generateChapter1(state):
         【新车型基本设定】
         
         """+state["basicSettings"]
-    result = llm.invoke(prompt)
+    result = llm.invoke(prompt).content
     #print("背景和设计理念："+result)
     state["chapter1"] = result
     return state
@@ -108,7 +113,7 @@ def generateChapter2(state):
         【新车型基本设定】
 
         """ + state["basicSettings"]
-    result = llm.invoke(prompt)
+    result = llm.invoke(prompt).content
     #print("市场趋势分析：" + result)
     state["chapter2"] = result
     return state
@@ -124,7 +129,7 @@ def generateChapter3(state):
         【新车型基本设定】
 
         """ + state["basicSettings"]
-    result = llm.invoke(prompt)
+    result = llm.invoke(prompt).content
     #print("用户人群分析和使用场景：" + result)
     state["chapter3"] = result
     return state
@@ -139,7 +144,7 @@ def generateChapter4(state):
         【新车型基本设定】
 
         """ + state["basicSettings"]
-    result = llm.invoke(prompt)
+    result = llm.invoke(prompt).content
     #print("技术方案：" + result)
     state["chapter4"] = result
     return state
@@ -154,7 +159,7 @@ def generateChapter5(state):
         【新车型基本设定】
 
         """ + state["basicSettings"]
-    result = llm.invoke(prompt)
+    result = llm.invoke(prompt).content
     #print("竞品分析：" + result)
     state["chapter5"] = result
     return state
@@ -172,7 +177,7 @@ def generateChapter6(state):
         【新车型基本设定】
 
         """ + state["basicSettings"]
-    result = llm.invoke(prompt)
+    result = llm.invoke(prompt).content
     #print("产品卖点：" + result)
     state["chapter6"] = result
     return state
@@ -188,7 +193,7 @@ def generateChapter7(state):
         【新车型基本设定】
 
         """ + state["basicSettings"]
-    result = llm.invoke(prompt)
+    result = llm.invoke(prompt).content
     #print("定价策略：" + result)
     state["chapter7"] = result
     return state
@@ -204,7 +209,7 @@ def generateChapter8(state):
         【新车型基本设定】
 
         """ + state["basicSettings"]
-    result = llm.invoke(prompt)
+    result = llm.invoke(prompt).content
     #print("海外市场：" + result)
     state["chapter8"] = result
     return state
@@ -223,7 +228,7 @@ def generateChapter9(state):
         【新车型基本设定】
 
         """ + state["basicSettings"]
-    result = llm.invoke(prompt)
+    result = llm.invoke(prompt).content
     #print("定价策略：" + result)
     state["chapter9"] = result
     return state
@@ -277,7 +282,6 @@ def buildGraph():
 if __name__ == "__main__":
     graph = buildGraph()
 
-    from courseCode import showGraph
 
     showGraph.showGraphInCode(graph, "graph.jpg")
 
