@@ -6,6 +6,9 @@ from typing import Annotated
 from pydantic import BaseModel,Field
 import operator
 
+import showGraph
+
+
 class Section(BaseModel):
     num: int = Field(description="章节序号")
     name:str=Field(description="章节标题，采用“【第三章】 迷雾重现”的形式")
@@ -82,8 +85,6 @@ def buildGraph():
 
 if __name__ == "__main__":
     graph = buildGraph()
-
-    from courseCode import showGraph
 
     showGraph.showGraphInCode(graph, "graph.jpg")
 
