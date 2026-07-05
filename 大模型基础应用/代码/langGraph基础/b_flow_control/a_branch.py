@@ -1,6 +1,9 @@
 from langgraph.graph import START,StateGraph,  END
 from typing_extensions import TypedDict
 
+import showGraph
+
+
 #添加状态类
 class State(TypedDict):
     水温: int
@@ -46,12 +49,12 @@ def buildGraph():
     #添加节点
     graphBuilder.add_node("烧水", 烧水)
     graphBuilder.add_node("冲咖啡", 冲咖啡)
-    graphBuilder.add_node("需要继续加热", 需要继续加热)
+    # graphBuilder.add_node("需要继续加热", 需要继续加热)
     #添加边
     graphBuilder.add_edge(START, "烧水")
-    graphBuilder.add_conditional_edges("烧水",按温度处理水,{"水烧开了":"冲咖啡","水没开":"需要继续加热"})
-    graphBuilder.add_edge("冲咖啡",END)
-    graphBuilder.add_edge("需要继续加热", END)
+    graphBuilder.add_conditional_edges("烧水",按温度处理水,{"水烧开了":END,"水没开":"烧水"})
+    # graphBuilder.add_edge("冲咖啡",END)
+    # graphBuilder.add_edge("需要继续加热", END)
     #编译图
     graph = graphBuilder.compile()
     return graph
@@ -60,7 +63,6 @@ if __name__ == "__main__":
     graph = buildGraph()
 
     #打印图
-    from courseCode import showGraph
 
     showGraph.showGraphInCode(graph, "branch.jpg")
 

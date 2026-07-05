@@ -75,7 +75,7 @@ class CustomModel(Runnable):
 
 llm = CustomModel(
         model_endpoint="https://api.siliconflow.cn/v1/chat/completions",
-        api_key="sk-szevaazcpwllljvxlyddutjsjzeexsptgtkfmqesswqoldvq"
+        api_key="xxxxxx"
     )
 
 def generateBasicSettings(state):
