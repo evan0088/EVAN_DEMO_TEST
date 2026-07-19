@@ -1,0 +1,55 @@
+# LangChain1.0+版本使用方式,目前主流,多模型共存
+
+
+# 1.导入依赖
+from dotenv import load_dotenv
+from langchain.chat_models import init_chat_model
+import os
+# .env文件读取
+load_dotenv(encoding="utf-8")
+
+# 2.实例化模型
+# model = init_chat_model(
+#     model="meituan-longcat/LongCat-2.0",
+#     model_provider="openai",
+#     api_key=os.getenv("SILICONFLOW_API_KEY"),
+#     base_url="https://api.siliconflow.cn/v1"
+# )
+#
+# # 3.调用模型
+# print(model.invoke("你是谁").content)
+#
+# print("*" * 70)
+
+# 4.实例化模型v2
+"""
+说明：
+model="deepseek-chat" 和 base_url="https://api.deepseek.com" 
+刚好匹配默认的 model_provider（如 deepseek），因此无需显式传入，函数内部做了智能推导
+如果切换成其他模型（如 OpenAI），若默认值不匹配，就需要显式指定 model_provider="openai"。
+"""
+model = init_chat_model(
+    model="deepseek-chat", # deepseek-chat 对应 DeepSeek-V3.2 的非思考模式
+    model_provider="deepseek", #可以不提供自动推导
+    api_key=os.getenv("DEEPSEEK_API_KEY"),
+    base_url="https://api.deepseek.com"
+)
+
+# model2 = init_chat_model(
+#     model="qwen3.5:0.8b",          # 你在 ollama pull 的模型名
+#     model_provider="openai",     # Ollama 兼容 OpenAI API
+#     api_key="ollama",            # 占位即可，Ollama 不校验
+#     base_url="http://localhost:11434/v1"
+# )
+
+# # 5.调用模型v2
+# print(model2.__dict__)
+# print(model2.invoke("你是谁").content)
+
+
+# 流式调用
+
+reslut=model.stream("你是谁")
+
+for e in reslut:
+    print(e.content,end="")

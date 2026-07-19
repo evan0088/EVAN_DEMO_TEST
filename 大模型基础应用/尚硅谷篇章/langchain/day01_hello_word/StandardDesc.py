@@ -22,17 +22,23 @@ def init_llm_client() -> ChatOpenAI:
         ChatOpenAI: 初始化后的LLM客户端实例
     """
     # 1. 读取环境变量并做非空校验
-    api_key = os.getenv("QWEN_API_KEY")
+    api_key = os.getenv("DEEPSEEK_API_KEY")
     if not api_key:
         raise ValueError("环境变量 QWEN_API_KEY 未配置，请检查.env文件")
 
     # 2. 初始化LLM客户端（参数命名规范，添加注释）
+    # llm = ChatOpenAI(
+    #     model="deepseek-v3.2",  # 模型名称
+    #     api_key=api_key,  # 通义千问API密钥
+    #     base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",  # 阿里云兼容接口地址
+    #     temperature=0.7,  # 可选：添加温度参数，控制输出随机性
+    #     max_tokens=2048  # 可选：限制输出长度，避免超限
+    # )
     llm = ChatOpenAI(
-        model="deepseek-v3.2",  # 模型名称
-        api_key=api_key,  # 通义千问API密钥
-        base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",  # 阿里云兼容接口地址
-        temperature=0.7,  # 可选：添加温度参数，控制输出随机性
-        max_tokens=2048  # 可选：限制输出长度，避免超限
+        model="deepseek-chat",
+        # 配置进环境变量
+        api_key=os.getenv("DEEPSEEK_API_KEY"),
+        base_url="https://api.deepseek.com"
     )
     return llm
 
@@ -45,7 +51,7 @@ def main():
         logger.info("LLM客户端初始化成功")
 
         # 调用模型（问题用变量存储，提高可读性）
-        question = "你是谁"
+        question = "介绍下你自己"
         response = llm.invoke(question)
 
         # 格式化输出结果（而非直接打印原始对象）
