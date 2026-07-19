@@ -13,7 +13,7 @@ from langchain.messages import HumanMessage,SystemMessage
 model = init_chat_model(
     model="qwen-plus",
     model_provider="openai",
-    api_key=os.getenv("aliQwen-api"),
+    api_key=os.getenv("DASHSCOPE_API_KEY"),
     base_url="https://dashscope.aliyuncs.com/compatible-mode/v1"
 )
 
