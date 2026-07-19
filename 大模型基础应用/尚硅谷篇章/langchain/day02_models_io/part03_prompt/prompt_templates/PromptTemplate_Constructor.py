@@ -1,11 +1,15 @@
 import os
 
+from dotenv import load_dotenv
 from langchain.chat_models import init_chat_model
 # 方式1：使用构造方法实例化提示词模板
 from langchain_core.prompts import PromptTemplate
 
 # 创建一个PromptTemplate对象，用于生成格式化的提示词模板
 # 该模板包含两个变量：role（角色）和question（问题）
+
+load_dotenv(encoding='utf-8')
+
 template = PromptTemplate(
     template="你是一个专业的{role}工程师，请回答我的问题给出回答，我的问题是：{question}",
     input_variables=['role', 'question']
@@ -23,9 +27,11 @@ print(prompt)# 你是一个专业的python开发工程师，请回答我的问�
 model = init_chat_model(
     model="qwen-plus",
     model_provider="openai",
-    api_key=os.getenv("aliQwen-api"),
+    api_key=os.getenv("DASHSCOPE_API_KEY"),
     base_url="https://dashscope.aliyuncs.com/compatible-mode/v1"
 )
+
+
 result = model.invoke(prompt)
 print(result.content)
 print("\n\n")
