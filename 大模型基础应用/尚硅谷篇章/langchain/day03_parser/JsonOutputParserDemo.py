@@ -4,13 +4,15 @@ JsonOutputParser，即JSON输出解析器，
 
 本案例是：指定提示词指明返回 json 格式
 """
-
+from dotenv import load_dotenv
 from langchain_core.output_parsers import StrOutputParser, JsonOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 import os
 from langchain.chat_models import init_chat_model
 from loguru import logger
 
+
+load_dotenv(encoding='utf-8')
 # 创建聊天提示模板，包含系统角色设定和用户问题输入
 chat_prompt = ChatPromptTemplate.from_messages([
     ("system", "你是一个{role}，请简短回答我提出的问题，结果返回json格式，q字段表示问题，a字段表示答案。"),
@@ -25,7 +27,7 @@ logger.info(prompt)
 model = init_chat_model(
     model="qwen-plus",
     model_provider="openai",
-    api_key=os.getenv("aliQwen-api"),
+    api_key=os.getenv("DASHSCOPE_API_KEY"),
     base_url="https://dashscope.aliyuncs.com/compatible-mode/v1"
 )
 

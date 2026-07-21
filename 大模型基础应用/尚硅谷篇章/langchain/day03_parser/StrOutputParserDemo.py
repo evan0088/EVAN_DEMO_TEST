@@ -3,11 +3,14 @@
 它是LangChain中最简单的输出解析器，它可以简单地将任何输入转换为字符串。
 从结果中提取content字段转换为字符串输出。
 """
+from dotenv import load_dotenv
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 import os
 from langchain.chat_models import init_chat_model
 from loguru import logger
+
+load_dotenv(encoding='utf-8')
 
 # 创建聊天提示模板，包含系统角色设定和用户问题输入
 chat_prompt = ChatPromptTemplate.from_messages(
@@ -25,7 +28,7 @@ logger.info(prompt)
 model = init_chat_model(
     model="qwen-plus",
     model_provider="openai",
-    api_key=os.getenv("aliQwen-api"),
+    api_key=os.getenv("DASHSCOPE_API_KEY"),
     base_url="https://dashscope.aliyuncs.com/compatible-mode/v1"
 )
 
