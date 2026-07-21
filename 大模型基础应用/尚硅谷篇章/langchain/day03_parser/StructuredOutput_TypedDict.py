@@ -5,6 +5,11 @@ from typing import TypedDict, Annotated
 from dotenv import load_dotenv
 from langchain.chat_models import init_chat_model
 
+"""
+
+Q : 如何让大模型准确输出JSON等格式
+
+"""
 
 load_dotenv(encoding='utf-8')
 
