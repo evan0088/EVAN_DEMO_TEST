@@ -7,13 +7,15 @@ PydanticOutputParser 是 LangChain 输出解析器体系中最常用、最强大
 """
 
 import os
+
+from dotenv import load_dotenv
 from langchain.chat_models import init_chat_model
 from langchain_core.output_parsers import PydanticOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 from loguru import logger
 from pydantic import BaseModel, Field, field_validator
 
-
+load_dotenv(encoding='utf-8')
 class Product(BaseModel):
     """
     产品信息模型类，用于定义产品的结构化数据格式
@@ -64,7 +66,7 @@ logger.info(prompt)
 model = init_chat_model(
     model="qwen-plus",
     model_provider="openai",
-    api_key=os.getenv("aliQwen-api"),
+    api_key=os.getenv("DASHSCOPE_API_KEY"),
     base_url="https://dashscope.aliyuncs.com/compatible-mode/v1"
 )
 
