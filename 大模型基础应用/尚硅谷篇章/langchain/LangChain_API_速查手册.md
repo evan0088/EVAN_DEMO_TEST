@@ -115,7 +115,7 @@ model = ChatDeepSeek(
     max_tokens=None,
     timeout=None,
     max_retries=2,
-    api_key=os.getenv("deepseek-api"),
+    api_key=os.getenv("DEEPSEEK_API_KEY"),
 )
 ```
 
@@ -188,7 +188,7 @@ llm = ChatQwen(
 from openai import OpenAI
 
 client = OpenAI(
-    api_key=os.getenv("deepseek-api"),
+    api_key=os.getenv("DEEPSEEK_API_KEY"),
     base_url="https://api.deepseek.com"
 )
 

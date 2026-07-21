@@ -16,7 +16,7 @@ chatLLM = ChatOllama(
 
 # chatLLM = ChatTongyi(
 #     model="qwen-plus",
-#     api_key=os.getenv("aliQwen-api"),
+#     api_key=os.getenv("DASHSCOPE_API_KEY"),
 #     streaming=True,
 #     # other params...
 # )
