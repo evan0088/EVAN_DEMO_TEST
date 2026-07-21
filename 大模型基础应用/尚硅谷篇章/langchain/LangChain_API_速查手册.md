@@ -23,6 +23,7 @@
 ## 一、环境与初始化
 
 ### 1.1 dotenv 加载环境变量
+> 📂 Demo：[GetEnvInfo.py](./day01_hello_word/GetEnvInfo.py) | [StandardDesc.py](./day01_hello_word/StandardDesc.py)
 
 ```python
 from dotenv import load_dotenv
@@ -38,9 +39,9 @@ api_key = os.getenv("DEEPSEEK_API_KEY") # 读取指定变量
 | `load_dotenv(encoding='utf-8')` | 加载 `.env` 文件中的环境变量到 `os.environ`，`encoding` 参数避免中文乱码 |
 | `os.getenv("KEY")` | 读取环境变量，不存在则返回 `None` |
 
-> 📂 Demo：[GetEnvInfo.py](<day01_hello_word/GetEnvInfo.py>) | [StandardDesc.py](<day01_hello_word/StandardDesc.py>)
 
 ### 1.2 查看 LangChain 版本
+> 📂 Demo：[LangChainV1.0.py](./day01_hello_word/LangChainV1.0.py) | [LangChainV0.3.py](./day01_hello_word/LangChainV0.3.py) | [LangChain_MoreV1.0.py](./day01_hello_word/LangChain_MoreV1.0.py)
 
 ```python
 import langchain
@@ -51,13 +52,13 @@ print(langchain_community.__version__)  # 社区包版本
 print(langchain.__file__)              # 安装路径
 ```
 
-> 📂 Demo：[LangChainV1.0.py](<day01_hello_word/LangChainV1.0.py>) | [LangChainV0.3.py](<day01_hello_word/LangChainV0.3.py>) | [LangChain_MoreV1.0.py](<day01_hello_word/LangChain_MoreV1.0.py>)
 
 ---
 
 ## 二、模型调用（Model I/O） 
 
 ### 2.1 init_chat_model — 统一入口（⭐ 推荐，v1.0+） [📖 官方概述](https://docs.langchain.com/oss/python/langchain/models)
+> 📂 Demo：[ModelIO_Init_chat_model.py](./day02_models_io/part1_模型调用入门/ModelIO_Init_chat_model.py)
 [📖 参数概述](https://docs.langchain.com/oss/python/langchain/models#parameters)
 ```python
 from langchain.chat_models import init_chat_model
@@ -83,9 +84,9 @@ model = init_chat_model(
 
 **智能推导机制**：当 `model="deepseek-chat"` + `base_url="https://api.deepseek.com"` 时，`model_provider` 可省略，函数内部自动匹配。
 
-> 📂 Demo：[ModelIO_Init_chat_model.py](<day02_models_io/part1_ 模型调用入门/ModelIO_Init_chat_model.py>)
 
 ### 2.2 ChatOpenAI — 兼容 OpenAI 协议的模型（v0.3 风格）  [📖 官方概述](https://docs.langchain.com/oss/python/integrations/chat)
+> 📂 Demo：[ModelIO_ChatOpenAI.py](./day02_models_io/part1_模型调用入门/ModelIO_ChatOpenAI.py) | [ModelIO_Params.py](./day02_models_io/part1_模型调用入门/ModelIO_Params.py)
 
 ```python
 from langchain_openai import ChatOpenAI
@@ -101,9 +102,9 @@ llm = ChatOpenAI(
 
 > **用途**：所有兼容 OpenAI API 协议的厂商（DeepSeek、通义千问、SiliconFlow 等）均可通过 ChatOpenAI 调用。
 
-> 📂 Demo：[ModelIO_ChatOpenAI.py](<day02_models_io/part1_ 模型调用入门/ModelIO_ChatOpenAI.py>) | [ModelIO_Params.py](<day02_models_io/part1_ 模型调用入门/ModelIO_Params.py>)
 
 ### 2.3 ChatDeepSeek — DeepSeek 专用客户端 [📖 官方概述](https://docs.langchain.com/oss/python/integrations/chat)
+> 📂 Demo：[ModelIO_DeepSeek.py](./day02_models_io/part1_模型调用入门/ModelIO_DeepSeek.py)
 
 ```python
 from langchain_deepseek import ChatDeepSeek
@@ -128,9 +129,9 @@ model = ChatDeepSeek(
 
 > **注意**：ChatDeepSeek 内置了默认 `base_url`，无需手动指定。
 
-> 📂 Demo：[ModelIO_DeepSeek.py](<day02_models_io/part1_ 模型调用入门/ModelIO_DeepSeek.py>)
 
 ### 2.4 ChatOllama — 本地模型调用 [📖 官方概述](https://docs.langchain.com/oss/python/integrations/chat)
+> 📂 Demo：[ModelIO_Ollama.py](./day02_models_io/part1_模型调用入门/ModelIO_Ollama.py) | [LangChain_Ollama.py](./day02_models_io/part2_Ollama_本地模型部署/LangChain_Ollama.py)
 
 ```python
 from langchain_ollama import ChatOllama 
@@ -150,9 +151,9 @@ model = ChatOllama(
 
 > **前提**：需先安装 Ollama 并 `ollama pull <模型名>`。
 
-> 📂 Demo：[ModelIO_Ollama.py](<day02_models_io/part1_ 模型调用入门/ModelIO_Ollama.py>) | [LangChain_Ollama.py](<day02_models_io/part2_Ollama_本地模型部署/LangChain_Ollama.py>)
 
 ### 2.5 ChatTongyi — 通义千问原生客户端 [📖 阿里云概述](https://bailian.console.aliyun.com/cn-beijing/?tab=api#/api/?type=model&url=2587654)
+> 📂 Demo：[ModelIO_Qwen.py](./day02_models_io/part1_模型调用入门/ModelIO_Qwen.py)
 
 ```python
 from langchain_community.chat_models.tongyi import ChatTongyi
@@ -163,9 +164,9 @@ chatLLM = ChatTongyi(
 )
 ```
 
-> 📂 Demo：[ModelIO_Qwen.py](<day02_models_io/part1_ 模型调用入门/ModelIO_Qwen.py>)
 
 ### 2.6 ChatQwen — 通义千问新版客户端   [📖 官方概述](https://docs.langchain.com/oss/python/integrations/chat/qwen)
+> 📂 Demo：[ModelIO_Qwen.py](./day02_models_io/part1_模型调用入门/ModelIO_Qwen.py)
 
 ```python
 from langchain_qwq import ChatQwen
@@ -181,6 +182,7 @@ llm = ChatQwen(
 ```
 
 ### 2.7 原生 OpenAI SDK 调用（对比参考）
+> 📂 Demo：[ModelIO_OpenAI.py](./day02_models_io/part1_模型调用入门/ModelIO_OpenAI.py)
 
 ```python
 from openai import OpenAI
@@ -202,7 +204,6 @@ response = client.chat.completions.create(
 print(response.choices[0].message.content)
 ```
 
-> 📂 Demo：[ModelIO_OpenAI.py](<day02_models_io/part1_ 模型调用入门/ModelIO_OpenAI.py>)
 
 ---
 
@@ -222,6 +223,7 @@ LangChain 模型对象是 **Runnable**，提供统一的调用接口。每种方
 | `astream(input)` | 异步流式调用 | `AsyncIterator[AIMessageChunk]` | WebSocket / SSE 推送 |
 
 ### 3.2 invoke — 同步单次调用
+> 📂 Demo：[LLM_Invoke.py](./day02_models_io/part03_prompt/invoke/LLM_Invoke.py)
 
 ```python
 from langchain.chat_models import init_chat_model
@@ -247,9 +249,9 @@ messages = [
 response = model.invoke(messages)
 ```
 
-> 📂 Demo：[LLM_Invoke.py](<day02_models_io/part03_prompt/invoke/LLM_Invoke.py>)
 
 ### 3.3 ainvoke — 异步单次调用
+> 📂 Demo：[LLM_aInvoke.py](./day02_models_io/part03_prompt/invoke/LLM_aInvoke.py)
 
 ```python
 import asyncio
@@ -263,9 +265,9 @@ asyncio.run(main())
 
 > **核心作用**：不阻塞主线程，适合大批量请求或 Web 服务（如 FastAPI）。
 
-> 📂 Demo：[LLM_aInvoke.py](<day02_models_io/part03_prompt/invoke/LLM_aInvoke.py>)
 
 ### 3.4 batch — 同步批量调用
+> 📂 Demo：[LLM_Batch.py](./day02_models_io/part03_prompt/invoke/LLM_Batch.py)
 
 ```python
 questions = [
@@ -280,9 +282,9 @@ for q, r in zip(questions, response):
     print(f"问题：{q}\n回答：{r.content}\n")
 ```
 
-> 📂 Demo：[LLM_Batch.py](<day02_models_io/part03_prompt/invoke/LLM_Batch.py>)
 
 ### 3.5 abatch — 异步批量调用
+> 📂 Demo：[LLM_aBatch.py](./day02_models_io/part03_prompt/invoke/LLM_aBatch.py)
 
 ```python
 async def async_batch_call():
@@ -293,9 +295,9 @@ async def async_batch_call():
 asyncio.run(async_batch_call())
 ```
 
-> 📂 Demo：[LLM_aBatch.py](<day02_models_io/part03_prompt/invoke/LLM_aBatch.py>)
 
 ### 3.6 stream — 同步流式调用
+> 📂 Demo：[LLM_Stream.py](./day02_models_io/part03_prompt/invoke/LLM_Stream.py)
 
 ```python
 messages = [
@@ -309,9 +311,9 @@ for chunk in response:
     print(chunk.content, end="", flush=True)  # flush=True 立即刷新缓冲区
 ```
 
-> 📂 Demo：[LLM_Stream.py](<day02_models_io/part03_prompt/invoke/LLM_Stream.py>)
 
 ### 3.7 astream — 异步流式调用
+> 📂 Demo：[LLM_aStream.py](./day02_models_io/part03_prompt/invoke/LLM_aStream.py)
 
 ```python
 async def async_stream_call():
@@ -323,9 +325,9 @@ async def async_stream_call():
 asyncio.run(async_stream_call())
 ```
 
-> 📂 Demo：[LLM_aStream.py](<day02_models_io/part03_prompt/invoke/LLM_aStream.py>)
 
 ### 3.8 同步 vs 异步 性能对比
+> 📂 Demo：[sync_vs_async_demo.py](./day02_models_io/part03_prompt/invoke/sync_vs_async_demo.py)
 
 | 方案 | 写法 | 2个任务(2s+3s)耗时 | 原理 |
 |------|------|---------------------|------|
@@ -342,13 +344,13 @@ async def demo_async_concurrent():
     # 总耗时 ≈ max(t1, t2)，而非 t1 + t2
 ```
 
-> 📂 Demo：[sync_vs_async_demo.py](<day02_models_io/part03_prompt/invoke/sync_vs_async_demo.py>)
 
 ---
 
 ## 四、消息类型（Messages）
 
 ### 4.1 五种消息类型
+> 📂 Demo：[ChatPromptTemplate_MessageParam.py](./day02_models_io/part03_prompt/chat_prompt_template/parameter/ChatPromptTemplate_MessageParam.py)
 
 ```python
 from langchain.messages import SystemMessage, HumanMessage, AIMessage, ToolMessage
@@ -372,7 +374,6 @@ messages = [
 | `ToolMessage` | tool | 工具调用返回的结果，需关联 `tool_call_id` |
 | `BaseMessage` | — | 所有消息的父类 |
 
-> 📂 Demo：[ChatPromptTemplate_MessageParam.py](<day02_models_io/part03_prompt/chat_prompt_template/parameter/ChatPromptTemplate_MessageParam.py>)
 
 ### 4.2 消息对象 vs 字典
 
@@ -398,6 +399,7 @@ messages = [
 > `PromptTemplate` 用于**单条字符串**模板，适合简单的一问一答场景。
 
 ### 5.1 构造方法（两种方式）
+> 📂 Demo：[PromptTemplate_Constructor.py](./day02_models_io/part03_prompt/prompt_templates/PromptTemplate_Constructor.py) | [PromptTemplate_FromTemplate.py](./day02_models_io/part03_prompt/prompt_templates/PromptTemplate_FromTemplate.py)
 
 ```python
 from langchain_core.prompts import PromptTemplate
@@ -419,7 +421,6 @@ template = PromptTemplate.from_template(
 | `template` | 模板字符串，用 `{变量名}` 做占位符 |
 | `input_variables` | 变量名列表，声明模板中的所有变量 |
 
-> 📂 Demo：[PromptTemplate_Constructor.py](<day02_models_io/part03_prompt/prompt_templates/PromptTemplate_Constructor.py>) | [PromptTemplate_FromTemplate.py](<day02_models_io/part03_prompt/prompt_templates/PromptTemplate_FromTemplate.py>)
 
 ### 5.2 format() — 填充变量（返回字符串）
 
@@ -429,6 +430,7 @@ prompt = template.format(role="python开发", question="冒泡排序怎么写？
 ```
 
 ### 5.3 invoke() — 填充变量（返回 PromptValue 对象）
+> 📂 Demo：[PromptTemplate_FormatMethod.py](./day02_models_io/part03_prompt/prompt_templates/method/PromptTemplate_FormatMethod.py) | [PromptTemplate_InvokeMethod.py](./day02_models_io/part03_prompt/prompt_templates/method/PromptTemplate_InvokeMethod.py)
 
 ```python
 prompt_value = template.invoke({"role": "python开发", "question": "冒泡排序怎么写？"})
@@ -440,7 +442,6 @@ print(prompt_value.to_string())
 print(prompt_value.to_messages())
 ```
 
-> 📂 Demo：[PromptTemplate_FormatMethod.py](<day02_models_io/part03_prompt/prompt_templates/method/PromptTemplate_FormatMethod.py>) | [PromptTemplate_InvokeMethod.py](<day02_models_io/part03_prompt/prompt_templates/method/PromptTemplate_InvokeMethod.py>)
 
 | 方法 | 返回值 | 转换方式 |
 |------|--------|----------|
@@ -450,6 +451,7 @@ print(prompt_value.to_messages())
 > **区别**：`format()` 返回纯字符串，`invoke()` 返回 `PromptValue` 对象（是 LCEL Runnable 体系的标准入口）。
 
 ### 5.4 partial() / partial_variables — 部分变量绑定
+> 📂 Demo：[PromptTemplate_PartialMethod.py](./day02_models_io/part03_prompt/prompt_templates/method/PromptTemplate_PartialMethod.py) | [PromptTemplate_PartialVariables.py](./day02_models_io/part03_prompt/prompt_templates/PromptTemplate_PartialVariables.py)
 
 ```python
 from datetime import datetime
@@ -475,9 +477,9 @@ prompt2 = partial.format(question="今天是几号？")
 | `.partial(key=value)` | 返回新模板，已绑定指定变量 |
 | `format()` 传入同名变量 | 可**覆盖** `partial_variables` 中预设的值 |
 
-> 📂 Demo：[PromptTemplate_PartialMethod.py](<day02_models_io/part03_prompt/prompt_templates/method/PromptTemplate_PartialMethod.py>) | [PromptTemplate_PartialVariables.py](<day02_models_io/part03_prompt/prompt_templates/PromptTemplate_PartialVariables.py>)
 
 ### 5.5 模板拼接
+> 📂 Demo：[PromptTemplate_Combined.py](./day02_models_io/part03_prompt/prompt_templates/PromptTemplate_Combined.py)
 
 ```python
 prompt_a = PromptTemplate.from_template("请用一句话介绍{topic}，要求通俗易懂\n")
@@ -489,7 +491,6 @@ result = prompt_all.format(topic="LangChain", length=200)
 
 > **用途**：在 AI 产品中分段构建复杂 Prompt，多组件一言一语组合成最终提示词。
 
-> 📂 Demo：[PromptTemplate_Combined.py](<day02_models_io/part03_prompt/prompt_templates/PromptTemplate_Combined.py>)
 
 ---
 
@@ -498,6 +499,7 @@ result = prompt_all.format(topic="LangChain", length=200)
 > `ChatPromptTemplate` 用于**多角色消息列表**，适合系统角色设定 + 多轮对话场景。
 
 ### 6.1 构造方法
+> 📂 Demo：[ChatPromptTemplate_Constructor.py](./day02_models_io/part03_prompt/chat_prompt_template/ChatPromptTemplate_Constructor.py) | [ChatPromptTemplate_TupleParam.py](./day02_models_io/part03_prompt/chat_prompt_template/parameter/ChatPromptTemplate_TupleParam.py) | [ChatPromptTemplate_DictParam.py](./day02_models_io/part03_prompt/chat_prompt_template/parameter/ChatPromptTemplate_DictParam.py)
 
 ```python
 from langchain_core.prompts import ChatPromptTemplate
@@ -536,7 +538,6 @@ from langchain_core.messages import SystemMessage, HumanMessage
 ]
 ```
 
-> 📂 Demo：[ChatPromptTemplate_Constructor.py](<day02_models_io/part03_prompt/chat_prompt_template/ChatPromptTemplate_Constructor.py>) | [ChatPromptTemplate_TupleParam.py](<day02_models_io/part03_prompt/chat_prompt_template/parameter/ChatPromptTemplate_TupleParam.py>) | [ChatPromptTemplate_DictParam.py](<day02_models_io/part03_prompt/chat_prompt_template/parameter/ChatPromptTemplate_DictParam.py>)
 
 ### 6.2 from_messages() — 工厂方法
 
@@ -550,6 +551,7 @@ chat_prompt = ChatPromptTemplate.from_messages(
 ```
 
 ### 6.3 三种填充方法对比
+> 📂 Demo：[ChatPromptTemplate_FormatMessages.py](./day02_models_io/part03_prompt/chat_prompt_template/ChatPromptTemplate_FormatMessages.py)
 
 ```python
 # 1. format_messages() — 返回 List[BaseMessage]
@@ -571,9 +573,9 @@ text = chat_prompt.format(**{"role": "python开发工程师", "question": "快�
 | `invoke(dict)` | `PromptValue` | LCEL Chain 中串联 |
 | `format(**kwargs)` | `str` | 调试 / 查看最终文本 |
 
-> 📂 Demo：[ChatPromptTemplate_FormatMessages.py](<day02_models_io/part03_prompt/chat_prompt_template/ChatPromptTemplate_FormatMessages.py>)
 
 ### 6.4 MessagesPlaceholder — 历史消息占位符
+> 📂 Demo：[ChatPromptTemplate_ExplicitPlaceholder.py](./day02_models_io/part03_prompt/chat_prompt_template/placeholder/ChatPromptTemplate_ExplicitPlaceholder.py) | [ChatPromptTemplate_ImplicitPlaceholder.py](./day02_models_io/part03_prompt/chat_prompt_template/placeholder/ChatPromptTemplate_ImplicitPlaceholder.py)
 
 **场景**：多轮对话中，需要把历史聊天记录插入模板。
 
@@ -610,13 +612,13 @@ prompt_value = prompt.invoke({
 | `MessagesPlaceholder("memory")` | **显式**占位，推荐（更清晰） |
 | `("placeholder", "{memory}")` | **隐式**简写，等价 |
 
-> 📂 Demo：[ChatPromptTemplate_ExplicitPlaceholder.py](<day02_models_io/part03_prompt/chat_prompt_template/placeholder/ChatPromptTemplate_ExplicitPlaceholder.py>) | [ChatPromptTemplate_ImplicitPlaceholder.py](<day02_models_io/part03_prompt/chat_prompt_template/placeholder/ChatPromptTemplate_ImplicitPlaceholder.py>)
 
 ---
 
 ## 七、外部加载 Prompt
 
 ### 7.1 load_prompt() — 从文件加载
+> 📂 Demo：[PromptLoadDemo01.py](./day02_models_io/part03_prompt/load_external/PromptLoadDemo01.py) | [PromptLoadDemo02.py](./day02_models_io/part03_prompt/load_external/PromptLoadDemo02.py)
 
 ```python
 from langchain_core.prompts import load_prompt
@@ -649,7 +651,6 @@ template: "请{name}讲一个{what}的故事"
 
 > **用途**：Prompt 工程化管理，模板与代码分离，方便非开发人员维护提示词。
 
-> 📂 Demo：[PromptLoadDemo01.py](<day02_models_io/part03_prompt/load_external/PromptLoadDemo01.py>) | [PromptLoadDemo02.py](<day02_models_io/part03_prompt/load_external/PromptLoadDemo02.py>)
 
 ---
 
@@ -658,6 +659,7 @@ template: "请{name}讲一个{what}的故事"
 > 输出解析器将 LLM 的自由文本输出转换为结构化数据。
 
 ### 8.1 StrOutputParser — 字符串解析器
+> 📂 Demo：[StrOutputParserDemo.py](./day03_parser/StrOutputParserDemo.py)
 
 ```python
 from langchain_core.output_parsers import StrOutputParser
@@ -669,11 +671,11 @@ response = parser.invoke(result)   # 提取 AIMessage 的 .content 字段
 
 > **作用**：最简单解析器，从 `AIMessage` 中提取 `.content` 字符串。
 
-> 📂 Demo：[StrOutputParserDemo.py](<day03_parser/StrOutputParserDemo.py>)
 
 ### 8.2 JsonOutputParser — JSON 解析器
 
 #### 基础用法（提示词中手动约束 JSON）
+> 📂 Demo：[JsonOutputParserDemo.py](./day03_parser/JsonOutputParserDemo.py)
 
 ```python
 from langchain_core.output_parsers import JsonOutputParser
@@ -693,6 +695,7 @@ response = parser.invoke(result)   # 返回类型: dict
 > **局限**：依赖提示词引导模型输出 JSON，模型可能不遵守格式，解析失败。
 
 #### 进阶用法（get_format_instructions + Pydantic）
+> 📂 Demo：[JsonOutputParserDemo.py](./day03_parser/JsonOutputParserDemo.py) | [JsonOutputParser_GetFormatInstructions.py](./day03_parser/JsonOutputParser_GetFormatInstructions.py)
 
 ```python
 from pydantic import BaseModel, Field
@@ -720,9 +723,9 @@ result = model.invoke(prompt)
 response = parser.invoke(result)   # 返回 Person 对象
 ```
 
-> 📂 Demo：[JsonOutputParserDemo.py](<day03_parser/JsonOutputParserDemo.py>) | [JsonOutputParser_GetFormatInstructions.py](<day03_parser/JsonOutputParser_GetFormatInstructions.py>)
 
 ### 8.3 PydanticOutputParser — Pydantic 输出解析器
+> 📂 Demo：[JsonOutputParser_GetFormatInstructions.py](./day03_parser/JsonOutputParser_GetFormatInstructions.py)（含 PydanticOutputParser 示例）
 
 ```python
 from langchain_core.output_parsers import PydanticOutputParser
@@ -761,7 +764,6 @@ response = parser.invoke(result)   # 返回 Product 对象，自动校验
 | 默认值/可选字段 | ❌ | ✅ Pydantic 原生支持 |
 | 适用场景 | 简单 JSON | 复杂结构 + 强类型约束 |
 
-> 📂 Demo：[JsonOutputParser_GetFormatInstructions.py](<day03_parser/JsonOutputParser_GetFormatInstructions.py>)（含 PydanticOutputParser 示例）
 
 ---
 
@@ -779,6 +781,7 @@ response = parser.invoke(result)   # 返回 Product 对象，自动校验
 | 返回值 | 需手动解析 | 直接是 Python 对象 |
 
 ### 9.2 使用 Pydantic BaseModel（带校验）
+> 📂 Demo：[StructuredOutput_Demo.py](./day03_parser/StructuredOutput_Demo.py) | [StructuredOutput_Pydantic.py](./day03_parser/StructuredOutput_Pydantic.py)
 
 ```python
 from pydantic import BaseModel, Field
@@ -803,9 +806,9 @@ print(result.event)
 # 返回类型: News (Pydantic BaseModel)
 ```
 
-> 📂 Demo：[StructuredOutput_Demo.py](<day03_parser/StructuredOutput_Demo.py>) | [StructuredOutput_Pydantic.py](<day03_parser/StructuredOutput_Pydantic.py>)
 
 ### 9.3 使用 TypedDict（轻量）
+> 📂 Demo：[StructuredOutput_TypedDict.py](./day03_parser/StructuredOutput_TypedDict.py)
 
 ```python
 from typing import TypedDict, Annotated
@@ -823,6 +826,7 @@ print(result['temperature'])
 ```
 
 ### 9.4 嵌套结构（TypedDict）
+> 📂 Demo：[StructuredOutput_TypedDict.py](./day03_parser/StructuredOutput_TypedDict.py)
 
 ```python
 class Animal(TypedDict):
@@ -839,7 +843,6 @@ resp = llm_with_structured_output.invoke(
 # 返回: {'animals': [{'animal': '猫', 'emoji': '🐱'}, ...]}
 ```
 
-> 📂 Demo：[StructuredOutput_TypedDict.py](<day03_parser/StructuredOutput_TypedDict.py>)
 
 ### 9.5 Pydantic vs TypedDict 选择建议
 
@@ -855,6 +858,7 @@ resp = llm_with_structured_output.invoke(
 ## 十、类型注解（Annotated + Pydantic / TypedDict）
 
 ### 10.1 Annotated + Pydantic Field（有运行时校验 ✅）
+> 📂 Demo：[AnnotatedPydantic.py](./day03_parser/AnnotatedPydantic.py)
 
 ```python
 from typing import Annotated
@@ -873,9 +877,9 @@ except ValidationError as e:
     print("数据校验失败：", e)                  # ✅ 运行时校验生效
 ```
 
-> 📂 Demo：[AnnotatedPydantic.py](<day03_parser/AnnotatedPydantic.py>)
 
 ### 10.2 Annotated + TypedDict（无运行时校验 ❌）
+> 📂 Demo：[AnnotatedTypedDict.py](./day03_parser/AnnotatedTypedDict.py)
 
 ```python
 from typing import Annotated, TypedDict
@@ -898,7 +902,6 @@ p = Person(name="z3", age=111, age2=188)   # 不会报错，188 > 150 也能通�
 
 > **核心原因**：`Annotated` 的设计目的是为类型添加元数据，而非运行时校验。Pydantic 的 `Field` 自带校验逻辑，TypedDict 只是静态类型提示。
 
-> 📂 Demo：[AnnotatedTypedDict.py](<day03_parser/AnnotatedTypedDict.py>)
 
 ---
 
