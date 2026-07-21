@@ -1,3 +1,5 @@
+# 课程外
+
 """
 with_structured_output() 演示
 功能: 直接通过模型API的JSON模式约束，让模型输出结构化的数据

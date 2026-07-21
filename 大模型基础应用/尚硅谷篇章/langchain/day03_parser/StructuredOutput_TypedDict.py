@@ -1,12 +1,17 @@
 
 import os
 from typing import TypedDict, Annotated
+
+from dotenv import load_dotenv
 from langchain.chat_models import init_chat_model
+
+
+load_dotenv(encoding='utf-8')
 
 llm = init_chat_model(
     model="qwen-plus",
     model_provider="openai",
-    api_key=os.getenv("aliQwen-api"),
+    api_key=os.getenv("DASHSCOPE_API_KEY"),
     base_url="https://dashscope.aliyuncs.com/compatible-mode/v1"
 )
 
