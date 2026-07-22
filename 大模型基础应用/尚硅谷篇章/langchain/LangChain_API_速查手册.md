@@ -1,6 +1,6 @@
-# LangChain 三天课程 — API 速查手册
+# LangChain 四天课程 — API 速查手册
 
-> 涵盖 Day01（入门）→ Day02（模型 I/O + Prompt）→ Day03（输出解析器）全部 API
+> 涵盖 Day01（入门）→ Day02（模型 I/O + Prompt）→ Day03（输出解析器）→ Day04（LCEL + Memory）全部 API
 
 ---
 
@@ -16,6 +16,8 @@
 - [八、输出解析器（Output Parser）](#八输出解析器output-parser)
 - [九、结构化输出（with_structured_output）](#九结构化输出with_structured_output)
 - [十、类型注解（Annotated + Pydantic / TypedDict）](#十类型注解annotated--pydantic--typeddict)
+- [十一、LCEL（LangChain Expression Language）](#十一lcellangchain-expression-language)
+- [十二、Memory（对话记忆）](#十二memory对话记忆)
 - [附录：完整导入速查](#附录完整导入速查)
 
 ---
@@ -905,6 +907,467 @@ p = Person(name="z3", age=111, age2=188)   # 不会报错，188 > 150 也能通�
 
 ---
 
+## 十一、LCEL（LangChain Expression Language）
+
+> LCEL 是 LangChain 的声明式链式编程语言，通过 `|` 管道符将组件串联，让一个任务的输出成为下一个任务的输入。
+
+### 11.1 LCEL 概述 — 管道符 `|`
+
+LCEL 的核心是 `|`（管道符），等价于 Linux 管道：`prompt | model | parser` 表示 prompt 的输出 → model 的输入 → parser 的输入。
+
+**LCEL 的优势：**
+- **简洁**：一行链式调用代替多行代码
+- **异步 / 流式 / 批量**：所有 Runnable 统一支持 `invoke` / `ainvoke` / `stream` / `batch`
+- **可组合**：任意组合 prompt、model、parser、lambda、branch 等
+- **可观测**：支持 `get_graph().print_ascii()` 可视化链结构
+
+### 11.2 RunnableSequence — 顺序链（串行）
+
+> 📂 Demo：[LCEL_RunnableSequenceDemo.py](./day04/06_lcel/LCEL_RunnableSequenceDemo.py) | [LCEL_RunnableSerializableDemo.py](./day04/06_lcel/LCEL_RunnableSerializableDemo.py)
+
+```python
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.output_parsers import StrOutputParser
+
+# 三个独立组件
+chat_prompt = ChatPromptTemplate.from_messages([
+    ("system", "你是一个{role}，请简短回答我提出的问题"),
+    ("human", "请回答:{question}")
+])
+model = init_chat_model(...)
+parser = StrOutputParser()
+
+# LCEL 串联（管道符）
+chain = chat_prompt | model | parser
+
+# 一行调用
+result = chain.invoke({"role": "AI助手", "question": "什么是LangChain，简洁回答100字以内"})
+# 返回类型: str
+```
+
+**多步骤串联（子链叠加）：**
+
+```python
+# 子链1：生成中文内容
+prompt1 = ChatPromptTemplate.from_messages([
+    ("system", "你是一个知识渊博的计算机专家，请用中文简短回答"),
+    ("human", "请简短介绍什么是{topic}")
+])
+chain1 = prompt1 | model | StrOutputParser()
+
+# 子链2：翻译成英文
+prompt2 = ChatPromptTemplate.from_messages([
+    ("system", "你是一个翻译助手，将用户输入内容翻译成英文"),
+    ("human", "{input}")
+])
+chain2 = prompt2 | model | StrOutputParser()
+
+# 串联两个子链：chain1 的输出通过 lambda 传给 chain2
+full_chain = chain1 | (lambda content: {"input": content}) | chain2
+
+result = full_chain.invoke({"topic": "langchain"})
+# chain1 输出中文介绍 → lambda 包装为 {"input": ...} → chain2 翻译为英文
+```
+
+| API | 说明 |
+|-----|------|
+| `A \| B` | 管道符，A 的输出成为 B 的输入 |
+| `chain1 \| (lambda x: {...}) \| chain2` | 用 lambda 做数据转换，将上游输出 reshape 为下游需要的 dict |
+
+> **注意**：`chain1` 输出是纯字符串，`chain2` 需要 `{"input": "..."}` 格式的 dict，因此必须用 lambda 做中间转换。
+
+
+### 11.3 RunnableParallel — 并行链
+
+> 📂 Demo：[LCEL_RunnableParallelDemo.py](./day04/06_lcel/LCEL_RunnableParallelDemo.py)
+
+**作用**：同时执行多个 Runnable，合并结果。
+
+```python
+from langchain_core.runnables import RunnableParallel
+
+# 中文链
+chain_cn = prompt_cn | model | parser_cn
+
+# 英文链
+chain_en = prompt_en | model | parser_en
+
+# 并行执行
+parallel_chain = RunnableParallel({
+    "chinese": chain_cn,
+    "english": chain_en
+})
+
+result = parallel_chain.invoke({"topic": "langchain"})
+# 返回: {"chinese": "LangChain是...", "english": "LangChain is..."}
+```
+
+| API | 说明 |
+|-----|------|
+| `RunnableParallel({key: runnable, ...})` | 并行执行多个 Runnable，返回 dict |
+| `parallel_chain.invoke(input)` | 将同一个 input 分发给所有子链 |
+| `.get_graph().print_ascii()` | 打印链的 ASCII 可视化结构 |
+
+> **用途**：一次请求同时获取多种视角结果（如中英文翻译、多维度分析），总耗时 ≈ 最慢子链耗时。
+
+
+### 11.4 RunnableLambda — 函数链
+
+> 📂 Demo：[LCEL_RunnableLambdaDemo.py](./day04/06_lcel/LCEL_RunnableLambdaDemo.py)
+
+**作用**：将普通 Python 函数包装为 Runnable，融入 LCEL 链中。
+
+```python
+from langchain_core.runnables import RunnableLambda
+
+# 普通 Python 函数
+def debug_print(x):
+    """调试用的中间打印函数"""
+    logger.info(f"中间结果: {x}")
+    return {"input": x}
+
+# 包装为 Runnable
+debug_node = RunnableLambda(debug_print)
+
+# 嵌入 LCEL 链中做调试
+full_chain = chain1 | debug_node | chain2
+
+result = full_chain.invoke({"topic": "langchain"})
+```
+
+| API | 说明 |
+|-----|------|
+| `RunnableLambda(func)` | 将普通函数转为 Runnable，融入管道链 |
+| 函数签名 | 接收上游输出，返回下游需要的格式 |
+
+**常见用法：**
+
+| 场景 | 示例 |
+|------|------|
+| 调试打印 | `RunnableLambda(lambda x: print(f"中间结果: {x}") or x)` |
+| 数据转换 | `(lambda content: {"input": content})` |
+| 结果记录 | 将中间结果写入日志/数据库 |
+
+
+### 11.5 RunnableBranch — 分支链
+
+> 📂 Demo：[LCEL_RunnableBranchDemo.py](./day04/06_lcel/LCEL_RunnableBranchDemo.py)
+
+**作用**：根据输入动态选择不同的处理路径（if-else 逻辑）。
+
+```python
+from langchain_core.runnables import RunnableBranch
+
+# 定义不同分支的 prompt
+english_prompt = ChatPromptTemplate.from_messages([
+    ("system", "你是一个英语翻译专家，你叫小英"),
+    ("human", "{query}")
+])
+japanese_prompt = ChatPromptTemplate.from_messages([
+    ("system", "你是一个日语翻译专家，你叫小日"),
+    ("human", "{query}")
+])
+korean_prompt = ChatPromptTemplate.from_messages([
+    ("system", "你是一个韩语翻译专家，你叫小韩"),
+    ("human", "{query}")
+])
+
+# 路由判断函数
+def determine_language(inputs):
+    query = inputs["query"]
+    if "日语" in query:
+        return "japanese"
+    elif "韩语" in query:
+        return "korean"
+    else:
+        return "english"
+
+# 构建分支链
+chain = RunnableBranch(
+    (lambda x: determine_language(x) == "japanese", japanese_prompt | model | parser),
+    (lambda x: determine_language(x) == "korean", korean_prompt | model | parser),
+    (english_prompt | model | parser)  # 默认分支（无条件，最后兜底）
+)
+
+# 自动路由到对应分支
+result = chain.invoke({"query": '请你用韩语翻译这句话:"见到你很高兴"'})
+```
+
+| API | 说明 |
+|-----|------|
+| `RunnableBranch((条件1, 分支1), (条件2, 分支2), ..., 默认分支)` | 按顺序匹配条件，命中则执行对应分支 |
+| 条件函数 | `(lambda x: bool)` 或任意返回 `bool` 的函数 |
+| 默认分支 | 不带条件的最后一项，无条件执行（兜底） |
+
+> **等价于**：`if ... elif ... else` 逻辑，但保持 LCEL 的 Runnable 类型一致性，支持串流/异步/批量等所有 Runnable 能力。
+
+
+### 11.6 LCEL 链可视化
+
+```python
+# 查看链的结构（ASCII 图）
+chain.get_graph().print_ascii()
+
+# 生成 Mermaid 图
+print(chain.get_graph().draw_mermaid())
+```
+
+> **用途**：调试复杂链结构，直观查看数据流转路径。
+
+
+---
+
+## 十二、Memory（对话记忆）
+
+> LLM 每次调用是无状态的——模型本身不记得上一轮对话。Memory 模块通过**外部存储历史消息**并在每次请求时注入上下文，实现"记忆"效果。
+
+### 12.1 问题的本质：LLM 的"遗忘"
+
+> 📂 Demo：[Memory_IDontKnow.py](./day04/07_memory/Memory_IDontKnow.py)
+
+```python
+chain = prompt | llm | parser
+
+# 第一轮对话
+print(chain.invoke({"question": "我叫张三，你叫什么?"}))
+# 输出: "你好张三，我叫通义千问..."
+
+# 第二轮对话
+print(chain.invoke({"question": "你知道我是谁吗?"}))
+# 输出: "我不知道你是谁..."  ← 忘了！
+```
+
+> **根本原因**：每次 `invoke()` 是独立的无状态 HTTP 请求，LLM 没有"记忆"，必须把历史对话随每次请求一起发送。
+
+
+### 12.2 InMemoryChatMessageHistory — 内存聊天历史
+
+> 📂 Demo：[Memory_InMemoryChatMessageHistory.py](./day04/07_memory/Memory_InMemoryChatMessageHistory.py)
+
+**手动管理历史记录（理解原理）：**
+
+```python
+from langchain_core.chat_history import InMemoryChatMessageHistory
+
+history = InMemoryChatMessageHistory()
+
+# 添加消息
+history.add_user_message("我叫张三，我的爱好是学习")
+ai_message = llm.invoke(history.messages)   # 传入历史消息
+history.add_message(ai_message)              # 记录 AI 回复
+
+# 新一轮对话（携带历史）
+history.add_user_message("我叫什么？我的爱好是什么？")
+ai_message2 = llm.invoke(history.messages)   # 模型能看到之前的内容
+
+# 遍历全部消息
+for message in history.messages:
+    print(message.content)
+```
+
+| API | 说明 |
+|-----|------|
+| `InMemoryChatMessageHistory()` | 创建内存中的聊天历史实例 |
+| `.add_user_message(content)` | 添加一条用户消息 |
+| `.add_message(ai_message)` | 添加一条 AI 消息 |
+| `.messages` | 返回完整的消息列表 `list[BaseMessage]` |
+| `.clear()` | 清空历史 |
+
+> **局限**：进程重启后数据丢失，无法多会话隔离。
+
+
+### 12.3 RunnableWithMessageHistory — 可持续记忆（基础版）
+
+> 📂 Demo：[Memory_RunnableWithMessageHistory.py](./day04/07_memory/Memory_RunnableWithMessageHistory.py)
+
+**自动管理历史 + 链式调用：**
+
+```python
+from langchain_core.runnables import RunnableWithMessageHistory, RunnableConfig
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain_core.chat_history import InMemoryChatMessageHistory
+
+# Prompt 中预留历史消息槽位
+prompt = ChatPromptTemplate.from_messages([
+    MessagesPlaceholder(variable_name="history"),   # 历史消息注入点
+    ("human", "{input}")
+])
+
+chain = prompt | llm | StrOutputParser()
+
+# 创建内存历史实例
+history = InMemoryChatMessageHistory()
+
+# 包装为带记忆的链
+runnable = RunnableWithMessageHistory(
+    chain,
+    get_session_history=lambda session_id: history,  # 获取历史的函数
+    input_messages_key="input",       # 对应 prompt 中用户输入的 key
+    history_messages_key="history"    # 对应 MessagesPlaceholder 的变量名
+)
+
+config = RunnableConfig(configurable={"session_id": "user-001"})
+
+# 调用时多轮对话自动带历史
+runnable.invoke({"input": "我叫张三，我爱好学习。"}, config)
+runnable.invoke({"input": "我叫什么？我的爱好是什么？"}, config)
+# 第二句能正确回答！
+```
+
+| API | 说明 |
+|-----|------|
+| `RunnableWithMessageHistory(chain, get_session_history, input_messages_key, history_messages_key)` | 包装链，自动管理历史消息 |
+| `RunnableConfig(configurable={"session_id": "..."})` | 运行时配置，用于区分不同会话 |
+| `get_session_history` | 接收 `session_id` 返回对应历史对象的函数 |
+
+**参数详解：**
+
+| 参数 | 类型 | 说明 |
+|------|------|------|
+| `chain` | `Runnable` | 被包装的原始链 |
+| `get_session_history` | `Callable[[str], BaseChatMessageHistory]` | 根据 session_id 返回历史对象 |
+| `input_messages_key` | `str` | 输入 dict 中用户消息的键名 |
+| `history_messages_key` | `str` | 对应 `MessagesPlaceholder` 的变量名 |
+
+
+### 12.4 多会话管理（进阶版）
+
+> 📂 Demo：[Memory_RunnableWithMessageHistoryV2.py](./day04/07_memory/Memory_RunnableWithMessageHistoryV2.py)
+
+**用 dict 存储多个 session 的历史，实现多用户隔离：**
+
+```python
+from langchain_core.chat_history import InMemoryChatMessageHistory
+from langchain_core.runnables.history import RunnableWithMessageHistory
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+
+# 全局会话存储
+store = {}
+
+def get_session_history(session_id: str):
+    """按 session_id 获取或创建历史"""
+    if session_id not in store:
+        store[session_id] = InMemoryChatMessageHistory()
+    return store[session_id]
+
+prompt = ChatPromptTemplate.from_messages([
+    ("system", "你是一个友好的中文助理，会根据上下文回答问题。"),
+    MessagesPlaceholder("history"),
+    ("human", "{question}")
+])
+
+chain = prompt | llm | StrOutputParser()
+
+with_history = RunnableWithMessageHistory(
+    chain,
+    get_session_history,
+    input_messages_key="question",
+    history_messages_key="history",
+)
+
+# 不同 session_id = 独立会话
+cfg_user1 = {"configurable": {"session_id": "user-001"}}
+cfg_user2 = {"configurable": {"session_id": "user-002"}}
+
+print(with_history.invoke({"question": "我叫张三。"}, cfg_user1))
+# user-001: "你好张三！"
+print(with_history.invoke({"question": "我叫李四。"}, cfg_user2))
+# user-002: "你好李四！"  ← 独立会话，互不干扰
+print(with_history.invoke({"question": "我叫什么？"}, cfg_user1))
+# user-001: "你叫张三。" ← 各自记住自己的上下文
+```
+
+| 场景 | 说明 |
+|------|------|
+| 单用户 | `lambda session_id: history`（永远返回同一对象） |
+| 多用户 | `dict[session_id]` 模式（不同 session 各自独立） |
+| 生产环境 | 改用 Redis / SQLite 等持久化存储 |
+
+> **核心思想**：`store` 就是"会话池"，key = `session_id`，value = 该会话的消息历史。
+
+
+### 12.5 RedisChatMessageHistory — Redis 持久化记忆
+
+> 📂 Demo：[Memory_RedisChatMessageHistory.py](./day04/07_memory/Memory_RedisChatMessageHistory.py) | [RedisEnvCheck.py](./day04/07_memory/RedisEnvCheck.py)
+
+**生产环境：用 Redis 持久化会话历史。**
+
+```bash
+pip install redis==5.3.1
+```
+
+```python
+from langchain_community.chat_message_histories import RedisChatMessageHistory
+from langchain_core.runnables.history import RunnableWithMessageHistory
+import redis
+
+REDIS_URL = "redis://localhost:6379"
+redis_client = redis.Redis.from_url(REDIS_URL, decode_responses=True)
+
+def get_session_history(session_id: str) -> RedisChatMessageHistory:
+    return RedisChatMessageHistory(
+        session_id=session_id,
+        url=REDIS_URL,
+        # ttl=3600  # 可选：设置过期时间（秒）
+    )
+
+chain = RunnableWithMessageHistory(
+    prompt | llm,
+    get_session_history,
+    input_messages_key="question",
+    history_messages_key="history"
+)
+
+config = RunnableConfig(configurable={"session_id": "user-001"})
+
+# 交互式对话循环
+while True:
+    question = input("\n输入问题：")
+    if question.lower() in ['quit', 'exit', 'q']:
+        break
+    response = chain.invoke({"question": question}, config)
+    print(f"AI: {response.content}")
+    redis_client.save()   # 强制持久化到 dump.rdb
+```
+
+| API | 说明 |
+|-----|------|
+| `RedisChatMessageHistory(session_id, url)` | 创建 Redis 会话历史对象 |
+| `RedisChatMessageHistory(session_id, url, ttl=3600)` | 设置过期时间（秒），过期自动清理 |
+| `redis.Redis.from_url(url, decode_responses=True)` | 创建原生 Redis 客户端 |
+| `redis_client.save()` | 强制写入 dump.rdb（等同于 `redis-cli SAVE`） |
+
+> **注意**：`decode_responses=True` 让 Redis 返回字符串而非字节串。
+
+
+### 12.6 RunnableConfig — 会话配置
+
+```python
+from langchain_core.runnables import RunnableConfig
+
+# 完整写法
+config = RunnableConfig(configurable={"session_id": "user-001"})
+
+# 简写（dict 自动转换）
+config = {"configurable": {"session_id": "user-001"}}
+```
+
+| 参数 | 说明 |
+|------|------|
+| `configurable` | 可配置的 dict，`session_id` 为约定键名 |
+| `session_id` | 会话标识，相当于"登录用户名"——不同 ID 对应不同历史 |
+
+### 12.7 记忆方案对比
+
+| 方案 | 持久化 | 多会话 | 适用场景 |
+|------|--------|--------|----------|
+| `InMemoryChatMessageHistory` | ❌ | ❌（单对象） | 原型开发、测试 |
+| `store = {}` + InMemory | ❌ | ✅ | 本地多用户模拟 |
+| `RedisChatMessageHistory` | ✅ | ✅ | 生产环境 |
+| SQLite / Postgres | ✅ | ✅ | 需要 SQL 查询历史 |
+
+---
+
 ## 附录：完整导入速查
 
 ```python
@@ -945,6 +1408,21 @@ from langchain_core.output_parsers import (
 from pydantic import BaseModel, Field, field_validator, ValidationError
 from typing import TypedDict, Annotated
 
+# ==================== LCEL（Day04） ====================
+from langchain_core.runnables import (
+    RunnableParallel,          # 并行链
+    RunnableLambda,            # 函数链
+    RunnableBranch,            # 分支链
+    RunnableConfig,            # 运行时配置
+)
+from langchain_core.runnables.history import RunnableWithMessageHistory  # 带记忆链
+
+# ==================== 对话记忆（Day04） ====================
+from langchain_core.chat_history import InMemoryChatMessageHistory      # 内存会话历史
+from langchain_community.chat_message_histories import (
+    RedisChatMessageHistory,   # Redis 持久化会话历史
+)
+
 # ==================== 调用方式 ====================
 # model.invoke(input)          同步单次
 # model.ainvoke(input)         异步单次
@@ -955,4 +1433,4 @@ from typing import TypedDict, Annotated
 # model.with_structured_output(Schema)   结构化输出
 ```
 
-> 📅 文档生成时间：2026-07-21 — 基于尚硅谷 LangChain Day01~Day03 课程内容整理
+> 📅 文档生成时间：2026-07-22 — 基于尚硅谷 LangChain Day01~Day04 课程内容整理
