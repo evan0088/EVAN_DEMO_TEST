@@ -1,6 +1,6 @@
 # LangChain 四天课程 — API 速查手册
 
-> 涵盖 Day01（入门）→ Day02（模型 I/O + Prompt）→ Day03（输出解析器）→ Day04（LCEL + Memory）全部 API
+> 涵盖 Day01（入门）→ Day02（模型 I/O + Prompt）→ Day03（输出解析器）→ Day04（LCEL + Memory + Tools）全部 API
 
 ---
 
@@ -18,6 +18,7 @@
 - [十、类型注解（Annotated + Pydantic / TypedDict）](#十类型注解annotated--pydantic--typeddict)
 - [十一、LCEL（LangChain Expression Language）](#十一lcellangchain-expression-language)
 - [十二、Memory（对话记忆）](#十二memory对话记忆)
+- [十三、Tools（工具定义与调用）](#十三tools工具定义与调用)
 - [附录：完整导入速查](#附录完整导入速查)
 
 ---
@@ -1368,6 +1369,266 @@ config = {"configurable": {"session_id": "user-001"}}
 
 ---
 
+## 十三、Tools（工具定义与调用）
+
+> 工具（Tool）让 LLM 能够调用外部函数——查询数据库、调用 API、执行计算等，突破纯文本生成的局限。
+
+### 13.1 @tool 装饰器 — 基础用法
+
+> 📂 Demo：[Tool_AddNumberTool.py](./day04/08_tools/Tool_AddNumberTool.py)
+
+**将普通 Python 函数注册为 LangChain 工具：**
+
+```python
+from langchain.tools import tool
+
+@tool
+def add_number(a: int, b: int) -> int:
+    """两个整数相加"""
+    return a + b
+
+# 调用工具（必须用 .invoke(dict)）
+result = add_number.invoke({"a": 1, "b": 12})
+# 返回: 13
+
+# 工具元信息
+print(add_number.name)         # 'add_number'
+print(add_number.description)  # '两个整数相加'
+print(add_number.args)         # {'a': {'title': 'A', 'type': 'integer'}, 'b': ...}
+```
+
+| 属性 | 说明 |
+|------|------|
+| `.name` | 工具名称，默认使用函数名 |
+| `.description` | 工具描述，取自函数 docstring（**必须提供**） |
+| `.args` | 工具参数 schema，从类型注解自动推导 |
+| `.invoke(dict)` | 调用工具，传入参数字典 |
+
+> **关键约定**：`@tool` 装饰器用函数 **docstring** 作为工具描述，LLM 据此判断何时调用该工具——docstring 必须清晰准确。
+
+
+### 13.2 @tool 装饰器 — 进阶：args_schema 自定义参数
+
+> 📂 Demo：[Tool_AddNumberToolPro.py](./day04/08_tools/Tool_AddNumberToolPro.py)
+
+**使用 Pydantic BaseModel 精确定义工具参数：**
+
+```python
+from langchain_core.tools import tool
+from pydantic import BaseModel, Field
+
+class FieldInfo(BaseModel):
+    """定义加法运算所需的参数信息"""
+    a: int = Field(description="第1个参数")
+    b: int = Field(description="第2个参数")
+
+# 通过 args_schema 绑定参数模型
+@tool(args_schema=FieldInfo)
+def add_number(a: int, b: int) -> int:
+    return a + b
+
+# 也可自定义其他元信息
+@tool(name_or_callable="my_tool", args_schema=FieldInfo, return_direct=True)
+def add_number(a: int, b: int) -> int:
+    return a + b
+```
+
+| 参数 | 类型 | 说明 |
+|------|------|------|
+| `args_schema` | `BaseModel` | Pydantic 模型，定义工具的输入参数 schema |
+| `name_or_callable` | `str` | 覆盖默认工具名（默认用函数名） |
+| `return_direct` | `bool` | `True` 时工具结果直接返回给用户，不经过 LLM 再润色 |
+
+**工具参数推导方式对比：**
+
+| 方式 | 说明 | 适用场景 |
+|------|------|----------|
+| 类型注解 `a: int` | 从 Python 类型注解自动推导 schema | 简单工具 |
+| `args_schema=PydanticModel` | 用 Pydantic `Field(description=...)` 精确描述参数 | 复杂工具 / 需要详细参数说明 |
+
+
+### 13.3 Pydantic StrictInt — 严格类型校验复习
+
+> 📂 Demo：[PydanticDemo.py](./day04/08_tools/PydanticDemo.py)
+
+**`int` vs `StrictInt` —— 工具参数类型校验的刚需：**
+
+```python
+from pydantic import BaseModel, StrictInt, ValidationError
+
+class User(BaseModel):
+    id: StrictInt   # 严格模式：拒绝类型转换
+    name: str
+    age: int = 0
+
+# int: 宽松，自动转换 "41" → 41 ✅
+# StrictInt: 严格，只接受真正的 int，传入字符串报错
+
+try:
+    User(id="abc", name="Bob")  # StrictInt 拒绝 "abc"
+except ValidationError as e:
+    print(e)
+    # ❌ value is not a valid integer
+```
+
+| 类型 | 字符串 `"41"` | 布尔 `True` | 纯整数 `41` |
+|------|:--:|:--:|:--:|
+| `int` | ✅ 自动转换 | ✅ 转为 1 | ✅ |
+| `StrictInt` | ❌ 报错 | ❌ 报错 | ✅ |
+
+> **工具场景建议**：工具参数的 schema 中推荐用 `int`（宽松），因为 LLM 可能输出 `"41"` 而不是 `41`。仅在需要严格数据校验的业务模型中使用 `StrictInt`。
+
+
+### 13.4 实战：天气查询工具
+
+> 📂 Demo：[QueryWeatherTool.py](./day04/08_tools/QueryWeatherTool.py)
+
+**用 @tool 封装真实 API 调用：**
+
+```python
+from langchain_core.tools import tool
+import httpx
+import json
+import os
+
+@tool
+def get_weather(loc):
+    """
+    查询即时天气函数
+
+    :param loc: 必要参数，字符串类型，用于表示查询天气的具体城市名称。
+                注意，中国的城市需要用对应城市的英文名称代替，例如查询北京市天气，
+                则 loc 参数需要输入 'Beijing'/'shanghai'。
+    :return: OpenWeather API 查询即时天气的结果，JSON 格式字符串。
+    """
+    url = "https://api.openweathermap.org/data/2.5/weather"
+    params = {
+        "q": loc,
+        "appid": os.getenv("OPENWEATHER_API_KEY"),
+        "units": "metric",
+        "lang": "zh_cn"
+    }
+    response = httpx.get(url, params=params, timeout=30)
+    data = response.json()
+    return json.dumps(data)
+
+# 直接调用测试
+result = get_weather.invoke("beijing")
+```
+
+> **关键**：docstring 中详细描述了参数含义和格式要求，LLM 会据此决定如何传参。例如用户说"北京天气"，LLM 知道该传 `"beijing"`。
+
+
+### 13.5 bind_tools — 将工具绑定到 LLM
+
+> 📂 Demo：[LLMQueryWeatherDemo.py](./day04/08_tools/LLMQueryWeatherDemo.py)
+
+**核心流程**：`@tool` 定义工具 → `bind_tools()` 绑定到模型 → LLM 自动决定是否调用工具。
+
+```python
+# Step 1: 将工具绑定到模型
+llm_with_tools = llm.bind_tools([get_weather])
+
+# 此时 llm 调用时会自动判断：
+#   - 需要查询天气 → 返回 tool_call
+#   - 不需要 → 正常回复
+```
+
+| API | 说明 |
+|------|------|
+| `model.bind_tools([tool1, tool2, ...])` | 将工具列表绑定到模型，返回新的 Runnable |
+| 返回值 | 增强了 tool-calling 能力的模型实例 |
+
+
+### 13.6 JsonOutputKeyToolsParser — 解析工具调用结果
+
+> 📂 Demo：[LLMQueryWeatherDemo.py](./day04/08_tools/LLMQueryWeatherDemo.py)
+
+**LLM 做工具决策，Parser 提取工具调用，Tool 执行：**
+
+```python
+from langchain_core.output_parsers import JsonOutputKeyToolsParser
+
+parser = JsonOutputKeyToolsParser(
+    key_name=get_weather.name,    # 指定要提取哪个工具的输出
+    first_tool_only=True           # 只取第一个匹配结果
+)
+```
+
+| 参数 | 类型 | 说明 |
+|------|------|------|
+| `key_name` | `str` | 工具名称，解析器只提取该工具对应的 JSON |
+| `first_tool_only` | `bool` | `True` 返回单个对象，`False` 返回列表 |
+
+
+### 13.7 完整工具链 — 从问天气到自然语言回复
+
+> 📂 Demo：[LLMQueryWeatherDemo.py](./day04/08_tools/LLMQueryWeatherDemo.py)
+
+**完整流程**：用户提问 → LLM 决策 → 工具执行 → 结果格式化：
+
+```python
+from langchain_core.output_parsers import JsonOutputKeyToolsParser, StrOutputParser
+from langchain_core.prompts import PromptTemplate
+
+# ① 定义工具（见 13.4）
+from QueryWeatherTool import get_weather
+
+# ② 绑定工具到模型
+llm_with_tools = llm.bind_tools([get_weather])
+
+# ③ 创建工具调用解析器
+parser = JsonOutputKeyToolsParser(
+    key_name=get_weather.name,
+    first_tool_only=True
+)
+
+# ④ 工具调用链：模型决策 → 解析器提取 → 工具执行
+get_weather_chain = llm_with_tools | parser | get_weather
+
+# ⑤ 格式化输出链：将 JSON 结果转为自然语言
+output_prompt = PromptTemplate.from_template(
+    """你将收到一段 JSON 格式的天气数据{weather_json}，请用简洁自然的方式将其转述给用户。
+    以下是天气 JSON 数据：
+    请将其转换为中文天气描述，例如：
+    "北京现在天气：多云，气温 28℃，体感有点闷热..."
+    """
+)
+output_chain = output_prompt | llm | StrOutputParser()
+
+# ⑥ 拼接完整链
+full_chain = get_weather_chain | (lambda x: {"weather_json": x}) | output_chain
+
+# ⑦ 执行
+result = full_chain.invoke("请问北京今天的天气如何？")
+# 返回自然语言天气描述
+```
+
+**链式数据流：**
+
+```
+用户输入 → llm_with_tools（判断需要查天气）
+        → JsonOutputKeyToolsParser（提取 tool_call）
+        → get_weather（执行 API 查询）
+        → lambda 包装 → output_chain（LLM 润色为自然语言）
+        → 最终回复
+```
+
+### 13.8 Tools API 速查
+
+| API | 类型 | 说明 |
+|-----|------|------|
+| `@tool` | 装饰器 | 将函数注册为 LangChain 工具 |
+| `@tool(args_schema=Model)` | 装饰器 | 带自定义参数 schema 的工具 |
+| `tool.invoke(dict)` | 方法 | 调用工具，传入参数字典 |
+| `tool.name` | 属性 | 工具名称 |
+| `tool.description` | 属性 | 工具描述（取自 docstring） |
+| `tool.args` | 属性 | 工具参数 schema |
+| `model.bind_tools([t1, t2])` | 方法 | 绑定工具到模型 |
+| `JsonOutputKeyToolsParser(key_name, first_tool_only)` | 解析器 | 从 LLM 输出中提取指定工具的调用结果 |
+
+---
+
 ## 附录：完整导入速查
 
 ```python
@@ -1422,6 +1683,12 @@ from langchain_core.chat_history import InMemoryChatMessageHistory      # 内存
 from langchain_community.chat_message_histories import (
     RedisChatMessageHistory,   # Redis 持久化会话历史
 )
+
+# ==================== 工具定义（Day04） ====================
+from langchain_core.tools import tool                                   # @tool 装饰器
+from langchain_core.output_parsers import JsonOutputKeyToolsParser      # 工具调用解析器
+# model.bind_tools([tool1, tool2])   将工具绑定到模型
+# tool.invoke({"arg": value})        调用工具
 
 # ==================== 调用方式 ====================
 # model.invoke(input)          同步单次
