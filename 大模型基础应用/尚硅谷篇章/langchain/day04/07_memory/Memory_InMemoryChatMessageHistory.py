@@ -1,14 +1,13 @@
-
+from dotenv import load_dotenv
 from langchain.chat_models import init_chat_model
 from langchain_core.chat_history import InMemoryChatMessageHistory
 from loguru import logger
 import os
-
-# 设置本地模型，不使用深度思考
+load_dotenv(encoding="utf-8")# 设置本地模型，不使用深度思考
 llm = init_chat_model(
     model="qwen-plus",
     model_provider="openai",
-    api_key=os.getenv("aliQwen-api"),
+    api_key=os.getenv("DASHSCOPE_API_KEY"),
     base_url="https://dashscope.aliyuncs.com/compatible-mode/v1"
 )
 
@@ -18,6 +17,8 @@ history = InMemoryChatMessageHistory()
 
 # 添加用户消息到聊天历史记录
 history.add_user_message("我叫张三，我的爱好是学习")
+print(type(history.messages))
+print(history)
 
 # 调用语言模型处理聊天历史中的消息
 ai_message = llm.invoke(history.messages)

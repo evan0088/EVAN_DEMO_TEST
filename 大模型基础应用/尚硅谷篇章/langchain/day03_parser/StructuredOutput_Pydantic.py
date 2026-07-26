@@ -7,6 +7,7 @@ PydanticOutputParser 是 LangChain 输出解析器体系中最常用、最强大
 """
 
 import os
+from typing import Annotated
 
 from dotenv import load_dotenv
 from langchain.chat_models import init_chat_model
@@ -25,9 +26,10 @@ class Product(BaseModel):
         category (str): 产品类别
         description (str): 产品简介，长度必须大于等于10个字符
     """
-    name: str = Field(description="产品名称")
-    category: str = Field(description="产品类别")
-    description: str = Field(description="产品简介")
+    # name: str = Field(description="产品名称")
+    name: Annotated[str,Field(description="产品名称")]
+    category :Annotated[str,Field(description="产品类别")]
+    description: Annotated[str,Field(description="产品简介")]
 
     @field_validator("description")
     def validate_description(cls, value):
@@ -45,19 +47,19 @@ class Product(BaseModel):
         return value
 
 # 创建Pydantic输出解析器实例，用于解析模型输出为Product对象
-parser = PydanticOutputParser(pydantic_object=Product)
+# parser = PydanticOutputParser(pydantic_object=Product)
 
 # 获取格式化指令，用于指导模型输出符合Product模型的JSON格式
-format_instructions = parser.get_format_instructions()
+# format_instructions = parser.get_format_instructions()
 
 # 创建聊天提示模板，包含系统消息和人类消息
 prompt_template = ChatPromptTemplate.from_messages([
-    ("system", "你是一个AI助手，你只能输出结构化的json数据\n{format_instructions}"),
+    ("system", "你是一个AI助手"),
     ("human", "请你输出标题为：{topic}的新闻内容")
 ])
 
 # 格式化提示消息，填充主题和格式化指令
-prompt = prompt_template.format_messages(topic="华为Mate X7", format_instructions=format_instructions)
+prompt = prompt_template.format_messages(topic="华为Mate X7")
 
 # 记录格式化后的提示消息
 logger.info(prompt)
@@ -71,16 +73,18 @@ model = init_chat_model(
 )
 
 # 调用模型获取结果
+model=model.with_structured_output(Product)
 result = model.invoke(prompt)
 
+
 # 记录模型返回的结果
-logger.info(f"模型原始输出:\n{result.content}")
+# logger.info(f"模型原始输出:\n{result.content}")
 
 # 使用解析器将模型结果解析为Product对象
-response = parser.invoke(result)
+# response = parser.invoke(result)
 
 # 打印解析后的结构化结果
-logger.info(f"解析后的结构化结果:\n{response}")
+logger.info(f"解析后的结构化结果:\n{result}")
 
 # 打印类型
-logger.info(f"结果类型: {type(response)}")
+logger.info(f"结果类型: {type(result)}")

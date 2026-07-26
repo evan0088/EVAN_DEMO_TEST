@@ -1,7 +1,7 @@
 """
 可持续记忆（RunnableWithMessageHistory）
 """
-
+from dotenv import load_dotenv
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.runnables import RunnableWithMessageHistory, RunnableConfig
@@ -9,12 +9,22 @@ from langchain.chat_models import init_chat_model
 from langchain_core.chat_history import InMemoryChatMessageHistory
 from loguru import logger
 import os
+load_dotenv(encoding="utf-8")
+store={}
+def get_session_history(session_id: str):
+    """
+    根据 session_id 获取对应的历史消息对象。
+    如果不存在则创建一个新的 InMemoryChatMessageHistory。
+    """
+    if session_id not in store:
+        store[session_id] = InMemoryChatMessageHistory()
+    return store[session_id]
 
 # 设置本地模型
 llm = init_chat_model(
     model="qwen-plus",
     model_provider="openai",
-    api_key=os.getenv("aliQwen-api"),
+    api_key=os.getenv("DASHSCOPE_API_KEY"),
     base_url="https://dashscope.aliyuncs.com/compatible-mode/v1"
 )
 
@@ -33,7 +43,7 @@ history = InMemoryChatMessageHistory()
 # 创建带消息历史的可运行对象，用于处理带历史记录的对话
 runnable = RunnableWithMessageHistory(
     chain,
-    get_session_history=lambda session_id: history,
+    get_session_history=get_session_history,
     input_messages_key="input",  # 指定输入键
     history_messages_key="history"  # 指定历史消息键
 )

@@ -38,9 +38,8 @@ def get_weather(loc):
     #print(json.dumps(data))
     return json.dumps(data)
 
-
-# 测试
-# result = get_weather.invoke("shanghai")
-result = get_weather.invoke("beijing")
-print(result)
+if __name__ == '__main__':
+    # result = get_weather.invoke("shanghai")
+    result = get_weather.invoke("beijing")
+    print(result)
 

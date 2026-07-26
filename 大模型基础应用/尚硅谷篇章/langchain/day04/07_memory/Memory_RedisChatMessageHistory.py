@@ -40,7 +40,7 @@ def get_session_history(session_id: str) -> RedisChatMessageHistory:
 
 # 创建带历史的链
 chain = RunnableWithMessageHistory(
-    prompt | llm,
+    prompt | llm, # chain
     get_session_history,
     input_messages_key="question",
     history_messages_key="history"

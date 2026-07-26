@@ -24,6 +24,7 @@ parser = JsonOutputKeyToolsParser(key_name=get_weather.name, first_tool_only=Tru
 
 # 构建工具调用链：模型 -> 解析器 -> 调用天气工具
 get_weather_chain = llm_with_tools | parser | get_weather
+
 # print(get_weather_chain.invoke("你好， 请问北京的天气怎么样？"))
 # 定义输出提示模板，将 JSON 天气数据转换为自然语言描述
 output_prompt = PromptTemplate.from_template(
@@ -42,7 +43,7 @@ output_parser = StrOutputParser()
 output_chain = output_prompt | llm | output_parser
 
 # 构建完整的处理链：天气查询链 ->将天气数据包装为字典格式 -> 输出链
-full_chain = get_weather_chain | (lambda x: {"weather_json": x}) | output_chain
+full_chain = {"weather_json": get_weather_chain} | output_chain
 
 # 执行完整链路，查询上海天气并打印结果
 result = full_chain.invoke("请问北京今天的天气如何？")

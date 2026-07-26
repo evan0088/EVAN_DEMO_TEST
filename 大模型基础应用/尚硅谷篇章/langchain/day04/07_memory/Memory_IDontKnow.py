@@ -1,14 +1,14 @@
-
+from dotenv import load_dotenv
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import PromptTemplate
 from langchain.chat_models import init_chat_model
 import os
-
+load_dotenv(encoding="utf-8")
 # 设置本地模型
 llm = init_chat_model(
     model="qwen-plus",
     model_provider="openai",
-    api_key=os.getenv("aliQwen-api"),
+    api_key=os.getenv("DASHSCOPE_API_KEY"),
     temperature=0.0,
     base_url="https://dashscope.aliyuncs.com/compatible-mode/v1"
 )

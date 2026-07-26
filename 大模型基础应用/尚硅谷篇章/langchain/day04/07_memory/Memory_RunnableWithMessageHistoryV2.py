@@ -1,19 +1,19 @@
 """
 可持续记忆（RunnableWithMessageHistory）
 """
-
+from dotenv import load_dotenv
 from langchain.chat_models import init_chat_model
 from langchain_core.chat_history import InMemoryChatMessageHistory  # 内存型消息记录
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.output_parsers import StrOutputParser
 import os
-
+load_dotenv(encoding="utf-8")
 # 设置本地模型
 llm = init_chat_model(
     model="qwen-plus",
     model_provider="openai",
-    api_key=os.getenv("aliQwen-api"),
+    api_key=os.getenv("DASHSCOPE_API_KEY"),
     base_url="https://dashscope.aliyuncs.com/compatible-mode/v1"
 )
 
