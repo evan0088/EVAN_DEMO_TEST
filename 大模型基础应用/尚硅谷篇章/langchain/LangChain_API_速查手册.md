@@ -1,6 +1,6 @@
-# LangChain 四天课程 — API 速查手册
+# LangChain 六天课程 — API 速查手册
 
-> 涵盖 Day01（入门）→ Day02（模型 I/O + Prompt）→ Day03（输出解析器）→ Day04（LCEL + Memory + Tools）全部 API
+> 涵盖 Day01（入门）→ Day02（模型 I/O + Prompt）→ Day03（输出解析器）→ Day04（LCEL + Memory + Tools）→ **Day05（Embedding + 向量数据库 + RAG）** → **Day06（MCP 协议 + Agent）** 全部 API
 
 ---
 
@@ -19,6 +19,14 @@
 - [十一、LCEL（LangChain Expression Language）](#十一lcellangchain-expression-language)
 - [十二、Memory（对话记忆）](#十二memory对话记忆)
 - [十三、Tools（工具定义与调用）](#十三tools工具定义与调用)
+- [十四、Embedding（文本向量化）](#十四embedding文本向量化)
+- [十五、向量数据库 Redis](#十五向量数据库-redis)
+- [十六、文档加载器（Document Loaders）](#十六文档加载器document-loaders)
+- [十七、文本分割器（Text Splitters）](#十七文本分割器text-splitters)
+- [十八、RAG 完整管道](#十八rag-完整管道)
+- [十九、MCP 协议](#十九mcp-协议)
+- [二十、Agent（智能体）](#二十agent智能体)
+- [二十一、Agent 高级模式](#二十一agent-高级模式)
 - [附录：完整导入速查](#附录完整导入速查)
 
 ---
@@ -1629,6 +1637,828 @@ result = full_chain.invoke("请问北京今天的天气如何？")
 
 ---
 
+## 十四、Embedding（文本向量化）
+
+> Embedding（嵌入）是将文本转换为数值向量的过程，是语义搜索、RAG 和相似度计算的基础。**语义相近的文本，向量距离也近**。
+
+### 14.1 DashScope 原生调用 — 理解向量本质
+
+> 📂 Demo：[Text2Embedding_DashScopeHello.py](./day05/09-embedding/Text2Embedding_DashScopeHello.py)
+
+```python
+import dashscope
+
+resp = dashscope.TextEmbedding.call(
+    model="text-embedding-v4",
+    api_key=os.getenv("aliQwen-api"),
+    input="衣服的质量杠杠的"
+)
+
+# 提取向量
+embedding = resp['output']['embeddings'][0]['embedding']
+# → [0.0123, -0.0045, 0.0234, ...]  高维浮点数列表
+```
+
+> **用途**：直接查看原始响应结构，理解"向量是什么样子"。
+
+### 14.2 DashScopeEmbeddings — LangChain 统一接口（⭐ 推荐）
+
+> 📂 Demo：[Text2Embedding_DashScope.py](./day05/09-embedding/Text2Embedding_DashScope.py)
+
+```python
+from langchain_community.embeddings import DashScopeEmbeddings
+
+embeddings = DashScopeEmbeddings(
+    model="text-embedding-v3",
+    dashscope_api_key=os.getenv("aliQwen-api")
+)
+
+# 单条查询向量化（用于用户问题）
+query_vector = embeddings.embed_query("LangChain 怎么使用 Redis？")
+
+# 批量文档向量化（用于构建索引）
+doc_vectors = embeddings.embed_documents([
+    "Redis 是一个高性能的 key-value 数据库",
+    "LangChain 提供了 Redis 向量存储集成"
+])
+```
+
+| 方法 | 参数 | 返回值 | 用途 |
+|------|------|--------|------|
+| `embed_query(text)` | `str` | `list[float]` | 将用户查询转为向量 |
+| `embed_documents(texts)` | `list[str]` | `list[list[float]]` | 批量将文档块转为向量，用于建索引 |
+
+> **关键约定**：索引阶段和查询阶段必须使用**相同的 Embedding 模型**，否则向量空间不匹配。
+
+### 14.3 OpenAI 兼容接口 — 跨厂商切换
+
+> 📂 Demo：[Text2Embedding_OpenAiHello.py](./day05/09-embedding/Text2Embedding_OpenAiHello.py)
+
+```python
+from openai import OpenAI
+
+client = OpenAI(
+    api_key=os.getenv("aliQwen-api"),
+    base_url="https://dashscope.aliyuncs.com/compatible-mode/v1"
+)
+
+response = client.embeddings.create(
+    model="text-embedding-v3",
+    input="你的文本"
+)
+
+embedding = response.data[0].embedding
+```
+
+> **融汇贯通点**：OpenAI 兼容协议在 Embedding 层同样适用——换 `base_url` 即可切换厂商。这与 Day02 的 `init_chat_model()` 和 Day06 的 MCP 协议一脉相承，都是**用统一抽象屏蔽底层差异**。
+
+### 14.4 多模态 Embedding — 文本 + 图像
+
+> 📂 Demo：[Text2Embedding_DashScopePro.py](./day05/09-embedding/Text2Embedding_DashScopePro.py)
+
+```python
+import dashscope
+
+# 文本向量化
+input_data = [{"text": "尚硅谷AI"}]
+resp = dashscope.MultiModalEmbedding.call(
+    model="multimodal-embedding-v1",
+    api_key=os.getenv("aliQwen-api"),
+    input=input_data,
+)
+embedding = resp.output["embeddings"][0]["embedding"]
+
+# 图像向量化（需要图片 URL 或 base64）
+# input_data = [{"image": "https://example.com/image.jpg"}]
+```
+
+### 14.5 余弦相似度 — 语义距离的数学计算
+
+> 📂 Demo：[Text2Embedding_CosSimilarity.py](./day05/09-embedding/Text2Embedding_CosSimilarity.py)
+
+**公式**：$\cos(\theta) = \frac{A \cdot B}{|A| \times |B|}$
+
+```python
+import numpy as np
+
+def cosine_similarity(vec1, vec2):
+    """余弦相似度：值越接近 1 表示语义越相似"""
+    dot_product = np.dot(vec1, vec2)
+    norm_vec1 = np.linalg.norm(vec1)
+    norm_vec2 = np.linalg.norm(vec2)
+    return dot_product / (norm_vec1 * norm_vec2)
+
+# 实战验证
+"我喜欢吃苹果" vs "苹果是我最喜欢吃的水果"  → 0.9064  # 高度相似
+"我喜欢吃苹果" vs "我喜欢用苹果手机"        → 0.7656  # 中等相似
+"苹果是我最喜欢吃的水果" vs "我喜欢用苹果手机" → 0.7421  # 较低相似
+```
+
+> **核心认知**：虽然三句话都包含"苹果"，但"吃苹果"和"苹果手机"的语义不同，余弦相似度精确捕捉到了这一点。这是所有语义检索的底层基础。
+
+### 14.6 Embedding 三种调用方式对比
+
+| 方式 | 文件 | 特点 | 适用场景 |
+|------|------|------|----------|
+| DashScope 原生 | `Text2Embedding_DashScopeHello.py` | 直接看原始响应，理解向量结构 | 学习底层 API |
+| LangChain 封装 | `Text2Embedding_DashScope.py` | `embed_query()` / `embed_documents()` 统一接口 | 集成到 LangChain 管道 |
+| OpenAI 兼容 | `Text2Embedding_OpenAiHello.py` | 换 `base_url` 即可切换厂商 | 跨厂商迁移 |
+
+---
+
+## 十五、向量数据库 Redis
+
+> 向量存进去不是目的，**能快速找到最相似的**才是目的。Redis 是 LangChain 支持的向量数据库之一。
+
+### 15.1 Redis.from_documents() — 文档流写入（⭐ 推荐）
+
+> 📂 Demo：[EmbeddingStoreRedis.py](./day05/09-embedding/EmbeddingStoreRedis.py) | [EmbeddingRagLLM.py](./day05/10-rag/EmbeddingRagLLM.py)
+
+```python
+from langchain_community.embeddings import DashScopeEmbeddings
+from langchain_community.vectorstores import Redis
+
+embeddings = DashScopeEmbeddings(
+    model="text-embedding-v3",
+    dashscope_api_key=os.getenv("aliQwen-api")
+)
+
+# 一步完成：向量化 + 建索引 + 写入
+vector_store = Redis.from_documents(
+    documents=texts,                        # List[Document]（已分割的小块）
+    embedding=embeddings,
+    redis_url="redis://localhost:26379",
+    index_name="my_index3",                 # 索引名，写入和查询必须一致
+)
+
+# 创建检索器
+retriever = vector_store.as_retriever(search_kwargs={"k": 2})
+```
+
+| 参数 | 说明 |
+|------|------|
+| `documents` | 分割后的 `List[Document]`，每个 Document 包含 `page_content` 和 `metadata` |
+| `embedding` | Embedding 模型实例 |
+| `redis_url` | Redis 连接地址 |
+| `index_name` | 索引名称，**写入和查询必须一致** |
+
+### 15.2 add_texts() — 文本流写入
+
+> 📂 Demo：[RedisVectorStore.py](./day05/10-rag/RedisVectorStore.py)
+
+```python
+from langchain_redis import RedisVectorStore, RedisConfig
+
+config = RedisConfig(redis_url="redis://localhost:26379", index_name="newsgroups")
+vector_store = RedisVectorStore(config, embeddings)
+
+# 手动指定文本和元数据
+texts = ["我喜欢吃苹果", "我喜欢用苹果手机"]
+metadatas = [{"source": "text1"}, {"source": "text2"}]
+
+# 写入（可先 embed_documents 预览向量）
+ids = vector_store.add_texts(texts, metadatas)
+# → ['newsgroups:01KKDZ5...', 'newsgroups:01KKDZ6...']
+```
+
+### 15.3 similarity_search_with_score — 带分数的语义搜索
+
+> 📂 Demo：[RedisVectorStore_SimilaritySearch.py](./day05/10-rag/RedisVectorStore_SimilaritySearch.py)
+
+```python
+# 带分数的相似性搜索
+results = vector_store.similarity_search_with_score("我喜欢用什么手机", k=3)
+
+for doc, score in results:
+    print(f"内容: {doc.page_content}")
+    print(f"相似度: {1 - score:.4f}")   # 距离转相似度（仅展示用）
+```
+
+| 方法 | 返回类型 | 说明 |
+|------|----------|------|
+| `as_retriever(k=N)` | `Retriever` | 标准检索器，用于 LCEL 链 |
+| `similarity_search(query, k=N)` | `list[Document]` | 不带分数 |
+| `similarity_search_with_score(query, k=N)` | `list[(Document, float)]` | 带距离分数 |
+
+---
+
+## 十六、文档加载器（Document Loaders）
+
+> 文档加载器将不同格式的文件统一加载为 `List[Document]` 对象。每个 Document 包含 `page_content`（文本正文）和 `metadata`（来源信息）。
+
+### 16.1 通用模式
+
+```python
+loader = XxxLoader("file_path", **options)
+documents = loader.load()              # → List[Document]
+```
+
+### 16.2 六种格式速查
+
+| 格式 | 加载器 | 导入路径 | 关键参数 |
+|------|--------|----------|----------|
+| TXT | `TextLoader` | `langchain_community.document_loaders` | `encoding="utf-8"` |
+| CSV | `CSVLoader` | `langchain_community.document_loaders.csv_loader` | `content_columns`, `metadata_columns` |
+| JSON | `JSONLoader` | `langchain_community.document_loaders` | `jq_schema="."`（需 `pip install jq`） |
+| DOCX | `UnstructuredWordDocumentLoader` | `langchain_community.document_loaders` | `mode="single"` / `"elements"` |
+| MD | `UnstructuredMarkdownLoader` | `langchain_community.document_loaders` | `mode="elements"`（保留标题层级） |
+| PDF | `PyPDFLoader` | `langchain_community.document_loaders` | `extraction_mode="plain"` / `"layout"` |
+
+> 📂 Demo 文件：[day05/10-rag/docloads/](./day05/10-rag/docloads/) 目录下对应每种格式
+
+### 16.3 CSV 加载最佳实践
+
+```python
+from langchain_community.document_loaders.csv_loader import CSVLoader
+
+# 模式 1（默认）：整行作为 page_content
+loader = CSVLoader("sample.csv")
+
+# 模式 2（⭐ 推荐用于 RAG）：指定正文列和元数据列
+loader = CSVLoader(
+    "sample.csv",
+    content_columns=["content"],          # 只有这些列进入向量化正文
+    metadata_columns=["title", "author"]  # 这些列用于过滤/展示
+)
+```
+
+### 16.4 PDF 加载注意事项
+
+```python
+from langchain_community.document_loaders import PyPDFLoader
+
+loader = PyPDFLoader("sample.pdf", extraction_mode="plain")
+documents = loader.load()
+# 每个页面一个 Document，metadata 包含 page、total_pages、source 等
+```
+
+> **注意**：PDF 是最棘手的格式。"能加载" 不等于 "适合直接用在 RAG 中"，通常需要额外的文本清洗。
+
+---
+
+## 十七、文本分割器（Text Splitters）
+
+> 为什么需要分割？① 控制 Token 成本——整篇文档塞不下；② 提高检索精度——小块更容易匹配到最相关内容。
+
+### 17.1 RecursiveCharacterTextSplitter — 核心分割器
+
+> 📂 Demo：[RecursiveTextSplitter.py](./day05/10-rag/textsplit/RecursiveTextSplitter.py) | [RecursiveTextSplitterV2.py](./day05/10-rag/textsplit/RecursiveTextSplitterV2.py)
+
+```python
+from langchain_classic.text_splitter import RecursiveCharacterTextSplitter
+
+splitter = RecursiveCharacterTextSplitter(
+    chunk_size=100,        # 每块最大字符数
+    chunk_overlap=30,      # 块之间的重叠字符数
+    length_function=len,   # 计算长度的函数
+)
+
+# 方式 1：分割纯文本字符串 → List[str]
+chunks = splitter.split_text("这是一段很长的文本内容...")
+
+# 方式 2：分割 Document 列表 → List[Document]（⭐ 推荐）
+texts = splitter.split_documents(documents)
+```
+
+### 17.2 split_text() vs split_documents()
+
+> 📂 Demo：[RecursiveDocumentSplitter.py](./day05/10-rag/textsplit/RecursiveDocumentSplitter.py)
+
+| 方法 | 输入 | 输出 | 元数据 |
+|------|------|------|--------|
+| `split_text(text)` | `str` | `list[str]` | ❌ 丢失 |
+| `split_documents(docs)` | `list[Document]` | `list[Document]` | ✅ 保留 |
+
+```python
+# split_documents 保留原始 Document 的 metadata
+documents = loader.load("倚天屠龙记.txt")
+texts = splitter.split_documents(documents)
+# texts[0].metadata → {'source': '倚天屠龙记.txt'}  # 保留！
+```
+
+> **在真实 RAG 中始终使用 `split_documents()`**，因为你需要保留来源信息用于溯源。
+
+### 17.3 chunk_overlap 的作用
+
+```
+原始文本:  "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+chunk_size=10, chunk_overlap=3
+
+块1: "ABCDEFGHIJ"
+块2: "HIJKLMNOPQR"    ← 与块1重叠 "HIJ"
+块3: "OPQRSTUVWX"     ← 与块2重叠 "OPQ"
+块4: "VWXYZ"
+```
+
+> **为什么需要重叠？** 避免关键信息正好落在两个块的边界上被截断。
+
+### 17.4 CharacterTextSplitter — 简单字符分割
+
+```python
+from langchain_classic.text_splitter import CharacterTextSplitter
+
+splitter = CharacterTextSplitter(
+    chunk_size=1000,
+    chunk_overlap=0,
+    length_function=len
+)
+```
+
+| 分割器 | 区别 | 建议 |
+|--------|------|------|
+| `RecursiveCharacterTextSplitter` | 按 `["\n\n", "\n", " ", ""]` 优先级递归分割 | ⭐ 通用首选 |
+| `CharacterTextSplitter` | 按单一分隔符简单切割 | 快速原型 |
+
+---
+
+## 十八、RAG 完整管道
+
+> RAG（Retrieval-Augmented Generation）= **检索 + 生成**。先检索相关文档，再基于文档内容生成回答。解决 LLM 的知识截止和幻觉问题。
+
+### 18.1 完整管道代码（⭐ 核心）
+
+> 📂 Demo：[EmbeddingRagLLM.py](./day05/10-rag/EmbeddingRagLLM.py)
+
+```python
+from langchain.chat_models import init_chat_model
+from langchain_community.document_loaders import Docx2txtLoader
+from langchain_classic.text_splitter import CharacterTextSplitter
+from langchain_community.embeddings import DashScopeEmbeddings
+from langchain_community.vectorstores import Redis
+from langchain_core.prompts import PromptTemplate
+from langchain_core.runnables import RunnablePassthrough
+
+# ① 加载文档
+loader = Docx2txtLoader("alibaba-java.docx")
+documents = loader.load()
+
+# ② 分割
+text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
+texts = text_splitter.split_documents(documents)
+
+# ③ 向量化 + 写入 Redis
+vector_store = Redis.from_documents(
+    documents=texts, embedding=embeddings,
+    redis_url="redis://localhost:26379", index_name="my_index3"
+)
+
+# ④ 创建检索器
+retriever = vector_store.as_retriever(search_kwargs={"k": 2})
+
+# ⑤ 提示词模板（{context} 由检索器填充）
+prompt = PromptTemplate(
+    template="""请使用以下提供的文本内容来回答问题。仅使用提供的文本信息，
+    如果文本中没有相关信息，请回答"抱歉，提供的文本中没有这个信息"。
+    
+    文本内容：{context}
+    问题：{question}
+    回答：""",
+    input_variables=["context", "question"]
+)
+
+# ⑥ LCEL 链：检索 + 生成
+rag_chain = (
+    {"context": retriever, "question": RunnablePassthrough()}
+    | prompt
+    | llm
+)
+
+# ⑦ 调用
+result = rag_chain.invoke("00000和A0001分别是什么意思")
+print(result.content)
+# → "00000 的意思是'一切 ok'，A0001 的意思是'用户端错误'"
+```
+
+**RAG 管道数据流**：
+
+```
+用户问题 → retriever(检索 top-k 文档) ──→ {context}
+         → RunnablePassthrough() ──→ {question}
+                                     ↓
+                              prompt.format() → LLM → 回答
+```
+
+### 18.2 RAG vs 无 RAG 对比
+
+```python
+# 有 RAG（从知识库检索）
+rag_chain.invoke("00000和A0001分别是什么意思")
+# ✅ "00000 是'一切 ok'，A0001 是'用户端错误'"
+
+# 无 RAG（纯靠模型自身知识）
+no_rag_chain = (
+    {"context": lambda _: "（未提供相关文档）", "question": RunnablePassthrough()}
+    | prompt | llm
+)
+no_rag_chain.invoke("00000和A0001分别是什么意思")
+# ❌ "抱歉，提供的文本中没有这个信息"
+```
+
+| | 有 RAG | 无 RAG |
+|---|---|---|
+| 知识来源 | 外部文档检索 | 模型训练数据 |
+| 回答质量 | 基于文档，可溯源 | 可能编造 |
+| 适用场景 | 企业知识库、私有文档问答 | 通用知识问答 |
+
+> **RAG 的核心价值不是让模型更聪明，而是给它正确的参考资料。**
+
+### 18.3 Day05 核心 API 速查
+
+| 功能 | API | 来源 |
+|------|-----|------|
+| Embedding 查询 | `DashScopeEmbeddings.embed_query(text)` | `langchain_community` |
+| Embedding 批量 | `DashScopeEmbeddings.embed_documents(texts)` | `langchain_community` |
+| 余弦相似度 | `np.dot(A,B) / (np.linalg.norm(A)*np.linalg.norm(B))` | numpy |
+| 文档加载 | `XxxLoader(path).load()` | `langchain_community.document_loaders` |
+| 文本分割 | `RecursiveCharacterTextSplitter(chunk_size, overlap).split_documents(docs)` | `langchain_classic` |
+| 写入 Redis | `Redis.from_documents(docs, embedding, url, index_name)` | `langchain_community.vectorstores` |
+| 创建检索器 | `vector_store.as_retriever(search_kwargs={"k": N})` | `langchain_community.vectorstores` |
+| 带分数搜索 | `vector_store.similarity_search_with_score(query, k=N)` | `langchain_community.vectorstores` |
+| RAG 链 | `{"context": retriever, "question": RunnablePassthrough()} \| prompt \| llm` | LCEL |
+
+---
+
+## 十九、MCP 协议
+
+> MCP（Model Context Protocol）是 Anthropic 提出的开放协议，**让 LLM 和外部工具/数据源的连接标准化**。它之于工具，就像 OpenAI 兼容接口之于模型——统一标准，消除碎片化。
+
+### 19.1 MCP 三大原语
+
+| 原语 | 装饰器 | 用途 | 示例 |
+|------|--------|------|------|
+| **Tool**（工具） | `@mcp.tool()` | LLM 可调用的函数 | 查天气、算加法 |
+| **Resource**（资源） | `@mcp.resource("uri")` | 向 LLM 暴露的静态/动态数据 | 配置文件、问候语 |
+| **Prompt**（提示词） | `@mcp.prompt()` | 结构化的 LLM 输入模板 | 风格化问候 |
+
+### 19.2 FastMCP 官方框架（⭐ 推荐）
+
+> 📂 Demo：[McpServerByFastMCP.py](./day06/11_mcp/McpServerByFastMCP.py)
+
+```bash
+pip install mcp
+```
+
+```python
+from mcp.server.fastmcp import FastMCP
+
+mcp = FastMCP("Demo")
+
+# 工具：LLM 可以调用的函数
+@mcp.tool()
+def add(a: int, b: int) -> int:
+    """两个整数相加"""
+    return a + b
+
+# 资源：向 LLM 暴露的数据
+@mcp.resource("greeting://default")
+def get_greeting() -> str:
+    return "Hello from static resource!"
+
+# 提示词：结构化的输入模板
+@mcp.prompt()
+def greet_user(name: str, style: str = "friendly") -> str:
+    styles = {
+        "friendly": "写一句友善的问候",
+        "formal": "写一句正式的问候",
+        "casual": "写一句轻松的问候",
+    }
+    return f"为{name}{styles.get(style, styles['friendly'])}"
+
+if __name__ == "__main__":
+    mcp.run(transport="stdio")
+```
+
+### 19.3 自定义 MCP 服务端（理解原理）
+
+> 📂 Demo：[McpServer.py](./day06/11_mcp/McpServer.py)
+
+```python
+class MCPWeatherServer:
+    def __init__(self, name, host="127.0.0.1", port=8000):
+        self.name = name
+        self._tools = {}
+
+    def tool(self):
+        """装饰器：注册工具函数到 _tools 字典"""
+        def decorator(func):
+            self._tools[func.__name__] = func
+            return func
+        return decorator
+
+    def run(self, transport="sse"):
+        print(f"Server running at http://{self.host}:{self.port}/sse")
+        self._keep_alive()   # 无限循环等待请求
+
+mcp = MCPWeatherServer("WeatherServer")
+
+@mcp.tool()
+def get_weather(city: str) -> str:
+    """查询天气"""
+    # 调用 OpenWeather API...
+    return json.dumps(data)
+```
+
+| | FastMCP 官方 | 自定义实现 |
+|---|---|---|
+| 文件 | `McpServerByFastMCP.py` | `McpServer.py` |
+| 传输 | stdio（标准输入输出） | SSE（HTTP，`http://127.0.0.1:8000/sse`） |
+| 学习价值 | 生产环境开发 | 理解底层原理 |
+| 依赖 | `pip install mcp` | 无外部依赖 |
+
+### 19.4 MCP 客户端调用
+
+> 📂 Demo：[McpClient.py](./day06/11_mcp/McpClient.py)
+
+```python
+class MCPWeatherClient:
+    def __init__(self, mcp_instance):
+        self._tools = mcp_instance._tools
+
+    def check_tool_availability(self, tool_name):
+        return tool_name in self._tools
+
+    def call_get_weather(self, city):
+        tool_func = self._tools["get_weather"]
+        return tool_func(city)
+
+# 遍历多个城市
+for city in ["Beijing", "Shanghai"]:
+    weather = client.call_get_weather(city)
+```
+
+> **融汇贯通点**：MCP 之于工具 = OpenAI 兼容接口之于模型。将来源头不同的工具（天气 API、数据库、文件系统），通过统一的 MCP Server 暴露，任何支持 MCP 的 LLM 客户端都能直接消费。
+
+---
+
+## 二十、Agent（智能体）
+
+> Agent 让 LLM 从"被动回答"升级为"自主行动"——它会**推理**需要什么、**选择**工具、**观察**结果、**决策**下一步，循环直到完成任务。
+
+### 20.1 create_agent() — LangChain 1.0 Agent 创建（⭐ 推荐）
+
+> 📂 Demo：[AgentReact.py](./day06/12_agent/AgentReact.py) | [AgentSmartSelectV1.0.py](./day06/12_agent/AgentSmartSelectV1.0.py)
+
+```python
+from langchain.agents import create_agent
+from langchain.tools import tool
+
+# 定义工具
+@tool
+def search_products(query: str) -> str:
+    """搜索产品并返回按受欢迎度排序的结果"""
+    # ... 业务逻辑
+    return formatted_result
+
+@tool
+def check_inventory(product_id: str) -> str:
+    """检查特定产品的库存状态"""
+    # ... 业务逻辑
+    return stock_info
+
+# 创建 Agent
+agent = create_agent(
+    model=model,
+    tools=[search_products, check_inventory],
+    system_prompt="你是电商助手，遵循ReAct模式：推理 → 行动 → 观察 → 重复"
+)
+
+# 调用
+result = agent.invoke({
+    "messages": [{"role": "user", "content": "查找最受欢迎的无线耳机并检查库存"}]
+})
+```
+
+| 参数 | 类型 | 说明 |
+|------|------|------|
+| `model` | `ChatModel` | 驱动 Agent 的语言模型 |
+| `tools` | `list` | 可用工具列表（`@tool` 装饰的函数） |
+| `system_prompt` | `str` | 系统提示词，定义 Agent 的角色和行为规则 |
+| `response_format` | `BaseModel` / `TypedDict` | 可选，结构化输出模式（见 21.2） |
+
+### 20.2 ReAct 模式 — Agent 的思维循环
+
+```
+用户: "查找最受欢迎的无线耳机并检查是否有库存"
+  │
+  ▼  🧠 推理(Reasoning)
+  │   "用户要找无线耳机，需要先搜索产品"
+  ▼  🛠️ 行动(Acting)
+  │   search_products("无线耳机") → 返回5个产品
+  ▼  👁️ 观察(Observation)
+  │   "最受欢迎：索尼 WH-1000XM5, ID=WH-1000XM5, 95%"
+  ▼  🧠 推理
+  │   "这个产品最受欢迎，现在检查库存"
+  ▼  🛠️ 行动
+  │   check_inventory("WH-1000XM5") → 有库存，10件
+  ▼  ✅ 最终回答
+      "最受欢迎的是索尼 WH-1000XM5，售价¥299，库存10件"
+```
+
+**追踪 ReAct 循环的消息类型**：
+
+```python
+for msg in result['messages']:
+    if msg.type == "AIMessage" and msg.tool_calls:    # 推理+行动
+        print(f"🛠️ 工具调用: {msg.tool_calls}")
+    elif msg.type == "ToolMessage":                    # 观察
+        print(f"📋 观察结果: {msg.content}")
+    elif msg.type == "AIMessage" and not msg.tool_calls:  # 最终回答
+        print(f"✅ 回答: {msg.content}")
+```
+
+### 20.3 经典 Agent API（V0.3 风格）
+
+> 📂 Demo：[AgentSmartSelectV0.3.py](./day06/12_agent/AgentSmartSelectV0.3.py)
+
+```python
+from langchain_classic import create_tool_calling_agent
+from langchain_classic.agents import AgentExecutor
+from langchain_core.prompts import ChatPromptTemplate
+
+prompt = ChatPromptTemplate.from_messages([
+    ("system", "你是天气助手..."),
+    ("human", "{input}"),
+    ("placeholder", "{agent_scratchpad}")
+])
+
+agent = create_tool_calling_agent(llm, tools, prompt)
+executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
+
+result = executor.invoke({"input": "请问北京和上海今天天气怎么样？"})
+```
+
+| API | 版本 | 特点 |
+|------|------|------|
+| `create_agent()` | LangChain 1.0（⭐ 推荐） | 简洁、支持 `response_format` |
+| `create_tool_calling_agent()` + `AgentExecutor` | langchain_classic | 兼容旧版本，verbose 日志 |
+
+### 20.4 并行工具调用
+
+Agent 可以在**单次推理**中判断需要调用多个工具（甚至同一个工具多次），并行触发：
+
+```python
+# 用户: "北京和上海今天天气怎么样，哪个城市更热？"
+# Agent 自动并行调用：
+#   get_weather("Beijing")  ──┐
+#   get_weather("Shanghai") ──┤ 同时执行
+#                              ↓
+#                  比较温度 → 回答
+```
+
+---
+
+## 二十一、Agent 高级模式
+
+### 21.1 A2A 多智能体协作
+
+> 📂 Demo：[Agent2Agent.py](./day06/12_agent/Agent2Agent.py)
+
+**模式**：A2A 调度 = **多个功能单一的 Runnable 子 Agent 链 + 一个控制调用逻辑的总协调器**。
+
+```
+用户: "安排北京飞上海的完整行程"
+  │
+  ▼
+┌──────────────────────┐
+│   总协调 Agent        │  ← RunnableLambda，顺序编排
+└──────────────────────┘
+  │         │         │
+  ▼         ▼         ▼
+┌──────┐ ┌──────┐ ┌──────┐
+│携程   │ │美团   │ │滴滴   │  ← 子 Agent，单一职责，单工具绑定
+│机票   │ │酒店   │ │打车   │
+└──────┘ └──────┘ └──────┘
+```
+
+**子 Agent 模板**：
+
+```python
+def create_ctrip_agent(llm):
+    """子 Agent = prompt | llm_with_tools | output_parser"""
+    llm_with_tools = llm.bind_tools([ctrip_book_flight])
+    prompt = ChatPromptTemplate.from_messages([
+        ("system", "你是专业的工具调用助手，只能调用CtripBookFlight工具..."),
+        ("human", "{input}")
+    ])
+    return prompt | llm_with_tools | StrOutputParser()
+```
+
+**总协调器核心逻辑**：
+
+```python
+def create_travel_coordinator_agent(llm, ctrip_chain, meituan_chain, didi_chain):
+    def a2a_schedule(input_dict):
+        # 1. 携程
+        ctrip_result = ctrip_chain.invoke({"input": "订机票"})
+        # 2. 美团
+        meituan_result = meituan_chain.invoke({"input": "订酒店"})
+        # 3. 滴滴
+        didi_result = didi_chain.invoke({"input": "预约打车"})
+        # 整合报告
+        return f"【最终报告】\n{ctrip_result}\n{meituan_result}\n{didi_result}"
+
+    return RunnableLambda(a2a_schedule)
+```
+
+**A2A 四大核心原则**：
+
+| 原则 | 说明 |
+|------|------|
+| **单一职责** | 一个子 Agent 只负责一个业务，只绑定一个专属工具 |
+| **统一接口** | 所有子 Agent 封装为 `prompt \| llm_with_tools \| output_parser`，对外仅暴露 `invoke()` |
+| **集中调度** | 总协调器控制所有调用顺序，子 Agent 之间不直接交互 |
+| **空值兜底** | 每个调用加 try-except，空结果通过 `tool.func` 获取原始函数兜底 |
+
+**兜底机制**：
+
+```python
+# 通过 .func 获取 @tool 装饰器下的原始函数
+ctrip_func = ctrip_book_flight.func
+
+# Agent 返回空时，直接调用原始函数
+try:
+    result = ctrip_chain.invoke({"input": "订机票"})
+except:
+    result = ""
+if not result.strip():
+    result = ctrip_func("北京", "上海", "2026-02-01")  # 兜底
+```
+
+### 21.2 结构化输出 Agent
+
+> 📂 Demo：[AgentSmartSelectV1.0.py](./day06/12_agent/AgentSmartSelectV1.0.py)
+
+**V0.3 → V1.0 关键升级**：Agent 输出从自然语言变为 TypedDict 结构化对象，下游代码可直接消费。
+
+```python
+from typing import TypedDict
+
+# 定义输出结构
+class WeatherCompareOutput(TypedDict):
+    beijing_temp: float
+    shanghai_temp: float
+    hotter_city: str
+    summary: str
+
+# 创建 Agent，指定结构化输出
+agent = create_agent(
+    model=model,
+    tools=[get_weather],
+    system_prompt="你是天气助手...",
+    response_format=WeatherCompareOutput,   # ← 关键参数
+)
+
+result = agent.invoke({"input": "请问北京和上海今天天气怎么样，哪个更热？"})
+
+# 直接获取结构化数据
+structured = result["structured_response"]
+# → {'beijing_temp': 32.0, 'shanghai_temp': 35.0, 'hotter_city': '上海', 'summary': '...'}
+
+print(json.dumps(structured, ensure_ascii=False, indent=2))
+```
+
+| | V0.3（经典） | V1.0（结构化） |
+|---|---|---|
+| API | `create_tool_calling_agent` + `AgentExecutor` | `create_agent()` |
+| 输出格式 | 自然语言文本 | TypedDict 结构化对象 |
+| 可编程性 | 需要解析自然语言 | 直接 `result["structured_response"]` |
+| 适用场景 | 人类阅读 | 下游代码消费 |
+
+### 21.3 Agent vs RAG 的融合视角
+
+```
+用户请求
+  │
+  ▼
+Agent 推理（Day06）──→ 需要查资料？──→ RAG 检索知识库（Day05）
+  │                                     │
+  │                    ┌────────────────┘
+  │                    ▼
+  ├──→ 需要调 API？──→ MCP 工具（Day06）──→ 天气/机票/酒店...
+  │
+  ▼
+综合所有信息 → 决策 → 回答
+```
+
+**一句话总结**：Day05 让你**喂对资料**，Day06 让你**做对决策**——两者结合，就是现代 AI Agent 应用的完整技术栈。
+
+### 21.4 Day06 核心 API 速查
+
+| 功能 | API | 来源 |
+|------|-----|------|
+| FastMCP 工具 | `@mcp.tool()` | `mcp.server.fastmcp` |
+| FastMCP 资源 | `@mcp.resource("uri")` | `mcp.server.fastmcp` |
+| FastMCP 提示词 | `@mcp.prompt()` | `mcp.server.fastmcp` |
+| 创建 Agent（1.0） | `create_agent(model, tools, system_prompt, response_format)` | `langchain.agents` |
+| 创建 Agent（经典） | `create_tool_calling_agent(llm, tools, prompt)` + `AgentExecutor` | `langchain_classic` |
+| 工具绑定 | `llm.bind_tools([tool1, tool2])` | `langchain_openai` |
+| 子 Agent 链 | `prompt \| llm_with_tools \| StrOutputParser` | LCEL |
+| A2A 协调器 | `RunnableLambda(a2a_schedule)` | `langchain_core.runnables` |
+| 工具原始函数 | `tool_object.func` | `@tool` 装饰器内部 |
+| 结构化输出 | `create_agent(..., response_format=TypedDict)` | `langchain.agents` |
+
+---
+
 ## 附录：完整导入速查
 
 ```python
@@ -1690,6 +2520,46 @@ from langchain_core.output_parsers import JsonOutputKeyToolsParser      # 工具
 # model.bind_tools([tool1, tool2])   将工具绑定到模型
 # tool.invoke({"arg": value})        调用工具
 
+# ==================== Embedding（Day05） ====================
+from langchain_community.embeddings import DashScopeEmbeddings           # 阿里云 DashScope 嵌入
+import dashscope                                                         # DashScope 原生 SDK
+from dashscope import TextEmbedding, MultiModalEmbedding                 # 文本/多模态嵌入
+
+# ==================== 向量数据库（Day05） ====================
+from langchain_community.vectorstores import Redis                       # Redis 向量存储
+from langchain_redis import RedisVectorStore, RedisConfig               # langchain_redis 封装
+
+# ==================== 文档加载器（Day05） ====================
+from langchain_community.document_loaders import (
+    TextLoader,                          # TXT
+    JSONLoader,                          # JSON
+    UnstructuredWordDocumentLoader,      # DOCX
+    UnstructuredMarkdownLoader,          # Markdown
+    PyPDFLoader,                         # PDF
+)
+from langchain_community.document_loaders.csv_loader import CSVLoader   # CSV
+
+# ==================== 文本分割器（Day05） ====================
+from langchain_classic.text_splitter import (
+    RecursiveCharacterTextSplitter,      # 递归分割（⭐ 推荐）
+    CharacterTextSplitter,               # 简单字符分割
+)
+
+# ==================== RAG（Day05） ====================
+from langchain_core.runnables import RunnablePassthrough                # 直通节点
+# rag_chain = {"context": retriever, "question": RunnablePassthrough()} | prompt | llm
+
+# ==================== MCP 协议（Day06） ====================
+from mcp.server.fastmcp import FastMCP                                   # FastMCP 框架
+# @mcp.tool()      注册工具
+# @mcp.resource()  注册资源
+# @mcp.prompt()    注册提示词模板
+
+# ==================== Agent（Day06） ====================
+from langchain.agents import create_agent                                # LangChain 1.0 Agent（⭐ 推荐）
+from langchain_classic import create_tool_calling_agent                  # 经典 Agent 创建
+from langchain_classic.agents import AgentExecutor                       # Agent 执行器
+
 # ==================== 调用方式 ====================
 # model.invoke(input)          同步单次
 # model.ainvoke(input)         异步单次
@@ -1700,4 +2570,6 @@ from langchain_core.output_parsers import JsonOutputKeyToolsParser      # 工具
 # model.with_structured_output(Schema)   结构化输出
 ```
 
-> 📅 文档生成时间：2026-07-22 — 基于尚硅谷 LangChain Day01~Day04 课程内容整理
+> 📅 文档更新时间：2026-07-30 — 基于尚硅谷 LangChain Day01~Day06 课程内容整理
+> 
+> Day01-04（初始版本，2026-07-22）→ Day05（Embedding + 向量数据库 + RAG）→ Day06（MCP 协议 + Agent）
